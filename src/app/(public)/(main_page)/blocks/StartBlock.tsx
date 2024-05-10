@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import React from "react";
 import LittleEl from "./elements/littleEl";
+import { LoginButton } from "@/components/auth/login-button";
 
 const StartBlock = () => {
   return (
@@ -15,12 +16,14 @@ const StartBlock = () => {
           Выберите язык и откройте новую главу в своем <br /> языковом
           путешествии с LingSait
         </h3>
-        <Button
-          variant="violetSelect"
-          className="p-7 rounded-xl w-[285px] mt-5"
-        >
-          Записаться на урок
-        </Button>
+        <LoginButton>
+          <Button
+            variant="violetSelect"
+            className="p-7 rounded-xl w-[285px] mt-5"
+          >
+            Записаться на урок
+          </Button>
+        </LoginButton>
       </div>
       <div className="rightside">
         <Image alt="Main" src={"/mainImg.png"} width={550} height={550} />

@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Layout } from "./_ui/layout";
 import { Logo } from "./_ui/logo";
 import { MainNav } from "./_ui/main-nav";
@@ -14,7 +15,8 @@ export function AppHeader({
     <Layout
       logo={<Logo />}
       nav={<MainNav />}
-      profile={isProfile && <Profile />}
-    ></Layout>
+      //profile={isProfile && <Profile />}
+    >
+    </Layout>
   );
 }

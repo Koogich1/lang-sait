@@ -8,7 +8,6 @@ export default async function Layout({
 }) {
   return (
     <div>
-      <AppHeader variant="private" />
       {children}
     </div>
   );

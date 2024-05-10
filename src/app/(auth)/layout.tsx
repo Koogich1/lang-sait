@@ -1,14 +1,15 @@
+import { db } from "@/lib/db";
 import { AppHeader } from "@/src/widgets/app-header/app-header";
 import React from "react";
 
-export default async function Layout({
+export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <AppHeader variant="auth" />
+    <div className="flex flex-col justify-center items-center h-[100vh]">
+
       {children}
     </div>
   );
