@@ -1,39 +1,32 @@
-import bcrypt from "bcryptjs"
-import { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials"
-import VK from "next-auth/providers/vk"
-import Yandex from "next-auth/providers/yandex"
 
-import { LoginSchema } from "@/schemas";
-import { getUserByEmail } from "@/data/user";
+import bcrypt from "bcryptjs";
 
-export default {
+import type { NextAuthConfig } from "next-auth";
+
+import { LoginSchema } from "./app/schemas";
+import { getUserByEmail } from "./data/user";
+
+export default{
 	providers: [
-		VK({
-			clientId: process.env.VK_CLIENT_ID,
-			clientSecret: process.env.VK_CLIENT_SECRET,
-		}),
-		Yandex,
 		Credentials({
 			async authorize(credentials){
 				const validatedFields = LoginSchema.safeParse(credentials);
 
-				if(validatedFields.success){
-					const { email, password } = validatedFields.data;
+        if (validatedFields.success) {
+          const { email, password } = validatedFields.data;
 
-					const user = await getUserByEmail(email)
-					if(!user || !user.password) return null
+          const user = await getUserByEmail(email);
 
-					const passwordMatch = await bcrypt.compare(
-						password,
-						user.password
-					)
+          // user has no password if using other providers like Github/Google
+          if (!user || !user.password) return null;
 
-					if (passwordMatch) return user
-				}
+          const passwordsMatch = await bcrypt.compare(password, user.password);
 
-				return null;
+          if (passwordsMatch) return user;
+        }
+				return null
 			}
 		})
-	],
+	]
 } satisfies NextAuthConfig
