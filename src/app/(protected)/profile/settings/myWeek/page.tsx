@@ -10,7 +10,7 @@ const myWeek = async () => {
 			<Header
 				header="Мое расписание"
 			/>
-			<div className="flex mt-10">
+			<div className="flex mt-10 w-full gap-5">
 				<TimeClock />
 				<CurrentWeek />
 			</div>

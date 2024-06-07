@@ -4,11 +4,11 @@ import clsx from "clsx";
 
 const TimeClock = () => {
   return (
-    <div className="min-w-[230px] items-center flex flex-col justify-between min-h-[230px] bg-white rounded-xl shadow-lg p-5">
-      <div>
+    <div className="min-w-[240px] min-h-[320px] w-[30%] items-center flex flex-col justify-center gap-9 bg-white rounded-xl shadow-lg p-5">
+      <div className="text-lg">
         C 10:00 до 17:00
       </div>
-      <div className="relative flex items-center justify-end w-[150px] h-[150px] overflow-hidden rounded-full ring-gray-600 ring-[2px]">
+      <div className="relative flex items-center justify-end w-[160px] h-[160px] overflow-hidden rounded-full ring-gray-600">
         {Array.from({ length: 60 }, (_, i) => (
           <div
             key={i}
