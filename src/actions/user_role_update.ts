@@ -1,10 +1,17 @@
 "use server"
 
+import { getUserByEmail } from "@/data/user";
 import { currentUser } from "@/lib/auth"; 
 import { db } from "@/lib/db";
 
 const teacherCreate = async () => {
     const user = await currentUser()
+
+    if(!user?.email){
+      return
+    }
+
+    const currentUs = await getUserByEmail(user?.email)
 
     if(!user) {
 		return {error: "Неавторизован"}
@@ -16,12 +23,19 @@ const teacherCreate = async () => {
         return {error: "Вы не учитель"}
     }
 
-    await db.teacher.create({
-        data:{
-            id: user.id,
+    const createdTeacher = await db.teacher.create({
+        data: {
             language: "English",
-        }
-    })
+        },
+    });
+
+    // Обновляем поле teacherId в профиле пользователя
+    await db.user.update({
+        where: { id: currentUs?.id},
+        data: {
+            teacherId: createdTeacher.id,
+        },
+    });
 };
 
 export default teacherCreate;

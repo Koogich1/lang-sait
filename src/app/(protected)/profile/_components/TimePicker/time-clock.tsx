@@ -1,19 +1,25 @@
 "use client"
 import React from "react";
 import clsx from "clsx";
+import moment from "moment";
 
 const TimeClock = () => {
+	const currentDate = moment().format("DD.MM")
+	
   return (
-    <div className="min-w-[240px] min-h-[320px] w-[30%] items-center flex flex-col justify-center gap-9 bg-white rounded-xl shadow-lg p-5">
-      <div className="text-lg">
+    <div className="min-w-[240px] text-gray-600 min-h-[320px] relative w-[30%] items-center flex flex-col justify-center gap-9 bg-white rounded-xl shadow-lg p-5">
+      <div className="text-xl font-bold">
         C 10:00 до 17:00
       </div>
-      <div className="relative flex items-center justify-end w-[160px] h-[160px] overflow-hidden rounded-full ring-gray-600">
+      <div className="relative flex items-center justify-end w-[160px] h-[160px] overflow-hidden rounded-full rotate-[270deg]">
+				<div className="absoluteflex rotate-90 mr-[3.65rem] justify-start items-center font-semibold text-base text-gray-300">
+					{currentDate}
+				</div>
         {Array.from({ length: 60 }, (_, i) => (
           <div
             key={i}
-            style={{ height: .5 }}
-            className={clsx("absolute w-1/2 origin-left flex justify-end", {
+            style={{ height: `${i % 5 === 0 ? 3 : 1}px` }}
+            className={clsx("absolute w-1/2 origin-left flex justify-end ", {
               "rotate-[0deg]": i === 0,
 							"rotate-[6deg]": i === 1,
 							"rotate-[12deg]": i === 2,
@@ -76,7 +82,9 @@ const TimeClock = () => {
 							"rotate-[354deg]": i === 59.
             })}
           >
-            <div className="w-[15%] h-full bg-gray-600 rounded-full" />
+            <div className="w-[15%] h-full bg-gray-600 rounded-full">
+							<div className={(`absolute w-full rotate-180 pl-5 text-gray-600 text-xs -top-2/4 -translate-x-1/2 text-center`)}></div>
+						</div>
           </div>
         ))}
       </div>

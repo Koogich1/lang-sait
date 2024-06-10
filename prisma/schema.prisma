@@ -37,22 +37,26 @@ enum languagePick {
 }
 
 model Teacher {
-  id                 String         @id @default(cuid())
-  availability       Availability[]
-  language           languagePick   @default(English)
+  id                 String              @id @default(cuid())
+  language           languagePick        @default(English)
   students           User[]
-  repeating_interval Int?           @default(0)
+  repeating_interval Int?                @default(0)
+  availabilities     TeacherAvailability[]
 }
 
-model Availability {
-  id         String    @id @default(cuid())
-  teacherId  String
-  date       DateTime?
-  start_time DateTime?
-  end_time   DateTime?
-
-  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+model TeacherAvailability {
+  id            String     @id @default(cuid())
+  teacherId     String
+  teacher       Teacher    @relation(fields: [teacherId], references: [id])
+  Monday        String[]
+  Tuesday       String[]
+  Wednesday     String[]
+  Thursday      String[]
+  Friday        String[]
+  Saturday      String[]
+  Sunday        String[]
 }
+
 
 model Account {
   id                String  @id @default(cuid())

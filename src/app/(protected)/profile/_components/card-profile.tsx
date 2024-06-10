@@ -5,15 +5,14 @@ import { Input } from "@/components/ui/input"
 import { BsCopy } from "react-icons/bs";
 import { Button } from "@/components/ui/button"
 import UploadFile from "./uploadFile";
-import { logout } from "@/actions/logout";
-import teacherCreate from "@/actions/user_role_update";
 import TeacherInterface from "./interface/teacher-interface";
 import ModalNewTeacher from "./modal/newTeacherFirst";
+import getTeacherAvailability from "@/actions/get-teacher-Availability";
+import { getUserByEmail } from "@/data/user";
 
 type Props = {
 	user: any
 }
-
 const CardProfile = ({user}: Props) => {
 
 
@@ -23,20 +22,10 @@ const CardProfile = ({user}: Props) => {
 		<UploadFile />
   );
 
-	const onClick = () => {
-		logout()
-	}
-
-	const handleSubmit = () => {
-		teacherCreate()
-	}
-
  return(
 			<div className="flex">
 				<div className="md:w-[330px] 2xl:w-[400px] bg-white p-6 rounded-3xl shadow-lg w-full mt-10">
 					<div>
-						<Button onClick={handleSubmit}>Отправить</Button>
-						<Button onClick={onClick}>Выйти из профиля</Button>
 					</div>
 					<div className="flex flex-col justify-center items-center w-full text-lg text-[#4D6785]">
 						<div className="w-full">
@@ -103,9 +92,6 @@ const CardProfile = ({user}: Props) => {
 								</Input>
 								<Button 
 								className={`absolute top-0 left-0 w-full h-full bg-transparent hover:bg-transparent flex justify-end opacity-50 hover:opacity-100`}
-								onClick={async () => {
-									await navigator.clipboard.writeText(teachEmail) // ВСТАВИТЬ ПОЧТУ УЧИТЕЛЯ
-								}}
 								title="Копировать"
 								data-tooltip-text="Копировать"
 								>
@@ -120,11 +106,14 @@ const CardProfile = ({user}: Props) => {
 				{user?.role === "TEACHER" ? 
 				<div>
 					<TeacherInterface />
-					<ModalNewTeacher 
-					user={user}
-					/>
 				</div>
 				: 
+				""
+				}
+				{user?.role === "TEACHER" ? 
+				<ModalNewTeacher 
+				user={user}
+				/> :
 				""
 				}
 				

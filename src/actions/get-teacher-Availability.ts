@@ -6,8 +6,8 @@ type Props = {
   teacherId: string;
 };
 
-export const getTeacherAvailability = async ({teacherId}: Props) => {
-  const existingAvailability = await db.availability.findFirst({
+export const getTeacherAvailability = async (teacherId: string) => {
+  const existingAvailability = await db.teacherAvailability.findFirst({
     where: {
       teacherId: teacherId,
     },

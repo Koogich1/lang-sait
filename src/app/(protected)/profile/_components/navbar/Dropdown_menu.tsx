@@ -12,6 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import LogoutButton from '../interface/logout-button';
+import TeacherCreate from '../interface/teacherCreate-button';
 
 export default function DropDownMenu() {
 	const user = useCurrentUser()
@@ -34,6 +36,14 @@ export default function DropDownMenu() {
 					<DropdownMenuItem>Занятия</DropdownMenuItem>
 					<DropdownMenuItem>Чат</DropdownMenuItem>
 					<DropdownMenuItem>Тесты</DropdownMenuItem>
+					<div>
+						<div>
+							<LogoutButton />
+						</div>
+						<div>
+							<TeacherCreate />
+						</div>
+					</div>
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</div>

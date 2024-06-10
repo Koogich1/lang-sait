@@ -52,7 +52,11 @@ const CurrentWeek = () => {
         Длительность урока <span className='text-[#9170D3]'>1 час</span>
       </h1>
       <h1 className='text-center pt-3 opacity-60'>
-        Выберете день недели, чтобы изменить промежуток, <br /> можете добавить или убрать часы, <span className='font-bold'>занятые часы изменить нельзя!</span>
+        Выберете день недели, чтобы изменить промежуток, 
+        <br /> можете добавить или убрать часы, 
+        <span className='font-bold'>
+          занятые часы изменить нельзя!
+        </span>
       </h1>
       <div className='flex justify-center items-center w-full h-full gap-4'>
         {daysOfWeek}

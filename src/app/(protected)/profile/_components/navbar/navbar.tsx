@@ -11,8 +11,11 @@ import {
 
 import { 
 	HiCog6Tooth, 
-	HiOutlineArrowUturnLeft } from "react-icons/hi2";
+	HiOutlineArrowUturnLeft }
+from "react-icons/hi2";
+
 import Link from "next/link";
+import { useState } from "react";
 
 
 export const Navbar = () => {
@@ -26,8 +29,8 @@ export const Navbar = () => {
 					href='/profile/user'
 					>
 						<Button 
-						variant='shadow' size="lg" className="w-full
-						 text-[#699BD8] font-semibold">
+						variant='shadow' size="lg" className={(`w-full
+						 text-[#699BD8] font-semibold`)}>
 							Профиль
 							<HiOutlineUser 
 							className="text-2xl"/> 
@@ -38,7 +41,10 @@ export const Navbar = () => {
 					<Link
 					href='/profile/calendar'
 					>
-					<Button variant='shadow' size="lg" className="w-full text-[#B069CA] font-semibold">
+					<Button 
+					variant='shadow' 
+					size="lg" 
+					className="w-full text-[#B069CA] font-semibold">
 						Календарь
 						<HiOutlineCalendar 
 						className="text-2xl"
@@ -50,7 +56,8 @@ export const Navbar = () => {
 					<Link
 					href='/profile/achievements'
 					>
-						<Button variant='shadow' size="lg" className="w-full text-[#C8A907] font-semibold">
+						<Button variant='shadow' size="lg" className="w-full text-[#C8A907] font-semibold"
+						>
 							Достижения
 							<HiOutlineClipboardList 
 							className="text-2xl"

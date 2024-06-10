@@ -9,6 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
+import TimeRangePicker from "../interface/time-range-picker";
+
 type Props = {
 	open: boolean,
 	day: any,
@@ -20,19 +22,24 @@ const DayOfWeekChoose = ({open, day, weekDay, onClose} : Props) => {
 
 	return(
 		<Dialog open={open}>
-			<DialogContent>
-				<DialogHeader>
-					<DialogTitle className="text-2xl font-bold text-[#835BD2]">Выберете свободные часы</DialogTitle>
-					<DialogDescription className="text-base text-gray-500 pt-3">
-						{day}
-						<div>
-							{weekDay}
-						</div>
-					</DialogDescription>
+			<DialogContent className="rounded-xl">
+				<DialogHeader className="p-0 m-0">
+					<DialogTitle className="text-xl font-bold text-[#835BD2] p-0 m-0 flex  justify-between items-end">
+						Выберете свободные часы
+					</DialogTitle>
 				</DialogHeader>
+					<div className="flex gap-2 absolute p-6 pt-[27px] right-1 a text-base text-gray-400 font-normal">
+						<div>
+							{day}
+						</div>
+						<div>
+							{weekDay?.charAt(0).toUpperCase() + weekDay?.slice(1)}
+						</div>
+					</div>
+				<TimeRangePicker />
 				<div className="w-full flex justify-between gap-3">
-					<Button variant='shadow2' className='w-1/2' onClick={onClose}>Отмена</Button>
-					<Button variant='violetSelect' className="w-1/2">Подтвердить</Button>
+					<Button variant='shadow2' className='w-1/2 font-semibold' onClick={onClose}>Отмена</Button>
+					<Button variant='violetSelect' className="w-1/2 text-base font-semibold">Подтвердить</Button>
 				</div>
 			</DialogContent>
 		</Dialog>
