@@ -18,6 +18,7 @@ const Header = ({header}: Props) => {
 			<div className="flex items-center gap-3">
 				<Button variant="shadow" size='lg' className="rounded-full w-[3.5rem] h-[3.5rem] flex items-center justify-center">
 					<HiOutlineBell className="text-[#4D6785] text-3xl"/>
+					але
 				</Button>
 				<DropDownMenu />
 			</div>
