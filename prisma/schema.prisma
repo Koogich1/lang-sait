@@ -57,6 +57,12 @@ model TeacherAvailability {
   Sunday        String[]
 }
 
+model Course{
+  id                String @id @default(cuid())
+  name              String
+  description       String
+}
+
 
 model Account {
   id                String  @id @default(cuid())

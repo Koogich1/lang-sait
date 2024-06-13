@@ -1,12 +1,12 @@
-"use server"
+"use client"
 
-import { currentUser } from "@/lib/auth"
 import Header from "../../_components/header" 
 import CurrentWeek from "../../_components/TimePicker/current-week"
 import TimeClock from "../../_components/TimePicker/time-clock"
+import 'moment/locale/ru'
+import Component from "../../_components/TimePicker/component"
 
-const myWeek = async () => {
-	const user = await currentUser()
+const myWeek = () => {
 
 	return (
 		<div>
@@ -15,8 +15,13 @@ const myWeek = async () => {
 			/>
 			<div className="flex mt-10 w-full gap-5">
 				<TimeClock />
-				<CurrentWeek />
+				<CurrentWeek 
+					handleDaySelect={''}
+				/>
 			 {/*	<Circle />  ДОДЕЛАТЬ ОТОБРАЖЕНИЕ ВЫБРАННОГО ВРЕМЕНИ НА ЧАСАХ*/}
+			</div>
+			<div>
+				
 			</div>
 		</div>
 	)
