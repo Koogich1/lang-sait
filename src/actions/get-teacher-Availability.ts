@@ -1,5 +1,5 @@
 "use server"
-
+/* 
 import { db } from "@/lib/db";
 
 type Props = {
@@ -20,4 +20,6 @@ export const getTeacherAvailability = async (teacherId: string) => {
   return true; 
 };
 
-export default getTeacherAvailability;
+export default getTeacherAvailability; 
+
+*/

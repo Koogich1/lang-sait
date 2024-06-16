@@ -5,7 +5,7 @@ import * as  z from "zod";
 import { Button } from "@/components/ui/button";
 import Header from "../_components/header";
 import { settings } from "@/actions/settings";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useSession } from "next-auth/react";
 import {
   Form,
@@ -34,42 +34,65 @@ import{
 	SelectValue,
 } from "@/components/ui/select"
 import { UserRole } from "@prisma/client";
+import { currentUser } from "@/lib/auth";
+import { ExtendedUser } from "@/next-auth";
 
 const SettingsPage = () => {
-	const [error, setError] = useState<string | undefined>()
-	const [success, setSuccess] = useState<string | undefined>()
-	const {update} = useSession()
-	const [isPending, startTransition] = useTransition()
-	
-	const user = useCurrentUser()
+	const [error, setError] = useState<string | undefined>();
+  const [success, setSuccess] = useState<string | undefined>();
+  const { update } = useSession();
+  const [isPending, startTransition] = useTransition();
+  const [user, setUser] = useState<ExtendedUser | null>(null);
 
-	const form = useForm<z.infer<typeof settingsSchema>>({
-		resolver: zodResolver(settingsSchema),
-		defaultValues: {
-			name: user?.name || undefined,
-			surname: user?.surname || undefined,
-			email:  user?.email || undefined,
-			password: undefined,
-			newPassword: undefined,
-			role: user?.role || undefined,
-		}
-	})
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await currentUser();
+      if (userData) {
+        setUser(userData);
+      }
+    };
+    fetchUser();
+  }, []);
 
-	const onSubmit = (values: z.infer<typeof settingsSchema>) => {
-		startTransition(() => {
-			settings(values)
-			.then((data)=> {
-				if (data.error){
-					setError(data.error)
-				}
-				if(data.success){
-					update()
-					setSuccess(data.success)
-				}
-			})
-			.catch(() => setError("Что-то пошло не так!"))
-		})
-	}
+  const form = useForm({
+    resolver: zodResolver(settingsSchema),
+    defaultValues: {
+      name: user?.name || "",
+      surname: user?.surname || "",
+      email: user?.email || "",
+      password: "",
+      newPassword: "",
+      role: user?.role || "",
+      isTwoFactorEnabled: user?.isTwoFactorEnabled || false,
+    },
+  });
+
+  useEffect(() => {
+    form.reset({
+      name: user?.name || "",
+      surname: user?.surname || "",
+      email: user?.email || "",
+      role: user?.role || "",
+      isTwoFactorEnabled: user?.isTwoFactorEnabled || false,
+    });
+  }, [user]);
+
+  const onSubmit = (values: any) => {
+    startTransition(() => {
+      settings(values)
+        .then((data) => {
+          if (data.error) {
+            setError(data.error);
+          }
+          if (data.success) {
+            update();
+            setSuccess(data.success);
+          }
+        })
+        .catch(() => setError("Что-то пошло не так!"));
+    });
+  };
+
 
 	return(
 		<div>
@@ -178,28 +201,7 @@ const SettingsPage = () => {
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Role</FormLabel>
-										<Select
-											disabled={isPending}
-											onValueChange={field.onChange}
-											defaultValue={field.value}
-										>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Выберите роль"/>
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-											<SelectItem value={UserRole.USER}>
-													Ученик
-												</SelectItem>
-												<SelectItem value={UserRole.TEACHER} disabled={true}>
-													Учитель
-												</SelectItem>
-												<SelectItem value={UserRole.ADMIN} disabled={true}>
-													Админ
-												</SelectItem>
-											</SelectContent>
-										</Select>
+											{user?.role}
 										<FormMessage />
 									</FormItem>
 								)}

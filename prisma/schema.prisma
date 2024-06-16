@@ -37,32 +37,52 @@ enum languagePick {
 }
 
 model Teacher {
-  id                 String              @id @default(cuid())
-  language           languagePick        @default(English)
+  id                 String                @id @default(cuid())
+  language           languagePick          @default(English)
   students           User[]
-  repeating_interval Int?                @default(0)
+  repeating_interval Int?                  @default(0)
   availabilities     TeacherAvailability[]
 }
 
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
 model TeacherAvailability {
-  id            String     @id @default(cuid())
-  teacherId     String
-  teacher       Teacher    @relation(fields: [teacherId], references: [id])
-  Monday        String[]
-  Tuesday       String[]
-  Wednesday     String[]
-  Thursday      String[]
-  Friday        String[]
-  Saturday      String[]
-  Sunday        String[]
+  id        String     @id @default(cuid())
+  teacherId String
+  teacher   Teacher    @relation(fields: [teacherId], references: [id])
+  day       DayOfWeek // День недели (например, "Monday", "Tuesday" и т.д.)
+  timeSlots TimeSlot[]
 }
 
-model Course{
-  id                String @id @default(cuid())
-  name              String
-  description       String
+model TimeSlot {
+  id                    String               @id @default(cuid())
+  start                 String // Время начала слота (например, "09:00")
+  end                   String // Время окончания слота (например, "10:00")
+  status                TimeSlotStatus
+  studentId             String? // Ссылка на идентификатор ученика, если слот занят
+  TeacherAvailability   TeacherAvailability? @relation(fields: [teacherAvailabilityId], references: [id])
+  teacherAvailabilityId String?
 }
 
+enum TimeSlotStatus {
+  FREE
+  OCCUPIED
+  NON_WORKING
+}
+
+model Course {
+  id          String @id @default(cuid())
+  name        String
+  description String
+}
 
 model Account {
   id                String  @id @default(cuid())

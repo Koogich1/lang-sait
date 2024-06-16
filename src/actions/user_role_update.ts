@@ -29,7 +29,6 @@ const teacherCreate = async () => {
         },
     });
 
-    // Обновляем поле teacherId в профиле пользователя
     await db.user.update({
         where: { id: currentUs?.id},
         data: {

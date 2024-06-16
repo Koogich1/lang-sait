@@ -101,14 +101,18 @@ export const Navbar = () => {
 				</li>
 			</ul>
 			<div>
+			<Link
+				href="http://localhost:3000"
+			>
 				<Button 
-					className="flex flex-between w-full font-light justify-between text-white" 
+					className="flex flex-between w-full font-light justify-between text-white opacity-50 hover:opacity-100" 
 					variant="violetSelect" 
 					size='lg'
 				>
-					На главную
+					<p className="p-4">На главную</p>
 					<HiOutlineArrowUturnLeft />
 				</Button>
+			</Link>
 			</div>
 		</div>
 	)

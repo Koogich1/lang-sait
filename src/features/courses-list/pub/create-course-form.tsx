@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form"
 
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { startTransition, useTransition } from "react"
+import { useTransition } from "react"
 import { createCourseAction } from "../actions"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"

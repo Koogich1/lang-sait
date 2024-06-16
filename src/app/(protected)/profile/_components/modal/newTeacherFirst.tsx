@@ -1,6 +1,4 @@
 "use client"
-
-import getTeacherAvailability from "@/actions/get-teacher-Availability"
 import {
   Dialog,
   DialogContent,
@@ -12,7 +10,7 @@ import {
 import { useEffect, useState } from "react"
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import createEmptyTeacherAvailability from "@/actions/create-Empty-Teacher-Aviability";
+// import createEmptyTeacherAvailability from "@/actions/create-Empty-Teacher-Aviability";
 
 type Props = {
 	user: any,
@@ -22,23 +20,15 @@ const ModalNewTeacher = ({user}: Props) => {
 	const [hasDates, setHasDates] = useState(false);
 	const [open, setOpen] = useState(false);
 
+	
   useEffect(() => {
-    const fetchData = async () => {
-      const dates = await getTeacherAvailability(user?.id ?? "");
-      setHasDates(dates);
-    };
-    
     if (user?.role === "TEACHER" && hasDates === false) {
-      fetchData();
       setOpen(true);
     }
   }, [user, hasDates]);
-	
+
 	const handleClose = () => {
 		setOpen(false)
-	}
-	const handleOpen = () => {
-		createEmptyTeacherAvailability()
 	}
 
 	return(
@@ -59,10 +49,9 @@ const ModalNewTeacher = ({user}: Props) => {
 					</Button>
 					<Link
 					className="w-1/2"
-					href={'settings/myWeek'}>
+					href={'settings/myWeek/firstTime'}>
 						<Button variant='violetSelect' 
 						className="w-full text-base h-[50px]"
-						onClick={handleOpen}
 						>
 							Перейти!
 						</Button>
