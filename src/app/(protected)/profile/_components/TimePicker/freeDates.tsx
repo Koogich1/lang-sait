@@ -1,76 +1,45 @@
 "use server"
-import React from 'react';
-import CurrentWeekFreeHours from './current-week-free-hours';
 
-const FreeDatesWeek = ({ currentDay }: { currentDay: string }) => {
+import { getUserByEmail } from "@/data/user";
+import { currentUser } from "@/lib/auth";
+import { db } from "@/lib/db";
+import getCurrentFreeDates from "./current-week-free-hours";
 
-  const fetchData = async () => {
-    const dates = await CurrentWeekFreeHours();
+const CurrentWeekFreeHours = async (currDayOfWeek: any) => {
+  const user = await currentUser();
 
-    if(!dates){
-      return
-    }
-    
-    if ('error' in dates) {
-      return <div>{dates.error}</div>;
-    }
-    if(currentDay === "понедельник"){
-      return (
-        <div>
-          <p>Понедельник: {dates.Monday.join(', ')}</p>
-        </div>
-      );
-    }
-    if(currentDay === "вторник"){
-      return (
-        <div>
-          <p>Вторник: {dates.Tuesday.join(', ')}</p>
-        </div>
-      );
-    }
-    if(currentDay === "среда"){
-      return (
-        <div>
-          <p>Среда: {dates.Wednesday.join(', ')}</p>
-        </div>
-      );
-    }
-    if(currentDay === "четверг"){
-      return (
-        <div>
-          <p>Четверг: {dates.Thursday.join(', ')}</p>
-        </div>
-      );
-    }
-    if(currentDay === "пятница"){
-      return (
-        <div>
-          <p>Пятница: {dates.Friday.join(', ')}</p>
-        </div>
-      );
-    }
-    if(currentDay === "суббота"){
-      return (
-        <div>
-          <p>Суббота: {dates.Saturday.join(', ')}</p>
-        </div>
-      );
-    }
-    if(currentDay === "воскресенье"){
-      return (
-        <div>
-          <p>Воскресенье: {dates.Sunday.join(', ')}</p>
-        </div>
-      );
-    }
+  if (!user?.email) {
+    return { error: "Подключите почту" };
+  }
 
-  };
+  const userEmail = await getUserByEmail(user?.email);
 
-  return (
-    <div>
-      {fetchData()}
-    </div>
-  );
+  const teacherId = userEmail?.teacherId;
+
+  if (!teacherId) {
+    return;
+  }
+
+  if(!currDayOfWeek){
+    return
+  }
+  const currWeekDates = await getCurrentFreeDates(currDayOfWeek);
+
+  if(!currWeekDates){
+    return
+  }
+
+
+  // Check if currWeekDates is undefined
+  if ('error' in currWeekDates) {
+    return (
+      <div>
+        <p>{currWeekDates.error}</p>
+      </div>
+    );
+  }
 };
 
-export default FreeDatesWeek;
+
+
+export default CurrentWeekFreeHours

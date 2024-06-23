@@ -4,9 +4,14 @@ import Header from "../../_components/header"
 import CurrentWeek from "../../_components/TimePicker/current-week"
 import TimeClock from "../../_components/TimePicker/time-clock"
 import 'moment/locale/ru'
-import Component from "../../_components/TimePicker/component"
+
+import getCurrentFreeDates from "../../_components/TimePicker/current-week-free-hours"
+import { useState, useEffect } from 'react';
 
 const myWeek = () => {
+	const [freeSlots, setFreeSlots] = useState([]);
+  const [nonWorkingSlots, setNonWorkingSlots] = useState([]);
+  const [loading, setLoading] = useState(true);
 
 	return (
 		<div>
@@ -18,10 +23,8 @@ const myWeek = () => {
 				<CurrentWeek 
 					handleDaySelect={''}
 				/>
-			 {/*	<Circle />  ДОДЕЛАТЬ ОТОБРАЖЕНИЕ ВЫБРАННОГО ВРЕМЕНИ НА ЧАСАХ*/}
 			</div>
 			<div>
-				
 			</div>
 		</div>
 	)

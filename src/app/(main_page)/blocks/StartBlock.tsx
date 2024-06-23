@@ -6,7 +6,7 @@ import { LoginButton } from "../../../components/auth/login-button";
 
 const StartBlock = () => {
   return (
-    <div className="w-[100%] flex justify-between items-center h-[85vh]">
+    <div className="w-[100%] flex justify-between items-center h-[85vh] mt-20">
       <LittleEl />
       <div className="leftside">
         <h1 className="text-4xl font-bold mt-[-35px]">

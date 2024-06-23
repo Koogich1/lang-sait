@@ -1,10 +1,7 @@
 "use server"
 
 import { db } from "@/lib/db";
-import { TimeSlotStatus } from "@prisma/client";
-import { addMinutes } from "date-fns";
 import cuid from "cuid"
-import { start } from "repl";
 import { currentUser } from "@/lib/auth";
 import { getUserByEmail } from "@/data/user";
 
@@ -41,12 +38,24 @@ const createEmptyTeacherAvailability = async () => {
     let startDay = 0;
     const endDay = 24;
 
-    while (startDay < endDay){
+    while (startDay < endDay) {
       const formattedTime = startDay.toString().padStart(2, '0') + ':00';
-      timeLength.push(formattedTime)
-      startDay++
+      // Добавляем +1 час к end
+      const endHour = (startDay + 1) % 24;
+      const formattedEndTime = endHour.toString().padStart(2, '0') + ':00'; 
+    
+      timeLength.push({
+        start: formattedTime,
+        end: formattedEndTime, // Добавляем formattedEndTime
+        status: "NON_WORKING",
+      });
+    
+      startDay++;
     }
+    
+    
     const id = cuid()
+
 
     const teacherAvailability = await db.teacherAvailability.create({
       data: {
@@ -55,8 +64,8 @@ const createEmptyTeacherAvailability = async () => {
         day,
         timeSlots: {
           create: timeLength.map((slotTime) => ({
-            start: slotTime,
-            end: slotTime + 1,
+            start: slotTime.start,
+            end: slotTime.end,
             status: "NON_WORKING",
           })),
         },

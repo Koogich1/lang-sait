@@ -1,38 +1,74 @@
 "use server"
 
-import { getUserByEmail } from "@/data/user";
-import { currentUser } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { getUserByEmail } from "@/data/user"
+import { currentUser } from "@/lib/auth"
+import { db } from "@/lib/db"
+import { DayOfWeek, TimeSlotStatus } from "@prisma/client";
 
-const CurrentWeekFreeHours = async () => {
-  const user = await currentUser();
+interface TimeSlot {
+  id: string;
+  start: string;
+  end: string;
+  status: TimeSlotStatus;
+  studentId: string | null;
+  teacherAvailabilityId: string | null;
+}
 
-  if (!user?.email) {
-    return { error: "Подключите почту" };
-  }
+interface TeacherAvailabilityWithSlots {
+  id: string;
+  teacherId: string;
+  day: DayOfWeek;
+  timeSlots: TimeSlot[]; // Now TypeScript knows that `timeSlots` is an array of TimeSlot
+}
 
-  const userEmail = await getUserByEmail(user?.email);
-
-  const teacherId = userEmail?.teacherId;
-
-  if (!teacherId) {
-    return;
-  }
-
+const getCurrentFreeDates = async (currentDayOfWeek: any) => {
   try {
-    const timeFinder = await db.teacherAvailability.findFirst({
+    // Получаем текущего пользователя
+    const user = await currentUser()
+    if (!user?.email) {
+      return { error: "Подключите почту" };
+    }
+
+    // Получаем информацию о пользователе по его email
+    const userEmail = await getUserByEmail(user?.email);
+    const teacherId = userEmail?.teacherId;
+
+    if(!teacherId){
+      return { error: "У пользователя нет привязанного учителя" };
+    }
+
+    // Ищем доступность учителя на текущий день недели
+    const teacherAvailabilities: TeacherAvailabilityWithSlots[] = await db.teacherAvailability.findMany({
       where: {
-        Monday:{
-					hasSome: ["12", "13",],
-				} 
+        teacherId,
+        day: currentDayOfWeek
+      },
+      include: {
+        timeSlots: true
       }
     });
-		console.log(timeFinder)
-    return timeFinder;
+
+    if (!teacherAvailabilities) {
+      return { error: "Доступность учителя на указанный день не найдена" };
+    }
+
+    const allTimeSlots: TimeSlot[] = [];
+    teacherAvailabilities.forEach(availability => {
+      allTimeSlots.push(...availability.timeSlots);
+    });
+    // Теперь вы можете отфильтровать слоты времени по статусу (свободные и не рабочие)
+
+    const freeSlots = allTimeSlots.filter(slot => slot.status === TimeSlotStatus.FREE);
+    const nonWorkingSlots = allTimeSlots.filter(slot => slot.status === TimeSlotStatus.NON_WORKING);
+
+    return { freeSlots, nonWorkingSlots };
   } catch (error) {
-    console.error("Что-то пошло не так", error);
-    return { error: "Что-то пошло не так", detailedError: error };
+    // Обработка ошибок, если возникли проблемы при выполнении запросов к базе данных
+    console.error(error);
+    return { error: "Произошла ошибка при получении свободных слотов" };
   }
 };
+  
+  
 
-export default CurrentWeekFreeHours
+export default getCurrentFreeDates

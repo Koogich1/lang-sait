@@ -4,11 +4,13 @@ import Courses from "./blocks/courses";
 import Footer from "./footer";
 import Programs from "./blocks/programs";
 import Teachers from "./blocks/teachers";
+import MainHeader from "./header";
 
 export default function Home() {
   return (
     <>
-      <div className="flex justify-around items-center w-[90%] max-w-[1440px] mx-auto text-[#3E236C] flex-col">
+    <MainHeader />
+      <div className="flex justify-around items-center w-full max-w-[1440px] px-[5%] mx-auto text-[#3E236C] flex-col m-0">
         <StartBlock />
         <Courses />
         <CaruselBlock />

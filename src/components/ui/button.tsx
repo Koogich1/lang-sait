@@ -16,7 +16,8 @@ const buttonVariants = cva(
         info: "bg-white border-purple-600 border-[1px] rounded-full text-purple-700",
         shadow: "hover:bg-[#EFEEF3] bg-white text-lg flex justify-between",
         calendar: "bg-white rounded-lg border hover:bg-purple-300 hover:text-white",
-        shadow2: "hover:bg-gray-300 bg-gray-100 text-gray-400 hover:text-gray-700 flex items-center text-base"
+        shadow2: "hover:bg-gray-300 bg-gray-100 text-gray-400 hover:text-gray-700 flex items-center text-base",
+        menu: "p-5 text-base font-semibold rounded-none hover:bg-gray-100",
       },
       size: {
         default: "h-10 px-4 py-2",

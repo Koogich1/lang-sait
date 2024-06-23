@@ -11,8 +11,6 @@ import { Pagination, Navigation } from "swiper/modules";
 import "./styles.css";
 import { Button } from "../../../../components/ui/button";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
-import SwiperNavButtons from "./swiperNavButtons";
 
 export default function App() {
   return (

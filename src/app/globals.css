@@ -1,6 +1,11 @@
-@tailwind base;
+  @tailwind base;
   @tailwind components;
   @tailwind utilities;
+
+  @font-china {
+    font-family: 'Belepotan';
+    src: url("./../../public/fonts/Belepotan.otf") format("truetype");
+  }
 
   @layer base {
     :root {
