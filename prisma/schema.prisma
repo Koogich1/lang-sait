@@ -58,7 +58,7 @@ model TeacherAvailability {
   id        String     @id @default(cuid())
   teacherId String
   teacher   Teacher    @relation(fields: [teacherId], references: [id])
-  day       DayOfWeek // День недели (например, "Monday", "Tuesday" и т.д.)
+  day       DayOfWeek
   timeSlots TimeSlot[]
 }
 
@@ -67,6 +67,7 @@ model TimeSlot {
   start                 String // Время начала слота (например, "09:00")
   end                   String // Время окончания слота (например, "10:00")
   status                TimeSlotStatus
+  date                  String
   studentId             String? // Ссылка на идентификатор ученика, если слот занят
   TeacherAvailability   TeacherAvailability? @relation(fields: [teacherAvailabilityId], references: [id])
   teacherAvailabilityId String?

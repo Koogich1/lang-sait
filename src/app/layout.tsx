@@ -23,8 +23,8 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html>
-        <body className={inter.className}>
-          <div className="w-full h-[100vh] p-0 m-0 bg-[#EFEEF3]">
+        <body className={`${inter.className} bg-[#EFEEF3]`}>
+          <div className="w-full h-[100vh] p-0 m-0">
           {children}
           </div>
         </body>

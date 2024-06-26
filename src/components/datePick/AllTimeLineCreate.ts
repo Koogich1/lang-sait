@@ -64,6 +64,7 @@ const createEmptyTeacherAvailability = async () => {
         day,
         timeSlots: {
           create: timeLength.map((slotTime) => ({
+            date: "",
             start: slotTime.start,
             end: slotTime.end,
             status: "NON_WORKING",

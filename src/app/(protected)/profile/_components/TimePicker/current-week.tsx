@@ -3,6 +3,8 @@
 import { Button } from '@/components/ui/button';
 import moment from 'moment';
 import 'moment/locale/ru';
+import { HiChevronLeft } from "react-icons/hi2";
+import { HiChevronRight } from "react-icons/hi2";
 
 moment.locale('ru');
 
@@ -46,7 +48,13 @@ const CurrentWeek = (handleDaySelect: any) => {
         </span>
       </h1>
       <div className='flex justify-center items-center w-full h-full gap-4'>
-        {daysOfWeek}
+        <Button  className='w-[40px] h-[40px] rounded-full text-xl font-bold items-center justify-center p-0 m-0' variant='violetSelect'>
+          <HiChevronLeft className='w-7 h-7 pr-1'/>
+        </Button>
+          {daysOfWeek}
+        <Button className='w-[40px] h-[40px] rounded-full text-xl font-bold items-center justify-center p-0 m-0' variant='violetSelect'>
+         <HiChevronRight className='w-7 h-7 pl-1'/>
+        </Button>
       </div>
     </div>
   );

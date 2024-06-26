@@ -23,14 +23,12 @@ const CurrentWeekFreeHours = async (currDayOfWeek: any) => {
   if(!currDayOfWeek){
     return
   }
-  const currWeekDates = await getCurrentFreeDates(currDayOfWeek);
+  const currWeekDates = await getCurrentFreeDates("currDayOfWeek");
 
   if(!currWeekDates){
     return
   }
 
-
-  // Check if currWeekDates is undefined
   if ('error' in currWeekDates) {
     return (
       <div>

@@ -68,32 +68,6 @@ const FirstTimeFreeUpdate = async (
 			} catch(error) {
 				console.error(`Error updating time slot for ${day} at ${timeSlot}`, error)
 			}
-			
-      /* try {
-        const updateResult = await db.teacherAvailability.update({
-          where: {
-            id: teacherAvailability.id,
-            teacherId: teacherId,
-            day: day,
-          },
-          data: {
-            timeSlots: {
-              updateMany: {
-                where: {
-                  start: timeSlot,
-                },
-                data: {
-                  status: "FREE",
-                },
-              },
-            },
-          },
-        });
-				console.log(`Update successful for ${day} at ${timeSlot}`, updateResult);
-      } catch(error) {
-				console.error(`Error updating time slot for ${day} at ${timeSlot}`, error)
-      }
-				*/
     }
   }
 };
