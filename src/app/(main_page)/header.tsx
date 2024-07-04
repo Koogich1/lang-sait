@@ -12,7 +12,7 @@ const MainHeader = () => {
 				<ul className='flex gap-4 lg:gap-10 xl:gap-[50px] items-center pt-[3px] font-semibold lg:font-medium text-lg text-gray-400'>
 					<Link href={"/"}><li className='hover:text-[#61439d]'>Главная</li></Link>
 					<Link href={"/courses"}><li className='hover:text-[#61439d]'>Выбор языка</li></Link>
-					<Link href={"/"}><li className='hover:text-[#61439d]'>Преподаватели</li></Link>
+					<Link href={"/teachers"}><li className='hover:text-[#61439d]'>Преподаватели</li></Link>
 					<Link href={"/"}><li className='hover:text-[#61439d]'>Контакты</li></Link>
 					<Link href={"/"}><li className='hover:text-[#61439d]'>Новости</li></Link>
 				</ul>

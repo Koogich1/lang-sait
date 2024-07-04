@@ -19,16 +19,18 @@ import { useEffect, useState } from "react";
 
 
 export const Navbar = () => {
-	const [activeLink, setActiveLink] = useState(window.location.pathname); // Initial active state
+	const [activeLink, setActiveLink] = useState("");
 
   useEffect(() => {
+    setActiveLink(window.location.pathname);
+
     const handleLocationChange = () => {
       setActiveLink(window.location.pathname);
     };
 
-    window.addEventListener("popstate", handleLocationChange); // For browser back/forward buttons
+    window.addEventListener("popstate", handleLocationChange);
 
-    return () => window.removeEventListener("popstate", handleLocationChange); // Cleanup on unmount
+    return () => window.removeEventListener("popstate", handleLocationChange);
   }, []);
 
   const handleLinkClick = (href: any) => {

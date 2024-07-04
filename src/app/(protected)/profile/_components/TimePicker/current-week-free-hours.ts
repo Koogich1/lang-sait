@@ -3,22 +3,14 @@
 import { getUserByEmail } from "@/data/user"
 import { currentUser } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { DayOfWeek, TimeSlotStatus } from "@prisma/client";
+import { DayOfWeek } from "@prisma/client";
 
-interface TimeSlot {
-  id: string;
-  start: string;
-  end: string;
-  status: TimeSlotStatus;
-  studentId: string | null;
-  teacherAvailabilityId: string | null;
-}
 
 interface TeacherAvailabilityWithSlots {
   id: string;
   teacherId: string;
   day: DayOfWeek;
-  timeSlots: TimeSlot[];
+  timeSlots: string[];
 }
 
 const getCurrentFreeDates = async (currentDayOfWeek: any) => {
@@ -37,11 +29,8 @@ const getCurrentFreeDates = async (currentDayOfWeek: any) => {
     const teacherAvailabilities: TeacherAvailabilityWithSlots[] = await db.teacherAvailability.findMany({
       where: {
         teacherId,
-        day: currentDayOfWeek
+        day: currentDayOfWeek,
       },
-      include: {
-        timeSlots: true
-      }
     });
 
     if (!teacherAvailabilities) {

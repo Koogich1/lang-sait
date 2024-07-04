@@ -1,0 +1,23 @@
+.swiper-button-next,
+.swiper-button-prev,
+.swiper-button-disabled {
+  background: #835bd2;
+  width: 60px;
+  height: 60px;
+  border-radius: 100px;
+	scale: 0.5;
+	margin-top: -30px;
+}
+
+.swiper-button-prev:after {
+  content: "➔";
+  color: #fff;
+  scale: 0.6;
+  transform: rotate(180deg);
+}
+
+.swiper-button-next:after {
+  content: "➔";
+  color: #fff;
+  scale: 0.6;
+}

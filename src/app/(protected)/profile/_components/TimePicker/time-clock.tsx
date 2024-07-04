@@ -7,7 +7,7 @@ const TimeClock = () => {
 	const currentDate = moment().format("DD.MM")
 	
   return (
-    <div className="min-w-[240px] text-gray-600 min-h-[320px] relative w-[30%] items-center flex flex-col justify-center gap-9 bg-white rounded-xl shadow-lg p-5">
+    <div className="min-w-[240px] text-gray-600 min-h-[320px] relative w-[30%] items-center flex flex-col justify-center gap-9 bg-white rounded-xl p-5">
       <div className="text-xl font-bold">
         C 10:00 до 17:00
       </div>

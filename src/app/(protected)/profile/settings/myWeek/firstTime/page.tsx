@@ -11,7 +11,7 @@ import { FirstTimeInputForm } from "@/components/datePick/pub/firstInputForm"
 
 const firstTimeChoosePage = () => {
 	const [transition, setTransition] = useState(false);
-	const [created, setCreated] = useState(false)
+	const [created, setCreated] = useState(true)
 
   const onSubmit = () => {
 		setTransition(true)

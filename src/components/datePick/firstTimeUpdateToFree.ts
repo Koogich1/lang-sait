@@ -29,45 +29,40 @@ const FirstTimeFreeUpdate = async (
 	for (const day of dayOfWeek) {
 		let startNum = Number(firstTime.split('').slice(0,2).join(''))
 		let secondNum = Number(secondTime.split('').slice(0,2).join(''))
-		console.log(secondNum)
 
 		const teacherAvailability = await db.teacherAvailability.findFirst({
 			where: {
 				teacherId: teacherId,
-				day: day, // Убедитесь, что вы ищете доступность для правильного дня
+				day: day, 
 			},
 		});
 
 		if (!teacherAvailability) {
 			console.error(`No availability found for ${day}`);
-			continue; // Пропустить следующую итерацию, если запись не найдена
+			continue; 
 		}
+
+		let timeslots = []
 	
 		for (let i: number = startNum; i < secondNum; i++) {
 			let timeSlot = i.toString().padStart(2, "0") + ":00";
-			try {
-				const updateResult = await db.teacherAvailability.update({
-					where: {
-						id: teacherAvailability.id, // Убедитесь, что id соответствует найденной записи
-						// Удалите teacherId и day из условия where, так как id уже уникален
-					},
-					data: {
-						timeSlots: {
-							updateMany: {
-								where: {
-									start: timeSlot,
-								},
-								data: {
-									status: "FREE",
-								},
-							},
-						},
-					},
-				});
-				console.log(`Update successful for ${day} at ${timeSlot}`, updateResult);
-			} catch(error) {
-				console.error(`Error updating time slot for ${day} at ${timeSlot}`, error)
-			}
+			timeslots.push(timeSlot)
+    }
+		console.log(timeslots)
+
+		try {
+      await db.teacherAvailability.update({
+        where: {
+          id: teacherAvailability.id,
+        },
+        data: {
+          timeSlots: {
+            set: timeslots,
+          },
+        },
+      });
+    } catch (error) {
+      console.error(error);
     }
   }
 };

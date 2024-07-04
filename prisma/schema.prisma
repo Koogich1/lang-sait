@@ -27,6 +27,7 @@ model User {
   twoFactorConfirmation twoFactorConfirmation?
   teacherId             String?
   teacher               Teacher?               @relation(fields: [teacherId], references: [id])
+  studentBookings       StudentBooking[]
 }
 
 enum languagePick {
@@ -42,6 +43,25 @@ model Teacher {
   students           User[]
   repeating_interval Int?                  @default(0)
   availabilities     TeacherAvailability[]
+  scheduleDays       TeacherScheduleDay[]
+}
+
+model TeacherScheduleDay {
+  id                 String                @id @default(cuid())
+  teacherId          String
+  date               DateTime
+  dayOfWeek          DayOfWeek
+  timeSlots          String[]
+  teacher            Teacher               @relation(fields: [teacherId], references: [id])
+  studentBookings    StudentBooking[]
+  studentBookingStatus                     status @default(free)
+  archived           Boolean               @default(false)
+}
+
+enum status {
+  free // <30 cлотов занято
+  fewSlots  //Когда слотов меньше 30%
+  booked // Заняты все слоты
 }
 
 enum DayOfWeek {
@@ -59,24 +79,23 @@ model TeacherAvailability {
   teacherId String
   teacher   Teacher    @relation(fields: [teacherId], references: [id])
   day       DayOfWeek
-  timeSlots TimeSlot[]
+  timeSlots String[]
 }
 
-model TimeSlot {
-  id                    String               @id @default(cuid())
-  start                 String // Время начала слота (например, "09:00")
-  end                   String // Время окончания слота (например, "10:00")
-  status                TimeSlotStatus
-  date                  String
-  studentId             String? // Ссылка на идентификатор ученика, если слот занят
-  TeacherAvailability   TeacherAvailability? @relation(fields: [teacherAvailabilityId], references: [id])
-  teacherAvailabilityId String?
+model StudentBooking {
+  id                      String                @id @default(cuid())
+  studentId               String
+  teacherScheduleDayId    String
+  timeSlot                String
+  student                 User                 @relation(fields: [studentId], references: [id])
+  teacherScheduleDay      TeacherScheduleDay     @relation(fields: [teacherScheduleDayId], references: [id])
+  status                  bookedEtaps            @default(free)
 }
 
-enum TimeSlotStatus {
-  FREE
-  OCCUPIED
-  NON_WORKING
+enum bookedEtaps{
+  free
+  waitingAccess
+  booked
 }
 
 model Course {

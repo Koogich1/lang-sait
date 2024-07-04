@@ -13,7 +13,7 @@ const WeekModalContent = async({currWeek} : Props) => {
 			<h1 className='p-5 text-xl font-semibold text-gray-600'>
 				Мои занятия
 			</h1>
-			<FreeDatesWeek currentDay={currWeek}/>
+			{/* <FreeDatesWeek currentDay={currWeek}/> */}
 		</div>
 	)
 }
