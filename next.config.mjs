@@ -1,4 +1,20 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  reactStrictMode: true,
+  // ... другие настройки
+  rewrites() {
+    return [
+      {
+        source: '/src/lib/file-storage',
+        destination: '/api/file-storage' // Перенаправляем на маршрут в pages/api
+      }
+    ]
+  },
+  experimental:{
+    serverComponents: true,
+    serverComponentsExternalPackages: ['sharp']
+  }
+}
+
 
 export default nextConfig;

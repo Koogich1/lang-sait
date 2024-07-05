@@ -4,11 +4,9 @@ import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { BsCopy } from "react-icons/bs";
 import { Button } from "@/components/ui/button"
-import UploadFile from "./uploadFile";
 import TeacherInterface from "./interface/teacher-interface";
 import ModalNewTeacher from "./modal/newTeacherFirst";
-import getTeacherAvailability from "@/actions/get-teacher-Availability";
-import { getUserByEmail } from "@/data/user";
+import LogoUpload from "./logoUpload";
 
 type Props = {
 	user: any
@@ -19,7 +17,7 @@ const CardProfile = ({user}: Props) => {
 	const teachEmail = user?.email ?? ''; 
 
 	const imgProfile = user?.image ? user?.image : (
-		<UploadFile />
+		<LogoUpload />
   );
 
  return(
