@@ -19,6 +19,7 @@ model User {
   surname               String?
   email                 String?                @unique
   emailVerified         DateTime?
+  favourites            String[]               @default([])
   image                 String?
   password              String?
   role                  UserRole               @default(USER)
@@ -28,6 +29,54 @@ model User {
   teacherId             String?
   teacher               Teacher?               @relation(fields: [teacherId], references: [id])
   studentBookings       StudentBooking[]
+  favouritesTeachers    String                 @default("")
+
+  conversations UserConversation[]
+  seenMessages  UserSeenMessage[]
+
+  messages Message[]
+}
+
+model Conversation {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  lastMessageAt DateTime @default(now())
+  name          String
+  isGroup       Boolean
+
+  users    UserConversation[]
+  messages Message[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  body      String?
+  image     String?
+  createdAt DateTime @default(now())
+
+  seen UserSeenMessage[]
+
+  conversationId String
+  conversations  Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model UserConversation {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+}
+
+model UserSeenMessage {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  messageId String
+  message   Message @relation(fields: [messageId], references: [id])
 }
 
 enum languagePick {
@@ -37,30 +86,48 @@ enum languagePick {
   German
 }
 
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  userId    String
+  teacherId String?
+  message   String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+}
+
+enum NotificationType {
+  SYSTEM
+  BOOKING
+  // Другие типы уведомлений
+}
+
 model Teacher {
   id                 String                @id @default(cuid())
   language           languagePick          @default(English)
+  languageLevel      String                @default("A0")
   students           User[]
+  aboutMe            String                @default("Я учитель")
   repeating_interval Int?                  @default(0)
   availabilities     TeacherAvailability[]
   scheduleDays       TeacherScheduleDay[]
 }
 
 model TeacherScheduleDay {
-  id                 String                @id @default(cuid())
-  teacherId          String
-  date               DateTime
-  dayOfWeek          DayOfWeek
-  timeSlots          String[]
-  teacher            Teacher               @relation(fields: [teacherId], references: [id])
-  studentBookings    StudentBooking[]
-  studentBookingStatus                     status @default(free)
-  archived           Boolean               @default(false)
+  id                   String           @id @default(cuid())
+  teacherId            String
+  date                 DateTime
+  dayOfWeek            DayOfWeek
+  timeSlots            String[]
+  teacher              Teacher          @relation(fields: [teacherId], references: [id])
+  studentBookings      StudentBooking[]
+  studentBookingStatus status           @default(free)
+  archived             Boolean          @default(false)
 }
 
 enum status {
   free // <30 cлотов занято
-  fewSlots  //Когда слотов меньше 30%
+  fewSlots //Когда слотов меньше 30%
   booked // Заняты все слоты
 }
 
@@ -75,24 +142,24 @@ enum DayOfWeek {
 }
 
 model TeacherAvailability {
-  id        String     @id @default(cuid())
+  id        String    @id @default(cuid())
   teacherId String
-  teacher   Teacher    @relation(fields: [teacherId], references: [id])
+  teacher   Teacher   @relation(fields: [teacherId], references: [id])
   day       DayOfWeek
   timeSlots String[]
 }
 
 model StudentBooking {
-  id                      String                @id @default(cuid())
-  studentId               String
-  teacherScheduleDayId    String
-  timeSlot                String
-  student                 User                 @relation(fields: [studentId], references: [id])
-  teacherScheduleDay      TeacherScheduleDay     @relation(fields: [teacherScheduleDayId], references: [id])
-  status                  bookedEtaps            @default(free)
+  id                   String             @id @default(cuid())
+  studentId            String
+  teacherScheduleDayId String
+  timeSlot             String
+  student              User               @relation(fields: [studentId], references: [id])
+  teacherScheduleDay   TeacherScheduleDay @relation(fields: [teacherScheduleDayId], references: [id])
+  status               bookedEtaps        @default(free)
 }
 
-enum bookedEtaps{
+enum bookedEtaps {
   free
   waitingAccess
   booked

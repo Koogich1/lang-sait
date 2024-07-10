@@ -12,7 +12,6 @@ const FirstTimeFreeUpdate = async (
 ) => {
   // Get current user
   const user = await currentUser();
-	console.log(dayOfWeek)
 
   if (!user?.email) {
     throw new Error("Unauthorized: Please log in to update availability");
@@ -23,8 +22,7 @@ const FirstTimeFreeUpdate = async (
 
   if (!teacherId) {
     throw new Error("Teacher not found");
-  }	
-
+  }
 
 	for (const day of dayOfWeek) {
 		let startNum = Number(firstTime.split('').slice(0,2).join(''))
@@ -43,12 +41,11 @@ const FirstTimeFreeUpdate = async (
 		}
 
 		let timeslots = []
-	
+    
 		for (let i: number = startNum; i < secondNum; i++) {
 			let timeSlot = i.toString().padStart(2, "0") + ":00";
 			timeslots.push(timeSlot)
     }
-		console.log(timeslots)
 
 		try {
       await db.teacherAvailability.update({

@@ -138,9 +138,6 @@ export const FirstTimeInputForm = () => {
               <FormMessage />
             </FormItem>
           </div>
-          <div>
-            
-          </div>
           <FormField
             control={form.control}
             name="firstTime"
@@ -249,8 +246,8 @@ export const FirstTimeInputForm = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="text-2xl text-[#835BD2]">Вы создали ваше первое расписание!</DialogTitle>
-            <DialogDescription className="flex justify-start items-center py-5 text-base text-gray-400">
-              <p className="w-1/2">Сейчас вы перейдете в окно, где сможете точнее настроить расписание и ознакомиться с основным интерфейсом.</p>
+            <DialogDescription className="flex justify-start items-center py-5 text-base text-gray-400 w-1/2">
+              Сейчас вы перейдете в окно, где сможете точнее настроить расписание и ознакомиться с основным интерфейсом.
               <Image alt="main" src={"/mainImg.png"} width={200} height={200} className="absolute right-10 bottom-6"/>
             </DialogDescription>
           </DialogHeader>

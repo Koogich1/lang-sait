@@ -1,32 +1,33 @@
 "use server"
 
-import { Upload } from "@aws-sdk/lib-storage";
 import { s3Client } from "@/lib/s3Client";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 
 const uploadFile = async (base64Data: string, s3FilePath: string, fileName: string) => {
   try {
-    // Преобразуем строку base64 в Buffer
-    const buffer = Buffer.from(base64Data, 'base64');
+    // Преобразование base64 в Buffer
+    const buffer = Buffer.from(base64Data.split(",")[1], 'base64');
 
-    // Установка параметров
     const params = {
-        Bucket: "langschoolacynberg",
-        Key: s3FilePath,
-        Body: buffer, 
+      Bucket: "langschoolacynberg",
+      Key: s3FilePath + fileName,
+      Body: buffer, 
+      ContentType: 'image/jpeg',
     };
 
-    // Загрузка файла в бакет
-    const upload = new Upload({
-        client: s3Client,
-        params
-    });
-
-    await upload.done();
-    console.log("Файл успешно загружен");
-    return true; // Для модульного тестирования
+    const results = await s3Client.send(new PutObjectCommand(params));
+    console.log(
+      "Successfully created " +
+      params.Key +
+      " and uploaded it to " +
+      params.Bucket +
+      "/" +
+      params.Key
+    );
+    return results; 
   } catch (err) {
-    console.log("Ошибка загрузки файла:", err);
-    return false; // Для модульного тестирования
+    console.log("Error", err);
+    return false;
   }
 };
 

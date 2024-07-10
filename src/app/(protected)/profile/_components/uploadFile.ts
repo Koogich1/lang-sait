@@ -1,27 +1,19 @@
-"use server"
 
 import { Upload } from "@aws-sdk/lib-storage";
-import { s3Client } from "@/lib/s3Client"; // Импортируем s3Client
-import sharp from "sharp"
+import { s3Client } from "@/lib/s3Client";
 
-const uploadFile = async (base64Data: string, s3FilePath: string, fileName: string) => {
+const uploadFile = async (file: File, s3FilePath: string, fileName: string) => {
   try {
-    const buffer = Buffer.from(base64Data, 'base64');
-
-		const outputBuffer = await sharp(buffer)
-		.jpeg()
-		.toBuffer()
-
     const params = {
-      Bucket: "langschoolacynberg",
-      Key: s3FilePath,
-      Body: outputBuffer,
+        Bucket: "langschoolacynberg",
+        Key: s3FilePath,
+        Body: file, 
     };
 
     // Загрузка файла в бакет
     const upload = new Upload({
-      client: s3Client, // Используем s3Client
-      params
+        client: s3Client,
+        params
     });
 
     await upload.done();
@@ -34,3 +26,4 @@ const uploadFile = async (base64Data: string, s3FilePath: string, fileName: stri
 };
 
 export default uploadFile;
+

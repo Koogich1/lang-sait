@@ -1,4 +1,5 @@
 "use client"
+/*
 import {
   Dialog,
   DialogContent,
@@ -17,36 +18,17 @@ type Props = {
 }
 
 const ModalNewTeacher = ({user}: Props) => {
-	const [hasDates, setHasDates] = useState(false);
-	const [open, setOpen] = useState(false);
-
-	
-  useEffect(() => {
-    if (user?.role === "TEACHER" && hasDates === false) {
-      setOpen(true);
-    }
-  }, [user, hasDates]);
-
-	const handleClose = () => {
-		setOpen(false)
-	}
 
 	return(
-		<Dialog open={open}>
-			<DialogContent>
-				<DialogHeader>
-					<DialogTitle className="text-2xl font-bold text-[#835BD2]">Добро пожаловать!</DialogTitle>
-					<DialogDescription className="text-base text-gray-500 pt-3">
+		<div className="w-full h-full absolute flex items-center justify-center">
+			<div className="w-[600px] h-[300px] bg-purple-200 shadow-xl p-8 rounded-lg flex flex-col justify-between">
+				<div>
+					<h1 className="text-2xl font-bold text-[#835BD2]">Добро пожаловать!</h1>
+					<h3 className="text-base text-[#835BD2] pt-10">
 						Для начала работы на нашей платформе вам необходимо указать дни недели, в которые вы доступны для проведения занятий.
-					</DialogDescription>
-				</DialogHeader>
-				<div className="flex w-full gap-3">
-					<Button 
-					variant='shadow2' 
-					className='w-1/2 font-semibold h-[50px]' 
-					onClick={handleClose}>
-						Настроить позже
-					</Button>
+					</h3>
+					</div>
+					<div className="flex w-full gap-3">
 					<Link
 					className="w-1/2"
 					href={'settings/myWeek/firstTime'}>
@@ -57,9 +39,11 @@ const ModalNewTeacher = ({user}: Props) => {
 						</Button>
 					</Link>
 				</div>
-			</DialogContent>
-		</Dialog>
+			</div>
+		</div>
 	)
 }
 
 export default ModalNewTeacher
+
+*/

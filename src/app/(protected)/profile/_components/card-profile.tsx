@@ -5,34 +5,55 @@ import { Input } from "@/components/ui/input"
 import { BsCopy } from "react-icons/bs";
 import { Button } from "@/components/ui/button"
 import TeacherInterface from "./interface/teacher-interface";
-import ModalNewTeacher from "./modal/newTeacherFirst";
+//import ModalNewTeacher from "./modal/newTeacherFirst";
 import LogoUpload from "./logoUpload";
+import IsHasDates from "@/actions/hasDates";
+import { useEffect, useState } from "react";
+import { ExtendedUser } from "@/next-auth";
+import { currentUser } from "@/lib/auth";
 
-type Props = {
-	user: any
-}
-const CardProfile = ({user}: Props) => {
+const CardProfile = () => {
+	const [user, setUser] = useState<ExtendedUser | null>(null);
+	const [dates, hasDates] = useState(false)
 
+  useEffect(() => {
+		const fetchUser = async () => {
+			const user = await currentUser();
+			if (user) {
+				setUser(user);
+			}
+		};
+	
+		fetchUser();
+	}, []);
+	
+	useEffect(() => {
+		const fetchData = async () => {
+			const isDates = await IsHasDates();
+			if (isDates === true) {
+				hasDates(true);
+			}
+		};
+		fetchData();
+	}, []);
 
-	const teachEmail = user?.email ?? ''; 
-
-	const imgProfile = user?.image ? user?.image : (
+	const imgProfile = (
 		<LogoUpload />
   );
 
  return(
-			<div className="flex">
+			<div className='flex relative'>
 				<div className="md:w-[330px] 2xl:w-[400px] bg-white p-6 rounded-3xl shadow-lg w-full mt-10">
 					<div>
 					</div>
 					<div className="flex flex-col justify-center items-center w-full text-lg text-[#4D6785]">
 						<div className="w-full">
 							<div className="flex justify-center">
-								<div className="w-[8rem] h-[8rem] rounded-full">
+								<div className="w-[12rem] h-[12rem] rounded-full">
 									{imgProfile}
 								</div>
 							</div>
-							<div className="flex w-full justify-center font-semibold pt-5 gap-1">
+							<div className="flex w-full justify-center text-xl font-semibold pt-5 gap-1">
 								<a className="">{user?.name}</a>
 								<a className="">{user?.surname}</a>
 							</div>
@@ -108,11 +129,13 @@ const CardProfile = ({user}: Props) => {
 				: 
 				""
 				}
-				{user?.role === "TEACHER" ? 
-				<ModalNewTeacher 
-				user={user}
-				/> :
-				""
+				{//user?.role === "TEACHER" && dates === true ? 
+					//""
+					//:
+					//<ModalNewTeacher 
+					//user={user}
+					//""
+					//>
 				}
 				
 			</div>

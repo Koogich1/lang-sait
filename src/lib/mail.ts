@@ -7,7 +7,7 @@ export const sendTwoFactorTokenEmail = async (
 	token: string,
 ) => {
 	await resend.emails.send({
-		from: "onboarding@resend.dev",
+		from: "mail@acyberg.com",
 		to: email,
 		subject: "2FA код",
 		html: `<p>Ваш код: ${token}</p>`
@@ -21,7 +21,7 @@ export const sendPasswordResetEmail = async (
 ) => {
 	const resetLink = `${domain}/auth/new-password?token=${token}`
 	await resend.emails.send({
-		from: "onboarding@resend.dev",
+		from: "mail@acyberg.com",
 		to: email,
 		subject: "Сброс пароля",
 		html: `<p>Нажми <a href="${resetLink}">сюда</a>чтобы сбросить пароль.</p>`
@@ -35,7 +35,7 @@ export const sendVerificationEmail = async (
 	const confirmLink = `http://localhost:3000/auth/new-verification?token=${token}`
 
 	await resend.emails.send({
-		from: "onboarding@resend.dev",
+		from: "mail@acyberg.com",
 		to: email,
 		subject: "Confirm your email",
 		html: `<p>Нажми <a href="${confirmLink}">сюда</a>чтобы подтвердить email.</p>`

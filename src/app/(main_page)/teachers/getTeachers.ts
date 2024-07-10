@@ -39,7 +39,9 @@ const getAllTeachers = async () => {
 											surname: user.surname,
 									},
 									teacherInfo: {
-											language: teacher.language
+											aboutMe: teacher.aboutMe,
+											language: teacher.language,
+											levelLanguage: teacher.languageLevel
 									},
 							};
 					})
