@@ -108,7 +108,7 @@ const SettingsPage = () => {
   useEffect(() => {
     if (fileName) {
       const updateProfilePhoto = async () => {
-        await updateUrlImgForUsers(fileName); // Используйте fileName для обновления
+        await updateUrlImgForUsers(fileName);
       }
       updateProfilePhoto();
     }
@@ -201,16 +201,28 @@ const SettingsPage = () => {
 						</DialogTitle>
 						<DialogHeader>
 							<h1>{fileUpload && <p className="font-extrabold">{fileUpload}</p>}</h1>
-							<Input type="file" onChange={onFileChange} className=""/>
+							<Input type="file" onChange={onFileChange} className="w-full h-20"/>
 						</DialogHeader>
+						{selectedFile && (
+							<div className="flex justify-center relative">
+								<img
+									src={URL.createObjectURL(selectedFile)}
+									alt="Выбранное изображение"
+									className="object-cover h-[300px] w-[300px] rounded-full"
+								/>
+							</div>
+						)}
 						<Button
 							onClick={() => {setOpen(false)}}
-							className="absolute right-0 m-5 h-8 w-3 bg-red-500 hover:bg-red-600"
+							className='absolute right-0 m-5 h-8 w-3 bg-red-500 hover:bg-red-600'
 						>
 							X
 						</Button>
-						<div className="flex gap-3 justify-end">
-							<Button onClick={handleUpload}>
+						<div className={`flex gap-3 justify-end}`}>
+							<Button 
+							onClick={handleUpload}
+							disabled={accept ? false : true}
+							>
 								Подтвердить
 							</Button>
 						</div>

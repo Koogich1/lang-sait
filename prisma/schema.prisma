@@ -30,6 +30,7 @@ model User {
   teacher               Teacher?               @relation(fields: [teacherId], references: [id])
   studentBookings       StudentBooking[]
   favouritesTeachers    String                 @default("")
+  allUserImage          String[]
 
   conversations UserConversation[]
   seenMessages  UserSeenMessage[]

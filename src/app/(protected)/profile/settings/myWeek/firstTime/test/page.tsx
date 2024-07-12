@@ -1,12 +1,23 @@
 "use client"
 
+import { Button } from "@/components/ui/button";
+import CreateConversation from "./createConversation";
+
 
 
 const Page = () => {
 
+  const onCLick = () => {
+    const createConversation = CreateConversation()
+    return createConversation
+  }
 
   return (
-    <div></div>
+    <div>
+      <Button onClick={onCLick}>
+        типо создаю
+      </Button>
+    </div>
   );
 };
 

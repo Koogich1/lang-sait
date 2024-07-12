@@ -1,31 +1,27 @@
 "use client"
 
-import { currentUser } from '@/lib/auth';
-import uploadFile from './uploadFile';
 import { useEffect, useState } from 'react';
-import { ExtendedUser } from '@/next-auth';
+import userImg from '@/actions/getImageUser';
 
 
 const LogoUpload = () => {
-  const [user, setUser] = useState<ExtendedUser | null>(null);
+  const [image, setImage] = useState("");
 
   useEffect(() => {
 		const fetchUser = async () => {
-			const user = await currentUser();
-			if (user) {
-				setUser(user); 
+			const img = await userImg()
+			if(img){
+				setImage(img)
 			}
 		};
-	
 		fetchUser();
 	}, []);
 
-  if(!user)return
+  if(!image)return
 
 	return(
 		<div className='w-full h-full'>
-			{`https://storage.yandexcloud.net/langschoolacynberg/images/avatar_${user.id}.jpg`}
-			<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/avatar_${user.id}.jpg`} alt="Profile Picture" className="w-full h-full rounded-full" width={100} height={100}/>
+			<img src={image.toString()} alt="Profile Picture" className="w-full h-full rounded-full" width={100} height={100}/>
 		</div>
 	)
 }

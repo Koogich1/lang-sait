@@ -18,19 +18,37 @@ const UserBox: React.FC<UserBoxProps> = ({data}) => {
 	const handleClick = useCallback(() => {
 		setIsLoading(true)
 		axios.post("/api/conversations", {
-			userId: data.id
+			userId: data.id,
+			isGroup: false,
+			members: 2,
+			name: data.name
 		})
 		.then((data) => {
-			router.push(`/conversations/${data.data.id}`)
+			router.push(`/chats/conversations/${data.data.id}`)
 		})
 		.finally(() => setIsLoading(false))
 	}, [data, router])
 	
 	return (
 		<div onClick={handleClick}
-		className="w-full relative flex items-center space-x-3 bg-white
-		p-3 hover:bg-neutral-100 rounded-sm transition cursor-pointer">
-			<Avatar id={data.id}/>
+		className="w-full relative flex items-center space-x-3 bg-white border border-b-0 border-x-0
+		p-1 hover:bg-neutral-100 transition cursor-pointer mb-[1px] rounded-sm">
+			<img src={
+				data.image 
+				?? "https://storage.yandexcloud.net/langschoolacynberg/images/user.png"} alt="" 
+				className="w-[3rem] h-[3rem] object-cover rounded-full"
+			/>
+			<div className="min-w-0 flex-1">
+				<div className="focus:outline-none">
+					<div
+					className="flex justify-between itmes-center mb-1"
+					>
+						<p className="text-sm font-medium text-gray-900">
+							{data.name}
+						</p>
+					</div>
+				</div>
+			</div>
 		</div>
 	)
 }

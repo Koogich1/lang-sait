@@ -25,6 +25,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
 import { currentUser } from '@/lib/auth';
+import userImg from '@/actions/getImageUser';
 
 type languagePick = 'English' | 'China' | 'Polish' | 'German';
 
@@ -49,6 +50,20 @@ const FormSchema = z.object({
 });
 
 const TeachersPage = () => {
+
+
+  const [image, setImage] = useState("");
+
+  useEffect(() => {
+		const fetchUser = async () => {
+			const img = await userImg()
+			if(img){
+				setImage(img)
+			}
+		};
+		fetchUser();
+	}, []);
+
   const updateFavourityes = async (teacherId: string) => {
     if(favouritesT?.includes(teacherId)){
       const notify = () => toast(
@@ -177,7 +192,7 @@ const TeachersPage = () => {
            <div key={id} className='[230px] h-[240px] rounded-lg shadow-lg bg-white flex p-2 w-full relative text-gray-600'>
              <div className='w-[220px] h-[225px] rounded-sm bg-cover overflow-hidden mr-4'>
                <img className="w-[220px] h-[225px] object-cover" 
-                 src={`https://storage.yandexcloud.net/langschoolacynberg/images/avatar_${teacher.id}.jpg`} 
+                 src={teacher.userInfo.image ? teacher.userInfo.image : 'Ava'} 
                  alt="" 
                />
              </div>

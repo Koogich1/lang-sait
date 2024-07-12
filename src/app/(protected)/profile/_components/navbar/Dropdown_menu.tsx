@@ -17,6 +17,7 @@ import TeacherCreate from '../interface/teacherCreate-button';
 import { HiOutlineCamera } from 'react-icons/hi2';
 import { currentUser } from '@/lib/auth';
 import { getUserById } from '@/data/user';
+import userImg from '@/actions/getImageUser';
 
 type role = "ADMIN" | "USER" | "TEACHER";
 
@@ -38,10 +39,17 @@ type User = {
 export default function DropDownMenu() {
 	const [user, setUser] = useState<User | null>(null);
 	const [cacheBuster, setCacheBuster] = useState(Date.now())
-		
-	useEffect(() => {
-    // ...
-}, [cacheBuster]);
+	const [image, setImage] = useState("");
+
+  useEffect(() => {
+		const fetchUser = async () => {
+			const img = await userImg()
+			if(img){
+				setImage(img)
+			}
+		};
+		fetchUser();
+	}, []);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -55,15 +63,17 @@ export default function DropDownMenu() {
 
 	const [brightness, setBrighness] = useState(0)
 
+	if(!user){return}
+
 	return (
 		<div>
 			<DropdownMenu>
 				<DropdownMenuTrigger className='border-none rounded-full'>
-					{user?.image ? 
+					{image.length > 10 ? 
 					<div className='relative flex items-center justify-center w-[4rem] h-[4rem] rounded-full'>
 						<img
 						className="object-cover p-0 m-0 w-[4rem] h-[4rem] rounded-full"
-						src={`https://storage.yandexcloud.net/langschoolacynberg/images/avatar_${user.id}.jpg`} 
+						src={image} 
 						alt=""
 						style={{
 							filter: 'brightness(100%)',
