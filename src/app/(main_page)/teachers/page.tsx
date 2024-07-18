@@ -27,8 +27,6 @@ import Link from 'next/link';
 import { currentUser } from '@/lib/auth';
 import userImg from '@/actions/getImageUser';
 
-type languagePick = 'English' | 'China' | 'Polish' | 'German';
-
 type Teacher = {
   id: string;
   teacherId: string;
@@ -39,7 +37,7 @@ type Teacher = {
   };
   teacherInfo: {
     aboutMe: string;
-    language: languagePick;
+    language: string[];
     levelLanguage: string;
   };
 };
@@ -82,7 +80,7 @@ const TeachersPage = () => {
   });
 
   const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [selectedLanguage, setSelectedLanguage] = useState<languagePick | 'все'>(
+  const [selectedLanguage, setSelectedLanguage] = useState<'все'>(
     'все'
   );
   const [favouritesT, setFavouritesT] = useState<string[] | undefined>();
@@ -123,12 +121,12 @@ const TeachersPage = () => {
     fetchData();
   }, []);
 
-  const handleLanguageChange = (language: languagePick | 'все') => {
+  const handleLanguageChange = (language: 'все') => {
     setSelectedLanguage(language);
   };
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    handleLanguageChange(data.language as languagePick | 'все');
+    handleLanguageChange(data.language as 'все');
   }
 
   const filteredTeachers = selectedLanguage === 'все'
@@ -203,7 +201,14 @@ const TeachersPage = () => {
                  </div>
                  <div className='flex items-center gap-2 pt-1'>
                   <div className='w-3 h-[3px] bg-purple-600 rounded-sm'></div>
-                   <p className='text-base font-medium'>{languageTranslations[teacher.teacherInfo.language]} язык</p> 
+                   <p className='text-base font-medium'>
+                   {teacher?.teacherInfo.language.map((language, id) => {
+                      return (
+                        <div key={id}>
+                          {language}
+                        </div>
+                      );
+                    })} язык</p> 
                  </div>
                  <div className='flex items-center gap-2'>
                   <div className='w-3 h-[3px] bg-purple-600 rounded-sm'></div>

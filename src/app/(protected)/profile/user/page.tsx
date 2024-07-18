@@ -41,11 +41,6 @@ const UserProfile = () => {
 			</div>
 			<CardProfile
 			/>
-			<Link href={"/chats"}>
-				<Button>
-					Чат
-				</Button>
-			</Link>
 		</div>
 	)
 }

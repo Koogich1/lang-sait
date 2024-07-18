@@ -80,13 +80,6 @@ model UserSeenMessage {
   message   Message @relation(fields: [messageId], references: [id])
 }
 
-enum languagePick {
-  English
-  China
-  Polish
-  German
-}
-
 model Notification {
   id        String           @id @default(cuid())
   type      NotificationType
@@ -105,7 +98,7 @@ enum NotificationType {
 
 model Teacher {
   id                 String                @id @default(cuid())
-  language           languagePick          @default(English)
+  language           String[]              @default(["English"])
   languageLevel      String                @default("A0")
   students           User[]
   aboutMe            String                @default("Я учитель")

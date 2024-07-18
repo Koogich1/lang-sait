@@ -1,5 +1,5 @@
 "use client"
-/*
+
 import {
   Dialog,
   DialogContent,
@@ -45,5 +45,3 @@ const ModalNewTeacher = ({user}: Props) => {
 }
 
 export default ModalNewTeacher
-
-*/

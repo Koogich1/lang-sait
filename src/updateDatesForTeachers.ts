@@ -71,8 +71,6 @@ const updateDatesForTeachers = async() => {
       }
     });
 
-    console.log(availability)
-
     if (!availability) {
       return
     }

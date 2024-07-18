@@ -10,11 +10,10 @@ const ProtectedLayout = ( {children}: ProtectedLayoutProps ) => {
 	return (
 		<div>
 			<Navbar />
-				<div className="ml-[240px] px-20 pt-5">
+				<div className="lg:ml-[240px] px-5 md:px-10 xl:px-15 pt-5">
 					{children}
 				</div>
 		</div>
-
 	);
 }
 

@@ -18,6 +18,7 @@ import { HiOutlineCamera } from 'react-icons/hi2';
 import { currentUser } from '@/lib/auth';
 import { getUserById } from '@/data/user';
 import userImg from '@/actions/getImageUser';
+import Link from 'next/link';
 
 type role = "ADMIN" | "USER" | "TEACHER";
 
@@ -63,10 +64,12 @@ export default function DropDownMenu() {
 
 	const [brightness, setBrighness] = useState(0)
 
-	if(!user){return}
+	if(!user){
+		return
+	}
 
 	return (
-		<div>
+		<div className='text-base'>
 			<DropdownMenu>
 				<DropdownMenuTrigger className='border-none rounded-full'>
 					{image.length > 10 ? 
@@ -85,28 +88,31 @@ export default function DropDownMenu() {
 						<HiOutlineUser className={`absolute text-white text-3xl transition-all opacity-${brightness}`}/>
 					</div>
 					: 
-					<div className='w-[4rem] h-[4rem] bg-white rounded-full flex items-center justify-center text-blue-400'>
+					<div className='w-[4.2rem] h-[4.2rem] bg-white rounded-full flex items-center justify-center text-blue-400'>
 						<HiOutlineUser className="text-4xl rounded-full" />
 					</div>
 					}
 				</DropdownMenuTrigger>
-				<DropdownMenuContent>
-					<DropdownMenuLabel>
+				<DropdownMenuContent className='text-gray-600'>
+					<DropdownMenuLabel className='text-lg'>
 						<div>
-							{user?.name}
+							{user?.email}
 						</div>
 					</DropdownMenuLabel>
 					<DropdownMenuSeparator />
-					<DropdownMenuItem>Занятия</DropdownMenuItem>
-					<DropdownMenuItem>Чат</DropdownMenuItem>
-					<DropdownMenuItem>Тесты</DropdownMenuItem>
-					<div>
-						<div>
-							<LogoutButton />
-						</div>
-						<div>
+					<Link href={"/profile/user"}><DropdownMenuItem className='text-base font-medium'>Профиль</DropdownMenuItem></Link>
+					<Link href={"/news"}><DropdownMenuItem className='text-base font-medium'>Новости</DropdownMenuItem></Link>
+					<Link href={"/chats/conversations"}><DropdownMenuItem className='text-base font-medium'>Мессенджер</DropdownMenuItem></Link>
+					{user.role === "TEACHER" ? 
+					<Link href={"/learning"}><DropdownMenuItem className='text-base font-medium'>Мои курсы</DropdownMenuItem></Link>
+					: ""}
+					<Link href={"/teachers"}><DropdownMenuItem className='text-base font-medium'>Преподаватели</DropdownMenuItem></Link>
+					<Link href={"/payment"}><DropdownMenuItem className='text-base font-medium'>Подписка</DropdownMenuItem></Link>
+					<DropdownMenuSeparator />
+					<div className='text-base font-medium bg-[#835BD2] p-2 px-5 text-white rounded-lg items-center flex justify-center'><LogoutButton /></div>
+					<div className='flex flex-col'>
+						Тестовая кнопка <br />  "создание учителя", <br /> в админ панель
 							<TeacherCreate />
-						</div>
 					</div>
 				</DropdownMenuContent>
 			</DropdownMenu>

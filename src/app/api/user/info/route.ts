@@ -11,7 +11,6 @@ export async function GET(request:any) {
         id: user?.id,
       },
     });
-    console.log(userInfo);
     return NextResponse.json(userInfo);
   } catch (error) {
     console.error('Ошибка получения информации о пользователе из БД', error);

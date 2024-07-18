@@ -1,17 +1,7 @@
 "use server"
 
-import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-const getUserByEmail = async (email: string) => {
-	const user = await db.user.findUnique({
-			where: {
-					email: email,
-			},
-	});
-
-	return user;
-};
 const getAllTeachers = async () => {
 	const allUsers = await db.user.findMany(); // Получение всех пользователей
 
@@ -22,6 +12,7 @@ const getAllTeachers = async () => {
 						if(!user.teacherId){
 							return
 						}
+
 							const teacher = await db.teacher.findUnique({
 									where: {
 											id: user.teacherId,

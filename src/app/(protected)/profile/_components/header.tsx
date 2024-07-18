@@ -11,7 +11,7 @@ const Header = ({header}: Props) => {
  return(
 	
 	<div>
-		<div className="flex justify-between items-center">
+		<div className="flex justify-between items-center pl-[50px] lg:pl-0">
 			<h1 className="text-3xl font-semibold text-[#4D6785]">
 				{header}
 			</h1>
