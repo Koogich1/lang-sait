@@ -26,6 +26,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
 import { currentUser } from '@/lib/auth';
 import userImg from '@/actions/getImageUser';
+import AboutTeacherModal from './modals/aboutTeacher';
+import AddTeacherToUser from '@/actions/addTeacherToUser';
 
 type Teacher = {
   id: string;
@@ -39,6 +41,7 @@ type Teacher = {
     aboutMe: string;
     language: string[];
     levelLanguage: string;
+    lessonPrise: number;
   };
 };
 
@@ -47,20 +50,14 @@ const FormSchema = z.object({
     .string({})
 });
 
+const FormatedLang = (lang:any) => {
+	const days = ['English', 'Korean', 'China'];
+	const dayIndex = days.indexOf(lang);
+	const russianDays = ['Английский', 'Корейский', 'Китайский'];
+	return russianDays[dayIndex]; // Или другой желаемый формат
+};
+
 const TeachersPage = () => {
-
-
-  const [image, setImage] = useState("");
-
-  useEffect(() => {
-		const fetchUser = async () => {
-			const img = await userImg()
-			if(img){
-				setImage(img)
-			}
-		};
-		fetchUser();
-	}, []);
 
   const updateFavourityes = async (teacherId: string) => {
     if(favouritesT?.includes(teacherId)){
@@ -140,6 +137,10 @@ const TeachersPage = () => {
     return text;
   };
 
+  const handleAdd = (teacherId:string) => {
+    AddTeacherToUser(teacherId)
+  }
+
   return (
     <>
       <MainHeader />
@@ -201,14 +202,14 @@ const TeachersPage = () => {
                  </div>
                  <div className='flex items-center gap-2 pt-1'>
                   <div className='w-3 h-[3px] bg-purple-600 rounded-sm'></div>
-                   <p className='text-base font-medium'>
+                   <div className='text-base font-medium flex gap-1'>
                    {teacher?.teacherInfo.language.map((language, id) => {
                       return (
                         <div key={id}>
-                          {language}
+                          {FormatedLang(language)}
                         </div>
                       );
-                    })} язык</p> 
+                    })} <div>язык</div></div> 
                  </div>
                  <div className='flex items-center gap-2'>
                   <div className='w-3 h-[3px] bg-purple-600 rounded-sm'></div>
@@ -218,8 +219,29 @@ const TeachersPage = () => {
                   {truncateText(teacher.teacherInfo.aboutMe, 110)}
                  </p>
                  <div className='mb-1 flex gap-2 justify-start'>
-                   <Button className='w-[120px] border-2 border-gray-500 text-gray-500' variant='shadow2'>Подробнее!</Button>
-                   <Button className='w-[120px] font-medium' variant='violetSelect'>Записаться</Button>
+                   <AboutTeacherModal teacher={teacher}/>
+                   <Button 
+                      className='w-[120px] font-medium' variant='violetSelect'
+                      onClick={() => {
+                        handleAdd(teacher.teacherId)
+                        const notify = () => toast(
+                          <p className='text-base flex flex-col'>
+                            {`Вы записались к учителю`}
+                            <span className='flex gap-1'>
+                              <span className='font-bold'>{teacher.userInfo.name}</span>
+                              {` `}
+                              <span className='font-bold'>{teacher.userInfo.surname}</span>
+                            </span>
+                            {`Переходите в профиль!`}
+                            <Link href={"/profile/user"} className='mt-2'><span className=' transition-all text-base rounded-md font-medium p-2 px-4 bg-[#835BD2] text-white hover:bg-[#6a49ab]'>Профиль</span></Link>
+                          </p>,
+                        );
+                        notify()
+                      }}
+                    >
+                      
+                      Записаться
+                    </Button>
                  </div>
              </div>
              <div className='absolute top-0 right-0 m-2 mr-3'>

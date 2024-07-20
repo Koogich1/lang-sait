@@ -98,13 +98,14 @@ enum NotificationType {
 
 model Teacher {
   id                 String                @id @default(cuid())
+  userId             String                @default("")
   language           String[]              @default(["English"])
   languageLevel      String                @default("A0")
   students           User[]
   aboutMe            String                @default("Я учитель")
-  repeating_interval Int?                  @default(0)
   availabilities     TeacherAvailability[]
   scheduleDays       TeacherScheduleDay[]
+  lessonPrise        Int                   @default(899)
 }
 
 model TeacherScheduleDay {

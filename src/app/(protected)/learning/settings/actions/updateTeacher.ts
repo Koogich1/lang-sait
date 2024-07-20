@@ -8,6 +8,7 @@ export const updateTeacher = async (
 	bio:string,
 	language:string,
 	languages: string[],
+	levelLanguage: string,
 ) => {
 	try{
 		const user = await currentUser()
@@ -18,28 +19,33 @@ export const updateTeacher = async (
 
 	if(!dbUser?.teacherId)return{ error: "Вы не Учитель" }
 
-	console.log(dbUser.teacherId)
-
 	let Newlanguages
-
-	if(!language || language == undefined){
-		return {success: "Настройки обновлены!"}
-	}
-	
-	if(languages.includes(language)){
-		Newlanguages = languages
-	}else{
-		Newlanguages = [...languages, language]
-	}
 
 	await db.teacher.update({
 		where: {id: dbUser.teacherId},
 		data:{
 			aboutMe: bio,
-			language: Newlanguages
+			languageLevel: levelLanguage,
 		}
 	})
-	
+		if(languages.includes(language)){
+			Newlanguages = languages
+
+		}else{
+			
+			Newlanguages = [...languages, language]
+		}
+
+		if(!language || language == undefined || language.length < 2){
+			return {success: "Настройки обновлены!"}
+		}
+
+		await db.teacher.update({
+			where: {id: dbUser.teacherId},
+			data:{
+				language: Newlanguages,
+			}
+		})
 
 		return {success: "Настройки обновлены!"}
 	}catch(error){

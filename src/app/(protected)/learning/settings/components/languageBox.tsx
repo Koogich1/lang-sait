@@ -30,7 +30,7 @@ type LanguageTranslation = {
 
 const englishToRussian: LanguageTranslation = {
   English: 'Английский',
-  Chinese: 'Китайский',
+  China: 'Китайский',
   Korean: 'Корейский',
   // Добавьте другие языки по необходимости
 };
@@ -58,8 +58,8 @@ const LanguageBox = () => {
 
     if (!user?.teacherInfo.language || user.teacherInfo.language.length === 0) {
         return (
-            <div>
-                <p>Добавьте ваши языки</p>
+            <div className=' bg-[#835BD2] text-sm font-semibold w-full p-3 mt-3 rounded-lg shadow-lg flex items-center justify-center'>
+                <p className='text-white'>Добавьте язык, который преподаете!</p>
             </div>
         );
     }
@@ -78,7 +78,7 @@ const LanguageBox = () => {
         return (
           <div key={id} className='mt-3 lg:w-full flex items-center  justify-between h-11 bg-gray-100 border border-gray-300 px-2 rounded-lg shadow-lg text-gray-400 hover:text-[#835BD2] transition-all hover:border-[#835BD2] cursor-pointer'>
 						<div className='flex gap-3 items-center'>
-							<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/${language}.png`} alt="flag" className='w-9 h-7 object-cover' />
+							<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/${language}.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 							<h1 className='text-lg font-medium'>{translateLanguage(language)}</h1>
 						</div>
 						<div

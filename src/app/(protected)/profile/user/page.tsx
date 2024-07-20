@@ -6,8 +6,6 @@ import Header from "../_components/header"
 import { currentUser } from "@/lib/auth"
 import type { ExtendedUser } from "@/next-auth"
 import { ClipLoader } from "react-spinners"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
 
 const UserProfile = () => {
 	const [user, setUser] = useState<ExtendedUser | null>(null);

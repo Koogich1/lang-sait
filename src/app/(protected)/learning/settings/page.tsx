@@ -39,6 +39,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import LanguageBox from "./components/languageBox";
+import { toast, ToastContainer } from "react-toastify";
+import Link from "next/link";
+import UpdateWeekSchema from "./_weekSchema/page";
 
 type Teacher = {
   id: string;
@@ -74,20 +77,22 @@ const SettingsPage = () => {
 	},[])
 
 	const form = useForm({
-    defaultValues: {
-      name: user?.userInfo.name|| "",
-      surname: user?.userInfo.surname || "",
-			bio: user?.teacherInfo.aboutMe,
-			language: undefined,
-    },
-  });
+		defaultValues: {
+			name: user?.userInfo.name || "",
+			surname: user?.userInfo.surname || "",
+			bio: user?.teacherInfo.aboutMe || "",
+			language: "",
+			levelLang: user?.teacherInfo.levelLanguage || "",
+		},
+	});
 
   useEffect(() => {
     form.reset({
       name: user?.userInfo.name|| "",
       surname: user?.userInfo.surname || "",
-      bio: user?.teacherInfo.aboutMe,
-			language: undefined,
+      bio: user?.teacherInfo.aboutMe || "",
+			language: "",
+			levelLang: user?.teacherInfo.levelLanguage || "",
     });
   }, [user]);
 
@@ -101,7 +106,7 @@ const SettingsPage = () => {
 			try {
 				console.log(values.name)
 				const userUpdateResult = await updateUser(values.name, values.surname);
-				const teacherUpdateResult = await updateTeacher(values.bio, values.language, user?.teacherInfo.language);
+				const teacherUpdateResult = await updateTeacher(values.bio, values.language, user?.teacherInfo.language, values.levelLang);
 	
 				if ('success' in userUpdateResult && 'success' in teacherUpdateResult) {
 					setSuccess('Settings updated successfully!');
@@ -117,9 +122,20 @@ const SettingsPage = () => {
 	
 
 	return(
-		<div className="w-full min-h-[80vh] bg-white rounded-xl shadow-lg p-6 mt-5 flex justify-between">
+		<>
+		<ToastContainer
+        position="bottom-left"
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+		<div className="w-full min-h-[80vh] bg-white rounded-xl shadow-lg p-6 mt-5 flex justify-between flex-col md:flex-row">
 				<UpdateProfilePhoto />
-				<div className="w-[70%] px-5">
+				<div className="md:w-[70%] w-full md:px-5 px-0">
 					<Form {...form}>
 						<form 
 						className="space-y-3 flex flex-col"
@@ -170,7 +186,7 @@ const SettingsPage = () => {
 									name="bio"
 									render={({ field }) => (
 										<FormItem className="flex justify-between items-center">
-											<FormLabel className="text-base font-semibold text-gray-500 w-[10%] pt-2">Фамилия</FormLabel>
+											<FormLabel className="text-base font-semibold text-gray-500 w-[10%] pt-2 text-nowrap">Обо мне</FormLabel>
 											<FormControl className="w-[75%] min-h-[130px]">
 												<Textarea 
 												className="transition-all rounded-lg border ring-[#cebeef] border-gray-300 focus:outline-none focus:ring focus:border-[#835BD2]"
@@ -196,9 +212,24 @@ const SettingsPage = () => {
 														<SelectValue placeholder="Выберете язык, который хотите добавить" />
 													</SelectTrigger>
 													<SelectContent>
-														<SelectItem value="China">Китайский</SelectItem>
-														<SelectItem value="Korean">Корейский</SelectItem>
-														<SelectItem value="English">Английский</SelectItem>
+														<SelectItem value="China" className="">
+															<div className="flex justify-start items-center gap-3">
+																<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/China.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+																<h1 className="font-semibold text-base text-gray-600">Китайский</h1>
+															</div>
+														</SelectItem>
+														<SelectItem value="Korean" className="border-t rounded-none">
+															<div className="flex justify-start items-center gap-3">
+																<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/Korean.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+																<h1 className="font-semibold text-base text-gray-600">Корейский</h1>	
+															</div>
+														</SelectItem>
+														<SelectItem value="English" className="border-t rounded-none">
+															<div className="flex justify-start items-center gap-3">
+																<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+																<h1 className="font-semibold text-base text-gray-600">Английский</h1>
+															</div>
+														</SelectItem>
 													</SelectContent>
 												</Select>
 											</FormControl>
@@ -206,12 +237,31 @@ const SettingsPage = () => {
 										</FormItem>
 									)}
 								/>
+								<div>
+									<h1 className="text-base font-semibold text-gray-500 w-[full] pt-2">Мои языки:</h1>
+									<LanguageBox />
+								</div>
+								<div className="w-full h-[1px] bg-gray-100 mt-3 mb-1"></div>
+								<FormField 
+									control={form.control}
+									name="levelLang"
+									render={({ field }) =>
+										(
+										<FormItem className="flex justify-between items-center w-full">
+											<FormLabel className="text-base flex font-semibold text-gray-500 w-[10%] pt-2">Уровень</FormLabel>
+											<FormControl className="w-[75%] h-10">
+												<Input 
+													className="transition-all rounded-lg border ring-[#cebeef] border-gray-300 focus:outline-none focus:ring focus:border-[#835BD2]"
+												{...field}
+												placeholder='Александр'
+												disabled={isPending}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 							</div>
-							<div>
-								<h1 className="text-base font-semibold text-gray-500 w-[full] pt-2">Мои языки:</h1>
-								<LanguageBox />
-							</div>
-							<div className="w-full h-[1px] bg-gray-100 mt-3 mb-1"></div>
 							<FormError message={error}/>
 							<FormSuccess message={success}/>
 							<Button
@@ -219,13 +269,26 @@ const SettingsPage = () => {
 								variant="violetSelect"
 								type="submit"
 								className="text-sm font-semibold"
-								>
+								onClick={
+									() => {
+										const notify = () => toast(
+											<p>Данные успешно обновлены</p>
+										);
+										notify();
+									}
+								}
+							>
 								Сохранить
 							</Button>
 						</form>
 					</Form>
+					<div className="w-full h-[1px] bg-gray-100 mt-3 mb-1"></div>
+					<div>
+						<UpdateWeekSchema />
+					</div>
 				</div>
 		</div>
+	</>
 	)
 }
 

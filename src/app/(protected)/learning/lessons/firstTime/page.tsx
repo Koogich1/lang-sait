@@ -1,6 +1,6 @@
 "use client"
 
-import Header from "../../../_components/header"
+import Header from "../../components/header"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import createEmptyTeacherAvailability from "@/components/datePick/AllTimeLineCreate"
@@ -77,10 +77,9 @@ const firstTimeChoosePage = () => {
 
 	return(
 		<div className="text-gray-400">
+			<Header />
 			<div id="header" className="opacity-0">
-				<Header
-					header="Настройки"
-				/>
+				Моя неделя
 			</div>
 			{created ? 
 			<section className="w-full h-[70vh] flex items-center justify-center opacity-1 ml-6" id="created-section">

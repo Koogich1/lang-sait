@@ -15,7 +15,7 @@ const FooterChoose = () => {
 	}
 	return (
 		<div
-			className='fixed bottom-0 h-[63px] bg-white rounded-lg shadow-lg py-2 px-4 w-[90%] max-w-[1268px]
+			className='fixed bottom-0 h-[63px] bg-white rounded-lg shadow-lg py-2 px-4 w-[90%] max-w-[1268px] border border-gray-200
 			'
 		>
 			<ul className='w-full flex justify-between text-gray-400'>

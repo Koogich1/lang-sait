@@ -24,7 +24,7 @@ const DeleteLanguage = async(language: string, languages: string[]) => {
 		}
 	})
 
-	return newLanguages
+	return {success: "Успешно"}
 }
 
 export default DeleteLanguage

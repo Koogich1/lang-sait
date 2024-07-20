@@ -12,6 +12,8 @@ import {
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa6"
 import DeleteLanguage from "../../settings/actions/deleteLanguage";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type LanguageTranslation = {
   [key: string]: string;
@@ -33,14 +35,26 @@ const englishToRussian: LanguageTranslation = {
 	};
 
 	const handleDelete = () => {
-		const updatedLanguages = DeleteLanguage(language, languages);
-		if (Array.isArray(updatedLanguages)) {
-			onLanguageDelete(updatedLanguages);
-		}
-		setOpen(false)
-	}
+			DeleteLanguage(language, languages).then((response) => {
+					if (response !== undefined && "success" in response && response.success !== undefined) {
+							const notify = () => toast(
+									<p>Язык удален, перезагрузите страницу, чтобы увидеть обновленные данные!</p>
+							);
+							notify();
+					} else {
+							const errorMessage = response && response.error ? response.error : 'Произошла ошибка при удалении языка.';
+							console.log("все не успешно")
+							const notify = () => toast(
+									<p>{errorMessage}</p>
+							);
+							notify();
+					}
+					setOpen(false);
+			});
+	};
  
 	return (
+	<>
 			<Dialog open={open}>
 					<DialogTrigger className="w-full h-full absolute text-gray" onClick={() => setOpen(true)}>
 					</DialogTrigger>
@@ -65,6 +79,7 @@ const englishToRussian: LanguageTranslation = {
 							</div>
 					</DialogContent>
 			</Dialog>
+		</>
 	);
 };
 

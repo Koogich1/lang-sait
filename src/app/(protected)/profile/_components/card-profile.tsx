@@ -32,7 +32,8 @@ const CardProfile = () => {
 
     fetchUser();
   }, []);
-	
+
+	/*
 	useEffect(() => {
 		const fetchData = async () => {
 			const isDates = await IsHasDates();
@@ -42,20 +43,10 @@ const CardProfile = () => {
 		};
 		fetchData();
 	}, []);
+	*/
 
-	useEffect(() => {
-		const userTeachers = async() => {
-			if(!user || user.teacherId === null || user.teacherId === undefined){
-				return;
-			}
-			
-			const userT = await getUserByTeacherId(user.teacherId)
-			if(!userT){
-				return
-			}
-			setTeacher(userT)
-		}
-	})
+	
+
 
 	const imgProfile = (
 		<LogoUpload />
@@ -104,14 +95,6 @@ const CardProfile = () => {
 										className="bg-[#699BD8] font-bold rounded-xl shadow-md hover:bg-[#527aab] lg:text-lg"
 										>
 											A0
-										</Button>
-									</li>
-									<li 
-									className="pt-1 flex justify-between items-center font-normal">
-										<p>- Курс:</p>
-										<Button 
-										className="bg-[#699BD8] font-bold text-base lg:text-lg rounded-xl shadow-md hover:bg-[#527aab]">
-											Ментор
 										</Button>
 									</li>
 								</ul>

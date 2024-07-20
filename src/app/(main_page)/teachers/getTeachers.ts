@@ -3,40 +3,43 @@
 import { db } from "@/lib/db";
 
 const getAllTeachers = async () => {
-	const allUsers = await db.user.findMany(); // Получение всех пользователей
+	const allTeachers = await db.teacher.findMany(); // Получение всех пользователей
 
 	const teachersData = await Promise.all(
-			allUsers
-					.filter((user) => user.teacherId)
-					.map(async (user) => {
-						if(!user.teacherId){
-							return
-						}
+		allTeachers
+			.filter((teacher) => teacher.userId)
+			.map(async (teacher) => {
+				if(!teacher.userId){
+					return
+				}
 
-							const teacher = await db.teacher.findUnique({
-									where: {
-											id: user.teacherId,
-									},
-							});
-							if(!teacher){
-								return
-							}
-							return {
-									id: user.id,
-									teacherId: user.teacherId,
-									userInfo: {
-											image: user.image,
-											name: user.name,
-											surname: user.surname,
-									},
-									teacherInfo: {
-											aboutMe: teacher.aboutMe,
-											language: teacher.language,
-											levelLanguage: teacher.languageLevel
-									},
-							};
-					})
-	);
+				const user = await db.user.findUnique({
+					where:{
+						id: teacher.userId
+					}
+				})
+
+				if(!user){
+					return
+				}
+
+				return {
+					id: user.id,
+					teacherId: teacher.id,
+					userInfo: {
+							image: user.image,
+							name: user.name,
+							surname: user.surname,
+					},
+					teacherInfo: {
+							aboutMe: teacher.aboutMe,
+							language: teacher.language,
+							levelLanguage: teacher.languageLevel,
+							lessonPrise: teacher.lessonPrise
+					},
+			};
+		})
+	)
 
 	return teachersData;
 };
