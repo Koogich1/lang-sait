@@ -7,7 +7,7 @@ const getAllTeachers = async () => {
 
 	const teachersData = await Promise.all(
 		allTeachers
-			.filter((teacher) => teacher.userId)
+			.filter((teacher) => teacher.id)
 			.map(async (teacher) => {
 				if(!teacher.userId){
 					return

@@ -19,8 +19,6 @@ from "react-icons/hi2";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-
 
 export const Navbar = () => {
 	const [activeLink, setActiveLink] = useState("");
@@ -81,10 +79,10 @@ export const Navbar = () => {
 					LangShool
 				</h1>
 				<div 
-					className="lg:hidden flex items-center justify-center bg-red-400 p-1 rounded-lg"
+					className="lg:hidden flex items-center justify-center bg-red-400 p-[0.125rem] rounded-lg hover:bg-red-500 transition-all cursor-pointer"
 					onClick={handleCloseBurger}
 				>
-					<HiOutlineXMark className="text-xl"/>
+					<HiOutlineXMark className="text-2xl text-white"/>
 				</div>
 			</div>
 			<ul className="h-[60%] flex flex-col justify-between w-[100%]">
@@ -128,6 +126,25 @@ export const Navbar = () => {
 				</li>
 				<li>
 					<Link
+						href='/profile/learning'
+						onClick={() => {
+							handleLinkClick("/profile/learning")
+							handleCloseBurger()
+						}}
+					>
+					<Button 
+					variant='shadow' 
+					size="lg" 
+					className={`w-full text-[#545ba8] font-semibold ${activeLink=== "/profile/learning" ? "bg-gray-100" : ""}`}>
+						Обучение
+						<HiOutlineCalendar 
+						className="text-2xl"
+						/>
+					</Button>
+					</Link>
+				</li>
+				<li>
+					<Link
 					href='/profile/achievements'
 					onClick={() => {
 						handleLinkClick("/profile/achievements")
@@ -145,45 +162,6 @@ export const Navbar = () => {
 							/>
 						</Button>
 					</Link>
-				</li>
-				<li>
-					<Link
-					href='/profile/materials'
-					onClick={() => {
-						handleLinkClick("/profile/materials")
-						handleCloseBurger()
-					}}
-					>
-						<Button 
-							variant='shadow' 
-							size="lg" 
-							className={`w-full text-[#4DA180] font-semibold ${activeLink=== "/profile/materials" ? "bg-gray-100" : ""}`}
-						>
-						Материалы
-						<HiOutlineBookOpen 
-						className="text-2xl mr-[1px]"
-						/>
-						</Button>
-					</Link>
-				</li>
-				<li>
-				<Link
-					href='/profile/tests'
-					onClick={() => {
-						handleLinkClick("/profile/tests")
-						handleCloseBurger()
-					}}
-				>
-					<Button 
-					variant='shadow'  
-					size="lg" 
-					className={`w-full text-[#F07979] font-semibold ${activeLink=== "/profile/tests" ? "bg-gray-100" : ""}`}
-					>
-						Тесты и ДЗ
-						<HiOutlinePencil 
-						className="text-[1.5rem] mr-[1px]"/> 
-					</Button>
-				</Link>
 				</li>
 				<li>
 					<Link
@@ -274,6 +252,25 @@ export const Navbar = () => {
 				</li>
 				<li>
 					<Link
+						href='/profile/learning'
+						onClick={() => {
+							handleLinkClick("/profile/learning")
+							handleCloseBurger()
+						}}
+					>
+					<Button 
+					variant='shadow' 
+					size="lg" 
+					className={`w-full text-[#545ba8] font-semibold ${activeLink=== "/profile/learning" ? "bg-gray-100" : ""}`}>
+						Обучение
+						<HiOutlineCalendar 
+						className="text-2xl"
+						/>
+					</Button>
+					</Link>
+				</li>
+				<li>
+					<Link
 					href='/profile/achievements'
 					onClick={() => {
 						handleLinkClick("/profile/achievements")
@@ -291,45 +288,6 @@ export const Navbar = () => {
 							/>
 						</Button>
 					</Link>
-				</li>
-				<li>
-					<Link
-					href='/profile/materials'
-					onClick={() => {
-						handleLinkClick("/profile/materials")
-						handleCloseBurger()
-					}}
-					>
-						<Button 
-							variant='shadow' 
-							size="lg" 
-							className={`w-full text-[#4DA180] font-semibold ${activeLink=== "/profile/materials" ? "bg-gray-100" : ""}`}
-						>
-						Материалы
-						<HiOutlineBookOpen 
-						className="text-2xl mr-[1px]"
-						/>
-						</Button>
-					</Link>
-				</li>
-				<li>
-				<Link
-					href='/profile/tests'
-					onClick={() => {
-						handleLinkClick("/profile/tests")
-						handleCloseBurger()
-					}}
-				>
-					<Button 
-					variant='shadow'  
-					size="lg" 
-					className={`w-full text-[#F07979] font-semibold ${activeLink=== "/profile/tests" ? "bg-gray-100" : ""}`}
-					>
-						Тесты и ДЗ
-						<HiOutlinePencil 
-						className="text-[1.5rem] mr-[1px]"/> 
-					</Button>
-				</Link>
 				</li>
 				<li>
 					<Link

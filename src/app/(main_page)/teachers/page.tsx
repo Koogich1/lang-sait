@@ -102,13 +102,6 @@ const TeachersPage = () => {
     }
   });
 
-  const languageTranslations = {
-    English: 'Английский',
-    China: 'Китайский',
-    Polish: 'Польский',
-    German: 'Немецкий',
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       const teachersData = await getAllTeachers();

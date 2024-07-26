@@ -12,6 +12,8 @@ const AddTeacherToUser = async(teacherID: string) => {
 
 		if(!dbUser)return
 
+		console.log(teacherID)
+
 		await db.user.update({
 			where:{
 				id: dbUser.id,
@@ -24,7 +26,16 @@ const AddTeacherToUser = async(teacherID: string) => {
 				},
 			}
 		})
-
+		await db.userSubscriptions.create({
+			data:{
+				user:{
+					connect:{
+						id: dbUser.id
+					}
+				},
+				teacherId: teacherID
+			}
+		})
 
 		console.log(teacherID, "добавлен к пользователю")
 	} catch (errors){

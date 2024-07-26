@@ -73,7 +73,7 @@ const AboutTeacherModal = ({teacher}: AboutTeacherModalProps) => {
 					</div>
 					</DialogHeader>
 					<div className="flex items-center justify-start gap-3 relative">
-						<h1 className="font-semibold text-gray-400">Цена за урок:</h1>
+						<h1 className="text-base font-semibold text-gray-400">Цена за урок:</h1>
 						<div className="text-base font-semibold bg-gradient-to-tr from-violet-600 to-indigo-600 text-white p-2 px-8 rounded-md cursor-pointer opacity-80 hover:opacity-100 transition-all">{prise}</div>
 					</div>
 					<div className="text-sm text-center flex justify-between items-center">

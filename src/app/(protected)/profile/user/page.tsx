@@ -13,7 +13,7 @@ const UserProfile = () => {
   useEffect(() => {
 		const fetchUser = async () => {
 			const user = await currentUser();
-			if (user) {
+			if(user) {
 				setUser(user); 
 			}
 		};

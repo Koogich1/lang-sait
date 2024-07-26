@@ -1,7 +1,5 @@
 "use client"
 
-import { Button } from '@/components/ui/button';
-import { useCurrentUser } from '@/hooks/use-current-user';
 import React, { useEffect, useState } from 'react'
 import { HiOutlineUser } from 'react-icons/hi';
 import {
@@ -14,53 +12,51 @@ import {
 } from "@/components/ui/dropdown-menu";
 import LogoutButton from '../interface/logout-button';
 import TeacherCreate from '../interface/teacherCreate-button';
-import { HiOutlineCamera } from 'react-icons/hi2';
 import { currentUser } from '@/lib/auth';
-import { getUserById } from '@/data/user';
-import userImg from '@/actions/getImageUser';
 import Link from 'next/link';
+import GetTeacher from '../actions/getTeacher';
+import { Teacher } from '../actions/typeUser';
+import { User, UserRole } from '@prisma/client';
+import GetUser from '../actions/getUser';
 
-type role = "ADMIN" | "USER" | "TEACHER";
 
-type User = {
-	id: string;
-	name: string | null;
-	surname: string | null;
-	email: string | null;
-	emailVerified: Date | null;
-	favourites: string[];
-	image: string | null;
-	password: string | null;
-	role: role;
-	isTwoFactorEnabled: boolean;
-	teacherId: string | null;
-	favouritesTeachers: string;
+type allInf = {
+	user: {
+			id: string;
+			name: string | null;
+			surname: string | null;
+			mail: string | null;
+			favourites: string[];
+			image: string | null;
+			role: UserRole;
+			teacherUser: {
+					id: string;
+			};
+	};
 }
 
 export default function DropDownMenu() {
-	const [user, setUser] = useState<User | null>(null);
-	const [cacheBuster, setCacheBuster] = useState(Date.now())
-	const [image, setImage] = useState("");
+	const [user, setUser] = useState<Teacher | allInf | null>(); 
+	
 
   useEffect(() => {
-		const fetchUser = async () => {
-			const img = await userImg()
-			if(img){
-				setImage(img)
+    const fetchUser = async () => {
+			const userdb = await currentUser()
+			if(!userdb)return;
+			if(userdb.role === "USER"){
+				const allInf = await GetTeacher()
+				if(allInf){
+					setUser(allInf)
+				}
+			}else{
+				const allInf = await GetUser()
+				if(allInf){
+					setUser(allInf)
+				}
 			}
-		};
-		fetchUser();
-	}, []);
-
-	useEffect(() => {
-		const fetchData = async () => {
-			const data = await currentUser();
-			if (data) {
-				setUser(data);
-			}
-		};
-		fetchData();
-	}, []);
+    };
+    fetchUser();
+  }, []);
 
 	const [brightness, setBrighness] = useState(0)
 
@@ -68,15 +64,19 @@ export default function DropDownMenu() {
 		return
 	}
 
+	if(!user.user.image){
+		return
+	}
+
 	return (
 		<div className='text-base'>
 			<DropdownMenu>
 				<DropdownMenuTrigger className='border-none rounded-full'>
-					{image.length > 10 ? 
+					{user.user.image.length > 10 ? 
 					<div className='relative flex items-center justify-center w-[4rem] h-[4rem] rounded-full'>
 						<img
 						className="object-cover p-0 m-0 w-[4rem] h-[4rem] rounded-full"
-						src={image} 
+						src={user.user.image} 
 						alt=""
 						style={{
 							filter: 'brightness(100%)',
@@ -96,14 +96,14 @@ export default function DropDownMenu() {
 				<DropdownMenuContent className='text-gray-600'>
 					<DropdownMenuLabel className='text-lg'>
 						<div>
-							{user?.email}
+							{user.user.mail}
 						</div>
 					</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<Link href={"/profile/user"}><DropdownMenuItem className='text-base font-medium'>Профиль</DropdownMenuItem></Link>
 					<Link href={"/news"}><DropdownMenuItem className='text-base font-medium'>Новости</DropdownMenuItem></Link>
 					<Link href={"/chats/conversations"}><DropdownMenuItem className='text-base font-medium'>Мессенджер</DropdownMenuItem></Link>
-					{user.role === "TEACHER" ? 
+					{user.user.role === "TEACHER" ? 
 					<Link href={"/learning"}><DropdownMenuItem className='text-base font-medium'>Мои курсы</DropdownMenuItem></Link>
 					: ""}
 					<Link href={"/teachers"}><DropdownMenuItem className='text-base font-medium'>Преподаватели</DropdownMenuItem></Link>

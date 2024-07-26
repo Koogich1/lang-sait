@@ -25,7 +25,7 @@ const teacherCreate = async () => {
 
     const createdTeacher = await db.teacher.create({
         data: {
-            language: "English",
+            language: ["English"],
         },
     });
 

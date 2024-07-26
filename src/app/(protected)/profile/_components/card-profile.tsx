@@ -1,87 +1,91 @@
 "use client"
 
-import { Input } from "@/components/ui/input"
-import { BsCopy } from "react-icons/bs";
 import { Button } from "@/components/ui/button"
-import TeacherInterface from "./interface/teacher-interface";
-import ModalNewTeacher from "./modal/newTeacherFirst";
-import LogoUpload from "./logoUpload";
-import IsHasDates from "@/actions/hasDates";
 import { useEffect, useState } from "react";
-import { User } from "@prisma/client";
-import getUserByTeacherId from "@/actions/getUserByTeacherId";
 import Link from "next/link";
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import GetTeacher from "./actions/getTeacher";
+import { Teacher } from "./actions/typeUser"
+import getAllSubscription from "@/actions/getAllSubscription";
+import { UserRole, UserSubscriptions } from "@prisma/client";
 
-const CardProfile = () => {
-	const [dates, hasDates] = useState(false)
-	const [user, setUser] = useState<User | null>(); 
-	const [teacher, setTeacher] = useState<User | null>();
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import TeacherBox from "./teacherBox";
+import { currentUser } from "@/lib/auth";
+import GetUser from "./actions/getUser";
+
+type allInf = {
+	user: {
+			id: string;
+			name: string | null;
+			surname: string | null;
+			mail: string | null;
+			favourites: string[];
+			image: string | null;
+			role: UserRole;
+			teacherUser: {
+					id: string;
+			};
+	};
+}
+
+const CardProfile = () => { 
+	const	[userSubs, setUserSubs] = useState<UserSubscriptions[] | null>([])
+	const [user, setUser] = useState<Teacher | allInf | null>(); 
+	
 
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const response = await fetch('/api/user/info');
-        const data = await response.json();
-        setUser(data);
-      } catch (error) {
-        console.error('Ошибка получения данных пользователя:', error);
-      }
+			const userdb = await currentUser()
+			if(!userdb)return;
+			if(userdb.role === "USER"){
+				const allInf = await GetTeacher()
+				if(allInf){
+					setUser(allInf)
+				}
+			}else{
+				const allInf = await GetUser()
+				if(allInf){
+					setUser(allInf)
+				}
+			}
     };
-
     fetchUser();
   }, []);
-
-	/*
-	useEffect(() => {
-		const fetchData = async () => {
-			const isDates = await IsHasDates();
-			if (isDates === true) {
-				hasDates(true);
-			}
-		};
-		fetchData();
-	}, []);
-	*/
-
-	
-
-
-	const imgProfile = (
-		<LogoUpload />
-  );
 
 	if(!user){
 		return
 	}
 
+
  return(
-	<>	
-		<ToastContainer
-        position="bottom-left"
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-			<div className='flex relative'>
-				<div className="md:w-[330px] h-[485px] lg:h-[525px] lg:w-[360px] xl:w-[380] xl:h-[580] 2xl:w-[400px] bg-white p-6 rounded-3xl shadow-lg w-full mt-10 text-gray-600">
+	<>
+		<div className='flex relative'>
+			<div></div>
+				<div className="md:w-[330px] h-[455px] lg:h-[490px] lg:w-[360px] xl:w-[380] 2xl:w-[400px] bg-white p-6 rounded-3xl shadow-lg w-full mt-10 text-gray-600">
 					<div>
 					</div>
 					<div className="flex flex-col justify-center items-center w-full text-lg">
 						<div className="w-full">
 							<div className="flex justify-center">
 								<div className="lg:w-[12rem] lg:h-[12rem] w-[10rem] h-[10rem] rounded-full">
-									{imgProfile}
+									{user.user.image ? 
+									<img className="w-full h-full rounded-full object-cover" src={`${user.user.image}`} alt="" /> 
+									:
+										<div></div>
+										}
 								</div>
 							</div>
 							<div className="flex w-full justify-center text-lg font-semibold pt-3 gap-1 lg:text-xl">
-								<a className="">{user?.name}</a>
-								<a className="">{user?.surname}</a>
+								<a className="">{user.user?.name}</a>
+								<a className="">{user.user?.surname}</a>
 							</div>
 						</div>
 						<div className="pt-3 w-full text-base lg:text-lg">
@@ -98,10 +102,35 @@ const CardProfile = () => {
 										</Button>
 									</li>
 								</ul>
-								<div className="pt-1 flex items-center justify-between w-full text-base lg:text-lg">
-									<p>Преподаватель:</p>
-									{teacher ? 
-										teacher.name 
+								<div className="pt-1 flex items-center justify-between w-full lg:text-lg mt-3 gap-3">
+									<Link href={"/chats/conversations"} className="w-1/2 h-[3rem]">
+										<Button variant="violetSelect" className="w-full h-[3rem] rounded-xl shadow-none bg-[#699BD8] hover:bg-[#527aab]">
+											Перейти в чат
+										</Button>
+									</Link>
+									{user.user.teacherUser ? 
+											<DropdownMenu >
+											<DropdownMenuTrigger asChild>
+												<div className="hover:bg-[#835BD2] transition-all bg-white text-[#835BD2] border-2 border-[#835BD2] text-sm hover:text-white font-semibold p-[0.65rem] px-5 rounded-full scale-105 cursor-pointer">
+													Преподаватели
+												</div>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent className="border-2 border-gray-300">
+												<DropdownMenuLabel className="text-lg text-gray-600">Мои преподаватели</DropdownMenuLabel>
+												<DropdownMenuSeparator />
+												{userSubs?.map((subs) => (
+													<DropdownMenuItem key={subs.id} className="p-0 m-0 w-full">
+														<Link href={'/profile/lessonsBuy'} className="w-full">
+																<TeacherBox subs={subs} />
+														</Link>
+													</DropdownMenuItem>
+												))}
+												<DropdownMenuSeparator />
+												<DropdownMenuItem className="w-full p-1 m-0">
+													<Link href={'/profile/lessonsBuy'} className="w-full"><Button className="w-full text-sm" variant='violetSelect'>Записаться на урок</Button></Link>
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
 										: 
 										<div>
 											<Link href={"/teachers"}>
@@ -114,50 +143,15 @@ const CardProfile = () => {
 								</div>
 							</h3>
 						</div>
-						<div className="flex justify-between pt-3 gap-2.5">
-							<Link href={"/chats/conversations"} className="w-[50%] h-[3rem]">
-								<Button variant="violetSelect" className="w-full h-[3rem] rounded-xl shadow-none bg-[#699BD8] hover:bg-[#527aab]">
-									Перейти в чат
-								</Button>
-							</Link>
-							<div 
-							className="relative h-full hover:bg-gray-200 rounded-lg transition-all"
-							onClick={() => {
-								const notify = () => toast(
-									<p className='text-base'>
-										{`Почта скопированна`}
-									</p>
-								 )
-								 notify()
-							}}
-							>
-								<Input
-								type="text"
-								value={`${user?.email}`}
-								disabled
-								className="text-[#527aab] h-[3rem]"
-								>
-								</Input>
-								<Button 
-								className={`absolute top-0 left-0 w-full h-full bg-transparent hover:bg-transparent flex justify-end opacity-50 hover:opacity-100`}
-								title="Копировать"
-								data-tooltip-text="Копировать"
-							>
-									<div>
-										<BsCopy className="text-[#527aab]"/>
-									</div>
-								</Button>
-							</div>
-						</div>
 					</div>
 				</div>
-				{user?.role === "TEACHER" ? 
+				{ /* user.user.=== "TEACHER" ? 
 				<div>
 					<TeacherInterface />
 				</div>
 				: 
 				""
-				}
+				*/}
 				{/* user?.role === "TEACHER" && dates === true ? 
 					""
 					:

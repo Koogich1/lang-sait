@@ -1,6 +1,6 @@
 "use client"
 
-import Header from "../../components/header"
+import Header from "../../../components/header"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import createEmptyTeacherAvailability from "@/components/datePick/AllTimeLineCreate"
