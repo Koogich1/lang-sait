@@ -12,7 +12,7 @@ import { generateVerificationToken } from '@/lib/tokens';
 
 import { sendVerificationEmail } from '@/lib/mail';
 
-export const register = async (values: z.infer<typeof RegisterSchema>) => {
+export const register:any = async (values: z.infer<typeof RegisterSchema>) => {
 	const validatedFields = RegisterSchema.safeParse(values) 
  
 	if(!validatedFields.success){
@@ -40,6 +40,8 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 			surname,
 			email,
 			password: hasherdPassword,
+			image: "https://storage.yandexcloud.net/langschoolacynberg/images/user.png",
+			teacherId: "cly6yadjz00015vyv0oydfbs0",
 		}
 	});
 

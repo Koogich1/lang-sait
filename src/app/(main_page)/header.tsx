@@ -1,9 +1,28 @@
+"use client"
 
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import DropDownMenu from '../(protected)/profile/_components/navbar/Dropdown_menu'
+import { currentUser } from '@/lib/auth'
+import { getUserById } from '@/data/user'
+import { User } from '@prisma/client'
+import { Button } from '@/components/ui/button'
 
 const MainHeader = () => {
+	const [user, setUser] = useState<User | null>(null)
+
+	useEffect(() => {
+		const catchUser = async() => {
+			const userdata = await currentUser()
+			console.log(userdata)
+			if(!userdata){
+				return
+			}
+			setUser(userdata)
+		}
+		catchUser()
+	},[])
+
 	return (
 		<div className="flex justify-around items-center w-full max-w-[1440px] px-[5%] mx-auto text-[#3E236C] flex-col m-0">
 			<div className='flex w-full mt-3 justify-between items-center'>
@@ -18,7 +37,10 @@ const MainHeader = () => {
 					<Link href={"/"}><li className='hover:text-[#61439d]'>Новости</li></Link>
 				</ul>
 				<div>
-					<DropDownMenu />
+					{user && user.role === "MODERATOR" ? 
+					<Link href={"/createCourses"}><Button variant='violetSelect' className='text-base font-medium'>Создать курсы</Button></Link>
+					: 
+					<DropDownMenu />}
 				</div>
 			</div>
 		</div>

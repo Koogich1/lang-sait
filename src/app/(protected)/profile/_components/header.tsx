@@ -17,7 +17,8 @@ import {
 import getAllSubscription from "@/actions/getAllSubscription";
 import HeaderTeacherBox from "./navbar/headerTeacherBox";
 import { currentUser } from "@/lib/auth";
-import { User, UserSubscriptions } from "@prisma/client";
+import { Notification, User, UserSubscriptions } from "@prisma/client";
+import findNotification from "@/actions/findNotification";
 
 type Props = {
 	header: string,
@@ -26,6 +27,7 @@ type Props = {
 const Header = ({header}: Props) => {
 	const	[userSubs, setUserSubs] = useState<UserSubscriptions[] | null>([])
 	const [user, setUser] = useState<User | null>(null)
+	const [notifications, setNotifications] = useState<Notification[] | null>(null)
 
 	useEffect(() => {
 		const handleData = async() => {
@@ -34,6 +36,10 @@ const Header = ({header}: Props) => {
 				return
 			}
 			setUser(user)
+			const fetchNotify = await findNotification(user)
+			if(fetchNotify){
+				setNotifications(fetchNotify)
+			}
 			if(user.role === "USER"){
 				const subsData = await getAllSubscription()
 				if(subsData){
@@ -50,8 +56,8 @@ const Header = ({header}: Props) => {
 	if(!user){
 		return
 	}
+
  return(
-	
 	<div>
 		<div className="flex justify-between items-center pl-[50px] lg:pl-0">
 			<h1 className="text-3xl font-semibold text-[#4D6785]">
@@ -93,11 +99,19 @@ const Header = ({header}: Props) => {
 								<HiOutlineBell className="text-[#4D6785] text-3xl"/>
 							</div>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent className="ml-[-125px] min-w-[260px]">
+						<DropdownMenuContent className="ml-[-125px] min-w-[260px] max-w-[300px]">
 							<DropdownMenuLabel className="text-lg text-gray-600">Уведомления</DropdownMenuLabel>
 							<DropdownMenuSeparator />
-								<DropdownMenuItem className="p-0 m-0">
-								</DropdownMenuItem>
+								{notifications?.length === 0 ? 
+								"" 
+								:
+								notifications?.map((data, id) => (
+									<div className="flex flex-col text-md border border-gray-100 p-2 rounded-lg shadow-lg text-gray-600" key={id}>
+										<h1 className="font-semibold">{data.head}</h1>
+										<span>{data.message}</span>
+									</div>
+								))
+								}
 							<DropdownMenuSeparator />
 							<DropdownMenuItem className="w-full p-1 m-0">
 								<Link href={'/profile/lessonsBuy'} className="w-full"><Button className="w-full text-sm" variant='violetSelect'>Очистить все</Button></Link>

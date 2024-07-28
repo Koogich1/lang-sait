@@ -46,7 +46,11 @@ const CardProfile = () => {
 			const userdb = await currentUser()
 			if(!userdb)return;
 			if(userdb.role === "USER"){
+				const fetchSubs = await getAllSubscription()
 				const allInf = await GetTeacher()
+				if(fetchSubs){
+					setUserSubs(fetchSubs)
+				}
 				if(allInf){
 					setUser(allInf)
 				}

@@ -6,21 +6,23 @@ import Header from "../_components/header"
 import { currentUser } from "@/lib/auth"
 import type { ExtendedUser } from "@/next-auth"
 import { ClipLoader } from "react-spinners"
+import { auth } from "@/auth"
+import { useRouter } from "next/navigation"
 
 const UserProfile = () => {
 	const [user, setUser] = useState<ExtendedUser | null>(null);
+	const router = useRouter()
 
   useEffect(() => {
 		const fetchUser = async () => {
-			const user = await currentUser();
-			if(user) {
-				setUser(user); 
+			const userinfo = await currentUser();
+			if(userinfo) {
+				setUser(userinfo); 
 			}
 		};
 	
 		fetchUser();
 	}, []);
-
 
   if (!user) {
     return(
@@ -29,6 +31,10 @@ const UserProfile = () => {
 			</div>
 		)
   }
+
+	if(user.role === "MODERATOR"){
+		router.push("/createCourses")
+	}
 
 	return(
 		<div>

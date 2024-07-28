@@ -49,7 +49,6 @@ const UpdateProfilePhoto = () => {
       return;
     }
     const reader = new FileReader();
-
     reader.onloadend = () => {
       if (reader.result) {
 				if(!user?.id){
@@ -74,7 +73,7 @@ const UpdateProfilePhoto = () => {
     };
     reader.readAsDataURL(selectedFile);
   };
-
+	
   useEffect(() => {
     if (fileName) {
       const updateProfilePhoto = async () => {

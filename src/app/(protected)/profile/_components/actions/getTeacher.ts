@@ -10,8 +10,10 @@ const GetTeacher = async() => {
 	if(!curentUser){return}
 	const dbUser = await getUserById(curentUser.id)
 	
-	if(!dbUser?.teacherId){return}
-	//ВОТ ТУТ ВСЕ ЛОМАЕТСЯ ЕСЛИ ТЫ УЧИТЕЛЬ, У ТЕБЯ НЕ БУДЕТ УЧИТЕЛЯ В USER И ОН ВОЗВРАЩАЕТ ПУСТУЮ ХУЙНЮ, НАДО ДУМАТЬ КАК ЕГО ЗАПУСКАТЬ
+	if(!dbUser?.teacherId){
+		return
+	}
+	
 	const teacher = await db.teacher.findUnique({
 		where:{
 			id: dbUser?.teacherId 
