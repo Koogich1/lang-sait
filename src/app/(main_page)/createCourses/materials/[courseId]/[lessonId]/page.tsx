@@ -21,26 +21,23 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 
-import DeleteRasdelModal from '../../../components/modal/deleteRasdelModal'
 import { FaRegTrashCan } from 'react-icons/fa6'
 import deleteLittleRasdel from '../../../components/actions/deleteRasdel'
 import createLittleRasdel from '../../../components/actions/createLittleRasdel'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Input } from '@/components/ui/input'
+import { Input } from '@/components/ui/input';
 
 import { IoCheckmark } from "react-icons/io5";
 import updateLittleRasdelName from '../../../components/actions/updateLittleRasdelName'
-import { Checkbox } from '@/components/ui/checkbox'
 import OrderBlock from './components/OrderBlock'
+import UpdateTestModal from '../../../components/modal/updateTestModal'
 
 const FormSchema = z.object({
   username: z.string().max(30, {
@@ -101,6 +98,10 @@ const Page = () => {
 			username: "", // Начальное значение остается пустым
 		},
 	})
+
+	const updateVisov = () => {
+		fetchTest(currRasdel?.id ? currRasdel?.id : "")
+	}
 
 	const handleCheckboxChange = (testId: string, optionId: string) => {
 		// Устанавливаем выбранный ответ, если он уже выбран, сбрасываем его
@@ -206,7 +207,7 @@ const Page = () => {
 							</div>
 							:
 							<h1 className='text-gray-500 font-bold text-2xl flex gap-3 items-center'>
-								<span>{currRasdel?.name}</span>
+								<span className=''>{currRasdel?.name}</span>
 								<div
 									className='w-8 h-8 bg-gray-200 text-gray-400 rounded-sm flex items-center justify-center transition-all hover:bg-gray-300 hover:text-gray-600 hover:shadow-lg text-lg cursor-pointer'
 									onClick={() => {
@@ -220,11 +221,11 @@ const Page = () => {
 					</div>
 					<div className='flex flex-col items-center'>
 						{tests?.map((test, index) => (
-							<div key={index} className='border border-gray-100 mt-5 flex flex-col justify-between rounded-xl p-3 pt-5 max-w-[430px] shadow-lg'>
-							<h3 className='font-semibold text-lg text-gray-600'>{test.question}</h3>
+							<div key={test.id} className='border border-gray-100 mt-5 flex flex-col justify-between rounded-xl p-3 pt-5 max-w-[430px] shadow-lg'>
+							<h3 className='font-semibold text-lg text-gray-600 pr-[30px]'>{test.question}</h3>
 							{/* В зависимости от типа вопроса, можно отобразить разные элементы */}
 							{test.questionType === "MULTIPLE_CHOICE" && (
-									<ul className='py-3 text-gray-500 font-semibold'>
+									<ul className='py-3 text-gray-500 font-semibold relative'>
 											{test.options.map((option) => (
 												<li key={option.id} className='flex gap-3 h-9 border-t items-center border-gray-100 rounded-lg '>
 													<input
@@ -240,12 +241,32 @@ const Page = () => {
 													</div>
 												</li>
 										))}
+										<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
 									</ul>
 							)}
 							{test.questionType === "ORDERING" && (
-									<OrderBlock answers={test.answers}/>
+								<>
+									<OrderBlock answers={test.answers} test={test} visov={() => updateVisov()} currRasdel={currRasdel?.id ? currRasdel?.id : ""}/>
+								</>
 							)}
-							{/* Добавьте условия для других типов вопроса по аналогии */}
+							{test.questionType === "FILL_IN_THE_BLANK" && (
+								<div className='relative'>
+									{test.options.map((data, id)=> (
+										<div key={data.id} className='text-gray-600 font-medium mt-3 flex-col'>
+											<div className='flex'>
+												Допустимые ответы:
+											</div>
+											<div className='flex gap-3 px-3 py-2 text-green-700 bg-green-200 w-[220px] items-center justify-center rounded-lg border-2 border-green-500'>
+												<h1>
+													{data.text}
+													{data.isCorrect}
+												</h1>
+											</div>
+											<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										</div>
+									))}
+								</div>
+							)}
 					</div>
 						))}
 					</div>
