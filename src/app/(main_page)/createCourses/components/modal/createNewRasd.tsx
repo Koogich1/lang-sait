@@ -25,23 +25,17 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
-import { FaPlus } from "react-icons/fa6";
+import { FiPlus } from "react-icons/fi";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import createS3photo from "../actions/createS3photo";
-import { User } from "@prisma/client";
+import { courseData, User } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import sendCourseData from "../actions/sendCourseData";
+import createRasdel from "../actions/createRasdel";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).refine(
@@ -56,12 +50,14 @@ const FormSchema = z.object({
   aboutCourse: z.string().max(300,{
     message: "Максимум 300 символов"
   }),
-  language: z.string({
-    message: "Выберите язык"
-  })
 });
 
-const createNewCourse = ({ updateData }: { updateData: () => void }) => {
+type Props = {
+	updateData: () => void,
+	course: courseData,
+}
+
+const CreateNewRasp = ({updateData, course}: Props) => {
   const [open, setOpen] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null)
@@ -81,8 +77,6 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
     defaultValues: {
       photoImage: undefined,
       name: "",
-      aboutCourse: "",
-      language: ""
     },
   });
 
@@ -96,14 +90,15 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64Data = reader.result as string; // Получаем строку в формате base64
-      const folderName = `course_${user.name}_${data.name}_${Math.floor(Math.random() * (1000000 - 100 + 1)) + 100}`; //Имя папки
-      const fileName = `oblozhka.jpg`; // Генерация имени файла
+      const folderName = `course_${user.name}_${data.name}_${Math.floor(Math.random() * (1000000 - 100 + 1)) + 100}`;
+      const fileName = `rasdel-${data.name}`;
       const fileURL = `https://storage.yandexcloud.net/langschoolacynberg/courses/${user.id}/${folderName}/${fileName}`
-      
+
       try {
-        await createS3photo(base64Data, folderName, fileName);
-        await sendCourseData({name: data.name, aboutCourse: data.aboutCourse, language: data.language, photoUrl: fileURL})
+				await createS3photo(base64Data, folderName, fileName);
+				await createRasdel({name: data.name, aboutRasdel: data.aboutCourse, photoUrl: fileURL, course: course})
         updateData()
+				setOpen(false)
       } catch (error) {
         console.error('Ошибка при загрузке фото:', error);
       }
@@ -114,17 +109,18 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
 
   return (
     <Dialog open={open}>
-      <DialogTrigger
-        className="w-[175px] h-[270px] flex flex-col items-center justify-center gap-3 border-2 border-dashed hover:border-solid hover:border-purple-600 transition-all rounded-lg"
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        <h1 className="text-xl font-bold text-[#835BD2]">Создать курс</h1>
-        <div className="h-6 w-6 bg-[#835BD2] rounded-lg">
-          <FaPlus className="w-full h-full p-1 text-white" />
-        </div>
-      </DialogTrigger>
+      <DialogTrigger className="w-full my-3">
+				<div className="flex gap-3 w-full h-[10vh] border items-center justify-center rounded-lg hover:border-2 hover:border-blue-200 text-gray-400 hover:text-blue-400 hover:bg-blue-50 transition-all"
+					onClick={() => {setOpen(true)}}
+				>
+					<div className="h-8 w-8 bg-gray-400 hover:bg-blue-400 rounded-full flex items-center justify-center text-white transiti">
+						<FiPlus className="text-2xl"/>
+					</div>
+					<span className="font-bold ">
+						Создать новый раздел
+					</span>
+				</div>
+			</DialogTrigger>
       <DialogContent className="max-w-[420px]">
         <div
           className="w-6 h-6 bg-red-400 rounded-sm cursor-pointer hover:bg-red-500 absolute right-0 top-0 m-6"
@@ -211,7 +207,7 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
                 name="aboutCourse"
                 render={({ field }) => (
                   <FormItem className="flex justify-center items-center space-y-0 gap-5 ml-0 mt-5">
-                    <Label htmlFor="aboutCourse" className="text-base text-gray-600 font-semibold w-2/5">Описание курса</Label>
+                    <Label htmlFor="aboutCourse" className="text-base text-gray-600 font-semibold w-2/5 text-nowrap">О разделе</Label>
                     <Textarea
                       {...field}
                       placeholder="Описание"
@@ -222,28 +218,6 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
                 )}
               />
               <div className="w-full h-[1px] bg-gray-200 mt-5"></div>
-              <FormField
-                control={form.control}
-                name="language"
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-5 mt-5">
-                    <FormLabel className="w-3/5 text-base font-semibold text-gray-600 pr-[43px]">Язык</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Выберете язык" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Korean"><div className="flex gap-3 items-center"><Image alt='icon' width={50} height={50} className="w-10 h-7 rounded-lg shadow-lg border border-gray-300" src="/Korean.png" /> <span>Корейский</span></div></SelectItem>
-                        <SelectItem value="China"><div className="flex gap-3 items-center"><Image alt='icon' width={50} height={50} src="/China.png" className="w-10 h-7 rounded-lg shadow-lg border border-gray-300" /> <span>Китайский</span></div></SelectItem>
-                        <SelectItem value="English"><div className="flex gap-3 items-center"><Image alt='icon' width={50} height={50} src="/English.png" className="w-10 h-7 rounded-lg shadow-lg border border-gray-300" /> <span>Английский</span></div></SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             <div className="w-full h-[1px] bg-gray-200 mt-5"></div>
             <div className="flex gap-3 mt-6">
                <Button
@@ -260,7 +234,6 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
                 type="submit"
                 className="w-1/2 text-base font-medium"
                 variant="violetSelect"
-                onClick={() => {setOpen(false)}}
               >
                 Создать
               </Button>
@@ -272,4 +245,4 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
   );
 };
 
-export default createNewCourse;
+export default CreateNewRasp;

@@ -107,6 +107,82 @@ enum NotificationType {
   // Другие типы уведомлений
 }
 
+model courseData {
+  id          String      @id @default(cuid())
+  userId      String      @default("")
+  name        String      @default("")
+  aboutCourse String      @default("")
+  language    String      @default("")
+  rasdelId    String[]    @default([""])
+  photoUrl    String      @default("")
+}
+
+model rasdelId {
+  id              String   @id @default(cuid())
+  photoUrl        String   @default("")
+  coureId         String   @default("")
+  userId          String   @default("")
+  name            String   @default("")
+  aboutRasdel     String   @default("")
+  lessons         Lessons[]
+}
+
+model Lessons {
+  id                String      @id @default(cuid())
+  photoUrl          String      @default("")
+  rasdelId          String      @default("")
+  rasdel            rasdelId    @relation(fields: [rasdelId], references: [id])
+  name              String      @default("")
+  aboutLesson       String      @default("")
+  littleRasdelId    String      @default("")
+  littleRasdels     LittleRasdel[]  @relation("LessonLittleRasdels")
+  tests             Test[]          @relation("LessonTests")
+}
+
+model LittleRasdel {
+  id             String     @id @default(cuid())
+  name           String     @default("")
+  position       Int        @default(1)
+  lessonId       String     @default("")
+  lesson         Lessons    @relation("LessonLittleRasdels", fields: [lessonId], references: [id])
+  tests          Test[]     @relation("LittleRasdelTests")
+}
+
+
+model Test {
+  id             String          @id @default(cuid())
+  lessonId       String
+  littleRasdelId String
+  lesson         Lessons         @relation("LessonTests", fields: [lessonId], references: [id])
+  littleRasdel   LittleRasdel    @relation("LittleRasdelTests", fields: [littleRasdelId], references: [id])
+  question       String          @default("")
+  questionType   QuestionType
+  options        Option[]        @relation("TestOptions")
+  answers        Answer[]        @relation("TestAnswers")
+}
+
+model Option {
+  id       String   @id @default(cuid())
+  testId   String
+  test     Test     @relation("TestOptions", fields: [testId], references: [id])
+  text     String   @default("")
+  isCorrect Boolean  @default(false) // Указывает, правильный ли вариант ответа
+}
+
+model Answer {
+  id       String   @id @default(cuid())
+  testId   String
+  test     Test     @relation("TestAnswers", fields: [testId], references: [id])
+  text     String   @default("")
+  order    Int?    // Для проверки порядка ответов (если применимо)
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  ORDERING
+  FILL_IN_THE_BLANK
+}
+
 model Teacher {
   id                 String                @id @default(cuid())
   userId             String                @default("")
