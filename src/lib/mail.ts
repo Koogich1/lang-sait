@@ -13,7 +13,7 @@ export const sendTwoFactorTokenEmail = async (
 		html: `<p>Ваш код: ${token}</p>`
 	})
 }
-	const domain = process.env.NEXT_PUBLIC_APP_URL
+	const domain = "http://send.acyberg.com:3000"
 
 export const sendPasswordResetEmail = async (
 	email: string,
