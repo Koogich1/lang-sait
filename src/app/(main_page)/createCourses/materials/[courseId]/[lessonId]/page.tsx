@@ -362,7 +362,7 @@ const Page = () => {
 													{test.answers
 															.filter(data => data.order !== null) // Фильтрация, чтобы убрать null
 															.sort((a, b) => (a.order || 0) - (b.order || 0)) // Сортируем с проверкой на null
-															.map((data) => (<span>{data.text}</span>))
+															.map((data) => (<span key={data.id}>{data.text}</span>))
 													}
 											</p>
 									</div>

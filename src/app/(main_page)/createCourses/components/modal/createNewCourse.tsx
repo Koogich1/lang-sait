@@ -51,9 +51,9 @@ const FormSchema = z.object({
     }
   ),
   name: z.string().max(40, {
-    message: "Максимум 40 сиволов"
+    message: "Максимум 40 символов"
   }),
-  aboutCourse: z.string().max(300,{
+  aboutCourse: z.string().max(300, {
     message: "Максимум 300 символов"
   }),
   language: z.string({
@@ -61,20 +61,20 @@ const FormSchema = z.object({
   })
 });
 
-const createNewCourse = ({ updateData }: { updateData: () => void }) => {
+const CreateNewCourse = ({ updateData }: { updateData: () => void }) => {
   const [open, setOpen] = useState(false);
-	const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const handleUser = async() => {
-      const userinf = await currentUser()
-      if(userinf){
-        setUser(userinf)
+    const handleUser = async () => {
+      const userinf = await currentUser();
+      if (userinf) {
+        setUser(userinf);
       }
-    }
-    handleUser()
-  }, [])
+    };
+    handleUser();
+  }, []);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -86,8 +86,8 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
     },
   });
 
-  if(!user){
-    return
+  if (!user) {
+    return null; // Или возвращайте что-то другое
   }
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -95,30 +95,28 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
 
     const reader = new FileReader();
     reader.onloadend = async () => {
-      const base64Data = reader.result as string; // Получаем строку в формате base64
-      const folderName = `course_${user.name}_${data.name}_${Math.floor(Math.random() * (1000000 - 100 + 1)) + 100}`; //Имя папки
-      const fileName = `oblozhka.jpg`; // Генерация имени файла
-      const fileURL = `https://storage.yandexcloud.net/langschoolacynberg/courses/${user.id}/${folderName}/${fileName}`
+      const base64Data = reader.result as string;
+      const folderName = `course_${user.name}_${data.name}_${Math.random().toString(36).substr(2, 9)}`; // Используем случайную строку
+      const fileName = `oblozhka.jpg`;
+      const fileURL = `https://storage.yandexcloud.net/langschoolacynberg/courses/${user.id}/${folderName}/${fileName}`;
       
       try {
         await createS3photo(base64Data, folderName, fileName);
-        await sendCourseData({name: data.name, aboutCourse: data.aboutCourse, language: data.language, photoUrl: fileURL})
-        updateData()
+        await sendCourseData({ name: data.name, aboutCourse: data.aboutCourse, language: data.language, photoUrl: fileURL });
+        updateData();
       } catch (error) {
         console.error('Ошибка при загрузке фото:', error);
       }
     };
 
-    reader.readAsDataURL(file); // Чтение файла как Data URL, что также является строкой base64
+    reader.readAsDataURL(file);
   };
 
   return (
     <Dialog open={open}>
       <DialogTrigger
         className="w-[175px] h-[270px] flex flex-col items-center justify-center gap-3 border-2 border-dashed hover:border-solid hover:border-purple-600 transition-all rounded-lg"
-        onClick={() => {
-          setOpen(true);
-        }}
+        onClick={() => setOpen(true)}
       >
         <h1 className="text-xl font-bold text-[#835BD2]">Создать курс</h1>
         <div className="h-6 w-6 bg-[#835BD2] rounded-lg">
@@ -128,130 +126,141 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
       <DialogContent className="max-w-[420px]">
         <div
           className="w-6 h-6 bg-red-400 rounded-sm cursor-pointer hover:bg-red-500 absolute right-0 top-0 m-6"
-          onClick={() => {
-            setOpen(false);
-          }}
+          onClick={() => setOpen(false)}
         >
           <IoCloseOutline className="text-2xl text-white" />
         </div>
         <DialogHeader>
           <DialogTitle className="text-gray-600 text-3xl font-bold">Новый материал</DialogTitle>
         </DialogHeader>
-				<div className="w-full h-[1px] bg-gray-200"></div>
+        <div className="w-full h-[1px] bg-gray-200"></div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="">
-					<FormField
-						control={form.control}
-						name="photoImage"
-						render={({ field }) => (
-							<FormItem className="grid grid-cols-2 justify-center items-center space-y-0 gap-3 ml-0">
-								<div className="w-[125px] h-[190px] rounded-xl bg-blue-200">
-									{imagePreview && (
-										<img
-											src={imagePreview}
-											alt="Preview"
-											className="w-full h-full object-cover rounded-xl"
-										/>
-									)}
-								</div>
-								<div className="flex flex-col w-full max-w-sm items-center gap-1.5">
-									<Label htmlFor="picture" className="text-lg text-gray-600 font-bold">Обложка</Label>
-									<Input
-										id="picture"
-										type="file"
-										accept="image/*"
-										className="hidden" // Скрываем стандартный input
-										onChange={(e) => {
-											if (e.target.files && e.target.files.length > 0) {
-												const selectedFile = e.target.files[0];
-												field.onChange(selectedFile);
-												const fileURL = URL.createObjectURL(selectedFile);
-												setImagePreview(fileURL);
-											}
-										}}
-										/>
-										<Button
-											type="button"
-											onClick={() => {
-												const input = document.getElementById('picture');
-												if (input) {
-													input.click(); // Имитируем клик только если элемент найден
-												} else {
-													console.warn('Input not found');
-												}
-											}}
-											className="font-semibold text-lg w-full"
-											variant='shadow2'
-										>
-											Загрузить
-										</Button>
-									</div>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <FormField
+              control={form.control}
+              name="photoImage"
+              render={({ field }) => (
+                <FormItem className="grid grid-cols-2 justify-center items-center space-y-0 gap-3 ml-0">
+                  <div className="w-[125px] h-[190px] rounded-xl bg-blue-200">
+                    {imagePreview && (
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="w-full h-full object-cover rounded-xl"
+                      />
+                    )}
+                  </div>
+                  <div className="flex flex-col w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="picture" className="text-lg text-gray-600 font-bold">Обложка</Label>
+                    <Input
+                      id="picture"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files.length > 0) {
+                          const selectedFile = e.target.files[0];
+                          field.onChange(selectedFile);
+                          const fileURL = URL.createObjectURL(selectedFile);
+                          setImagePreview(fileURL);
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        const input = document.getElementById('picture');
+                        if (input) {
+                          input.click();
+                        } else {
+                          console.warn('Input not found');
+                        }
+                      }}
+                      className="font-semibold text-lg w-full"
+                      variant='shadow2'
+                    >
+                      Загрузить
+                    </Button>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="w-full h-[1px] bg-gray-200 mt-5"></div>
             <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="flex justify-center items-center space-y-0 gap-5 ml-0 mt-5">
-                    <Label htmlFor="name" className="text-base text-gray-600 font-semibold w-2/5">Название</Label>
-                    <Input
-                      {...field}
-                      placeholder="Введите название"
-                      className="w-3/5 h-[40px]"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="aboutCourse"
-                render={({ field }) => (
-                  <FormItem className="flex justify-center items-center space-y-0 gap-5 ml-0 mt-5">
-                    <Label htmlFor="aboutCourse" className="text-base text-gray-600 font-semibold w-2/5">Описание курса</Label>
-                    <Textarea
-                      {...field}
-                      placeholder="Описание"
-                      className="w-3/5 h-[40px]"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="w-full h-[1px] bg-gray-200 mt-5"></div>
-              <FormField
-                control={form.control}
-                name="language"
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-5 mt-5">
-                    <FormLabel className="w-3/5 text-base font-semibold text-gray-600 pr-[43px]">Язык</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Выберете язык" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Korean"><div className="flex gap-3 items-center"><Image alt='icon' width={50} height={50} className="w-10 h-7 rounded-lg shadow-lg border border-gray-300" src="/Korean.png" /> <span>Корейский</span></div></SelectItem>
-                        <SelectItem value="China"><div className="flex gap-3 items-center"><Image alt='icon' width={50} height={50} src="/China.png" className="w-10 h-7 rounded-lg shadow-lg border border-gray-300" /> <span>Китайский</span></div></SelectItem>
-                        <SelectItem value="English"><div className="flex gap-3 items-center"><Image alt='icon' width={50} height={50} src="/English.png" className="w-10 h-7 rounded-lg shadow-lg border border-gray-300" /> <span>Английский</span></div></SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="flex justify-center items-center space-y-0 gap-5 ml-0 mt-5">
+                  <Label htmlFor="name" className="text-base text-gray-600 font-semibold w-2/5">Название</Label>
+                  <Input
+                    {...field}
+                    placeholder="Введите название"
+                    className="w-3/5 h-[40px]"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="aboutCourse"
+              render={({ field }) => (
+                <FormItem className="flex justify-center items-center space-y-0 gap-5 ml-0 mt-5">
+                  <Label htmlFor="aboutCourse" className="text-base text-gray-600 font-semibold w-2/5">Описание курса</Label>
+                  <Textarea
+                    {...field}
+                    placeholder="Описание"
+                    className="w-3/5 h-[40px]"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="w-full h-[1px] bg-gray-200 mt-5"></div>
+            <FormField
+              control={form.control}
+              name="language"
+              render={({ field }) => (
+                <FormItem className="flex items-center gap-5 mt-5">
+                  <FormLabel className="w-3/5 text-base font-semibold text-gray-600 pr-[43px]">Язык</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Выберете язык" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Korean">
+                        <div className="flex gap-3 items-center">
+                          <Image alt='icon' width={50} height={50} className="w-10 h-7 rounded-lg shadow-lg border border-gray-300" src="/Korean.png" />
+                          <span>Корейский</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="China">
+                        <div className="flex gap-3 items-center">
+                          <Image alt='icon' width={50} height={50} src="/China.png" className="w-10 h-7 rounded-lg shadow-lg border border-gray-300" />
+                          <span>Китайский</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="English">
+                        <div className="flex gap-3 items-center">
+                          <Image alt='icon' width={50} height={50} src="/English.png" className="w-10 h-7 rounded-lg shadow-lg border border-gray-300" />
+                          <span>Английский</span>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="w-full h-[1px] bg-gray-200 mt-5"></div>
             <div className="flex gap-3 mt-6">
-               <Button
+              <Button
                 className="w-1/2 border-2 text-gray-300 border-gray-300 font-bold"
                 type="button"
-                onClick={() => {
-                  setOpen(false);
-                }}
+                onClick={() => setOpen(false)}
                 variant="shadow2"
               >
                 Отмена
@@ -260,7 +269,6 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
                 type="submit"
                 className="w-1/2 text-base font-medium"
                 variant="violetSelect"
-                onClick={() => {setOpen(false)}}
               >
                 Создать
               </Button>
@@ -272,4 +280,4 @@ const createNewCourse = ({ updateData }: { updateData: () => void }) => {
   );
 };
 
-export default createNewCourse;
+export default CreateNewCourse;

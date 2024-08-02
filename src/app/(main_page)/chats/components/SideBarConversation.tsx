@@ -31,11 +31,13 @@ const SideBarConversations = ({initialItems}: ConversationListProps) => {
 				</div>
 			</div>
 			<div>
-				{items.map((item:any) => (
-					<ConversationBox
-					data={item.id}
-					selected={conversationId === item.id}
-					/>
+				{items.map((item:any, key:any) => (
+					<div key={key}>
+						<ConversationBox
+						data={item.id}
+						selected={conversationId === item.id}
+						/>
+					</div>
 				))}
 			</div>
     </div>

@@ -9,7 +9,7 @@ import { useState } from "react"
 import { FirstTimeInputForm } from "@/components/datePick/pub/firstInputForm"
 
 
-const firstTimeChoosePage = () => {
+const FirstTimeChoosePage = () => {
 	const [transition, setTransition] = useState(false);
 	const [created, setCreated] = useState(false)
 
@@ -111,4 +111,4 @@ const firstTimeChoosePage = () => {
 	)
 }
 
-export default firstTimeChoosePage
+export default FirstTimeChoosePage
