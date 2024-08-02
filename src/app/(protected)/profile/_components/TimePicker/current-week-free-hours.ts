@@ -1,4 +1,4 @@
-"use server"
+/* "use server"
 
 import { getUserByEmail } from "@/data/user"
 import { currentUser } from "@/lib/auth"
@@ -6,12 +6,27 @@ import { db } from "@/lib/db"
 import { DayOfWeek } from "@prisma/client";
 
 
+export interface TimeSlot {
+  id: string;         // Unique identifier for the time slot
+  startTime: string;  // Start time of the slot (e.g., '10:00')
+  endTime: string;    // End time of the slot (e.g., '11:00')
+  status: TimeSlotStatus; // The status of the slot
+}
+
+// Update the interface here
 interface TeacherAvailabilityWithSlots {
   id: string;
   teacherId: string;
   day: DayOfWeek;
-  timeSlots: string[];
+  timeSlots: TimeSlot[]; // This should refer to TimeSlot[]
 }
+
+export enum TimeSlotStatus {
+  FREE = "FREE",
+  OCCUPIED = "OCCUPIED",
+  NON_WORKING = "NON_WORKING"
+}
+
 
 const getCurrentFreeDates = async (currentDayOfWeek: any) => {
   try {
@@ -56,3 +71,4 @@ const getCurrentFreeDates = async (currentDayOfWeek: any) => {
   
 
 export default getCurrentFreeDates
+*/
