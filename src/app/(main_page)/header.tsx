@@ -41,6 +41,7 @@ const MainHeader = () => {
 					<Link href={"/createCourses"}><Button variant='violetSelect' className='text-base font-medium'>Создать курсы</Button></Link>
 					: 
 					<DropDownMenu />}
+					{!user && <Link href={"/auth/login"}><Button variant={"violetSelect"}>Войти</Button></Link>}
 				</div>
 			</div>
 		</div>
