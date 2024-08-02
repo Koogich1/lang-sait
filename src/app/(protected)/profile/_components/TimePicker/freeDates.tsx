@@ -3,7 +3,7 @@
 import { getUserByEmail } from "@/data/user";
 import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import getCurrentFreeDates from "./current-week-free-hours";
+//import getCurrentFreeDates from "./current-week-free-hours";
 
 const CurrentWeekFreeHours = async (currDayOfWeek: any) => {
   const user = await currentUser();
@@ -23,20 +23,22 @@ const CurrentWeekFreeHours = async (currDayOfWeek: any) => {
   if(!currDayOfWeek){
     return
   }
-  const currWeekDates = await getCurrentFreeDates("currDayOfWeek");
 
-  if(!currWeekDates){
-    return
-  }
+  //const currWeekDates = await getCurrentFreeDates("currDayOfWeek");
 
-  if ('error' in currWeekDates) {
+  //if(!currWeekDates){
+    //return
+  //}
+
+  //if ('error' in currWeekDates) {
     return (
       <div>
-        <p>{currWeekDates.error}</p>
+        {//<p>{currWeekDates.error}</p>
+        }
+        привет
       </div>
     );
   }
-};
 
 
 
