@@ -65,7 +65,6 @@ const ConversationBox : React.FC<ConversationBoxProps> = ({data, selected}) => {
 			)}
 		>
 			text
-			<img src={otherUser?.surname} alt="" />
 		</div>
 	)
 }
