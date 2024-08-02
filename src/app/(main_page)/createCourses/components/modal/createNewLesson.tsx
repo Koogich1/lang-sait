@@ -48,6 +48,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import deleteLessons from "../actions/deleteLessons";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import UpdateLessonModal from "./updateLessonModal";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).refine(
@@ -141,7 +142,8 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
                 {data.name}
               </h1>
             </div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-1 items-center">
+            <UpdateLessonModal lessonId={data.id} updateData={fetcher} />
             <DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<div className='h-7 w-7 rounded-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 transition-all cursor-pointer'>
@@ -149,10 +151,6 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
 									</div>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent className='text-gray-500 font-medium'>
-									<DropdownMenuItem className='hover:bg-gray-100 flex justify-between'>
-										<IoPencil />
-										Редакт
-									</DropdownMenuItem>
 									<DropdownMenuItem className='hover:bg-gray-100 flex justify-between'
                   onClick={() => {
                     deleteLessons(data.id)
@@ -165,7 +163,7 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
 								</DropdownMenuContent>
 							</DropdownMenu>
               <Link href={`/createCourses/materials/${courseId}/${data.id}`}>
-                <Button className="p-0 h-7 px-2 rounded-xl bg-transparent hover:bg-blue-400 text-blue-400 hover:text-white">
+                <Button className="p-0 h-7 px-2 rounded-xl bg-transparent hover:bg-blue-400 text-blue-400 hover:text-white border border-blue-400">
                   Открыть
                 </Button>
               </Link>

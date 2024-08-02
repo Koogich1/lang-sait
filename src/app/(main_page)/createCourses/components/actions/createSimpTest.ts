@@ -35,7 +35,7 @@ const createSimpTest = async(littleRasdelId:string, lessonId: string) => {
 						}
 					},
 					{
-						question: "В каком случае код внутри блока if будет выполнен?",
+						question: "В каком случае код внутри блока if будет выполнен? ",
 						questionType: "FILL_IN_THE_BLANK",
 						lessonId: lessonId,
 						options: {

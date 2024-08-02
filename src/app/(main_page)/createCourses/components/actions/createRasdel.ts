@@ -11,6 +11,15 @@ type Props = {
 }
 
 const createRasdel = async({name, aboutRasdel, photoUrl, course}: Props) => {
+	const allRasdels = await db.rasdelId.findMany({
+		where:{
+			coureId: course.id
+		}
+	})
+
+	const order = allRasdels.length + 1
+
+
 	await db.rasdelId.create({
 		data:{
 			name: name,
@@ -18,6 +27,7 @@ const createRasdel = async({name, aboutRasdel, photoUrl, course}: Props) => {
 			coureId: course.id,
 			userId: course.userId,
 			photoUrl: photoUrl,
+			position: order,
 		}
 	})
 }

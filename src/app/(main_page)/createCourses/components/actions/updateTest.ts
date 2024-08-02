@@ -7,6 +7,7 @@ type Props = {
   name?: string;
   options?: { id: string; text: string; isCorrect: boolean }[]; // Массив объектов для обновления опций
   answers?: { id: string; text: string; order?: number }[]; // Массив объектов для обновления ответов
+  fileUrl?: string;
 };
 
 const updateTest = async ({
@@ -16,6 +17,7 @@ const updateTest = async ({
   testId,
 }: Props) => {
   // Сначала обновляем сам тест
+
   const updatedTest = await db.test.update({
     where: { id: testId },
     data: {

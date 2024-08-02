@@ -14,7 +14,10 @@ const fetchTestFromDb = async ({ lessonId, littleRasdelId }: Props) => {
 		},
 		include: {
 			options: true,
-			answers: true,
+			answers: true, 
+		},
+		orderBy:{
+			position: "asc"
 		}
 	});
 	return tests;

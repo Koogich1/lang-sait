@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 import CreateNewCourse from '../../components/modal/createNewCourse'
 import { courseData } from '@prisma/client'
 import getAllTeacherCourses from '../../components/actions/getAllTeacherCourses'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const Personal = () => {

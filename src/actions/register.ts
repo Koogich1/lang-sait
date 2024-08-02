@@ -41,7 +41,7 @@ export const register:any = async (values: z.infer<typeof RegisterSchema>) => {
 			email,
 			password: hasherdPassword,
 			image: "https://storage.yandexcloud.net/langschoolacynberg/images/user.png",
-			teacherId: "cly6yadjz00015vyv0oydfbs0",
+			teacherId: 'clzayrugw00006x6x9zsukbbe'
 		}
 	});
 

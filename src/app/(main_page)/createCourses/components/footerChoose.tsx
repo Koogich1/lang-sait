@@ -22,29 +22,29 @@ const FooterChoose = () => {
 			<li className={`flex flex-col items-center justify-center hover:text-[#835BD2] cursor-pointer relative
 					text-${page === "/learning/help" ? "[#835BD2]": ""}
 				`}
-				onClick={() => setPage('/learning/help')}
+				onClick={() => setPage('/createCourses/help')}
 				>
 					<HiOutlineQuestionMarkCircle className='text-2xl'/>
-					<Link href={"/learning/help"} className='w-full h-full absolute'></Link>
+					<Link href={"/createCourses/help"} className='w-full h-full absolute'></Link>
 					<p className='text-sm'>Помощь</p>
 				</li>
 				<li className={`flex flex-col items-center justify-center hover:text-[#835BD2] cursor-pointer relative
 					text-${page === "/materials" ? "[#835BD2]": ""}
 				`}
-				onClick={() => setPage('/learning/materials')}
+				onClick={() => setPage('/createCourses/help')}
 				>
 					<HiOutlineBookOpen className='text-2xl' />
-					<Link href={"/createCourse/materials"} className='w-full h-full absolute'></Link>
+					<Link href={"/createCourses/materials"} className='w-full h-full absolute'></Link>
 					<p className='text-sm'>Материалы</p>
 				</li>
 				<li className={`flex flex-col items-center justify-center hover:text-[#835BD2] cursor-pointer relative
 					text-${page === "/learning" ? "[#835BD2]": ""}
 				`}
-				onClick={() => setPage('/learning')}
+				onClick={() => setPage('/createCourses/watching')}
 				>
 					<PiStudent className='text-2xl' />
-					<p className='text-sm'>Вид курсов</p>
-					<Link href={"/learning"} className='w-full h-full absolute'></Link>
+					<p className='text-sm'>Предпросмотр</p>
+					<Link href={"/createCourses/watching"} className='w-full h-full absolute'></Link>
 				</li>
 			</ul>
 		</div>

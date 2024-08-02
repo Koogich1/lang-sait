@@ -2,22 +2,15 @@ import React from 'react'
 import FilterMaterials from '../../components/modal/filterMaterials'
 import MaterialsBox from './materialsBox'
 import { HiMagnifyingGlass } from "react-icons/hi2";
+import { RingLoader } from 'react-spinners';
 
 const Katalog = () => {
 	return (
 		<div className='min-h-[70vh] flex flex-col'>
-			<div className='w-full flex justify-between h-10 items-center mt-3 gap-3'>
-				<input
-					type="text"
-					className="w-full h-12 px-3 transition-all rounded-lg border ring-[#cebeef] border-gray-300 focus:outline-none focus:ring focus:border-[#835BD2]"
-					placeholder="Поиск курсов и уроков"
-				/>
-				<div className='h-12 w-16 rounded-lg bg-[#b493f5] hover:bg-[#835BD2] transition-all cursor-pointer'>
-					<HiMagnifyingGlass />
-				</div>
-				<FilterMaterials />
+			<div className='flex flex-col items-center justify-center gap-5 text-xl font-bold min-h-[60vh] text-gray-400'>
+				В разработке
+				<RingLoader />
 			</div>
-			<MaterialsBox />
 		</div>
 	)
 }

@@ -38,6 +38,9 @@ import { IoCheckmark } from "react-icons/io5";
 import updateLittleRasdelName from '../../../components/actions/updateLittleRasdelName'
 import OrderBlock from './components/OrderBlock'
 import UpdateTestModal from '../../../components/modal/updateTestModal'
+import CreateTestModal from '../../../components/modal/createTestModal'
+import { Textarea } from '@/components/ui/textarea'
+import DeleteRasdelModal from '../../../components/modal/deleteRasdelModal'
 
 const FormSchema = z.object({
   username: z.string().max(30, {
@@ -79,6 +82,17 @@ const Page = () => {
 		}
 	}
 
+	const setRasdel = () => {
+		if (rasdels && rasdels.length > 0) {
+			const firstRasdel = rasdels[0];
+			setCurretRasdel(firstRasdel);
+			fetchTest(firstRasdel.id);
+		} else {
+			setCurretRasdel(null);
+			setTests(null); // или другое поведение, если разделов нет
+		}
+	};
+
 	useEffect(() => {
 		const loadRasdels = async () => {
 			await fetchRasdels(); // Ждем, пока данные загружены
@@ -88,9 +102,12 @@ const Page = () => {
 
 	useEffect(() => {
 		if (currRasdel) {
-			form.setValue("username", currRasdel.name)
+			form.setValue("username", currRasdel.name);
+		} else if (rasdels && rasdels.length > 0) {  // Если currRasdel не установлен
+			setCurretRasdel(rasdels[0]); // Установить первый раздел
+			fetchTest(rasdels[0].id); // Получить тесты для первого раздела
 		}
-	}, [currRasdel]); // Обновляем username при изменении currRasdel
+	}, [currRasdel, rasdels]); // Добавить rasdels как зависимостьl
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -122,6 +139,14 @@ const Page = () => {
 		}
 	}
 
+	const shuffleArray = (array:any) => {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+};
+
 	return (
 		<div className='flex gap-3 mt-5'>
 			<div className='flex flex-col items-center'>
@@ -136,7 +161,7 @@ const Page = () => {
 						<DropdownMenuItem className='text-lg font-semibold'>Разделы</DropdownMenuItem>
 						{rasdels && rasdels.map((data) => (
 							<DropdownMenuItem
-								className={`flex gap-3 p-0 relative hover:bg-gray-200 border-b border-gray-100 justify-start text-gray-400 hover:text-gray-500 ${currRasdel?.id === data.id ? "border-b-blue-400 rounded-none rounded-t-lg border-b-2" : ""}`}
+								className={`flex gap-3 p-0 w-full relative hover:bg-gray-200 border-b border-gray-100 justify-start text-gray-400 hover:text-gray-500 ${currRasdel?.id === data.id ? "border-b-blue-400 rounded-none rounded-t-lg border-b-2" : ""}`}
 								key={data.id}
 							>
 								<span>=</span>
@@ -148,15 +173,6 @@ const Page = () => {
 									}}
 								>
 									<h1 className='font-medium'>{data.name}</h1>
-								</div>
-								<div
-									className='w-4 h-4 bg-red-300 text-white rounded-sm flex items-center justify-center transition-all hover:bg-gray-500 hover:text-white hover:shadow-lg text-xs m-2'
-									onClick={async () => {
-										await deleteLittleRasdel(data.id);
-										await fetchRasdels();
-									}}
-								>
-									<FaRegTrashCan />
 								</div>
 							</DropdownMenuItem>
 						))}
@@ -173,7 +189,7 @@ const Page = () => {
 			</div>
 			<div className='min-h-[80vh] w-full p-3 bg-white shadow-lg rounded-lg'>
 				<div>
-					<div className='w-full min-h-12 border-b border-gray-100'>
+					<div className='w-full min-h-12 border-b border-gray-100 relative'>
 						{settingOn ? 
 							<div>
 								<Form {...form}>
@@ -216,14 +232,26 @@ const Page = () => {
 								>
 									<IoPencil />
 								</div>
+								<div
+									className='absolute right-0'
+									onClick={async () => {
+										await fetchRasdels();
+									}}
+								>
+									<DeleteRasdelModal
+										currRasdel={currRasdel ? currRasdel.id : ""}
+										lessonId={currRasdel ? currRasdel.lessonId : ""}
+										visov={setRasdel} // это обновляет состояние, устанавливая первый раздел
+									/>
+
+								</div>
 							</h1>
 							}
 					</div>
 					<div className='flex flex-col items-center'>
 						{tests?.map((test, index) => (
-							<div key={test.id} className='border border-gray-100 mt-5 flex flex-col justify-between rounded-xl p-3 pt-5 max-w-[430px] shadow-lg'>
-							<h3 className='font-semibold text-lg text-gray-600 pr-[30px]'>{test.question}</h3>
-							{/* В зависимости от типа вопроса, можно отобразить разные элементы */}
+							<div key={test.id} className='border border-gray-100 mt-5 flex flex-col justify-between rounded-xl p-3 pt-5 min-w-[330px] max-w-[430px] shadow-lg'>
+							{test.questionType === "AUDIOCHOOSE" ? <audio src={test.question} controls className='w-[80%] h-9'></audio> : test.questionType === "CONNECT_LETTERS" ? <h1 className='text-lg font-semibold text-gray-600'>Составьте слово из букв</h1> :<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>}
 							{test.questionType === "MULTIPLE_CHOICE" && (
 									<ul className='py-3 text-gray-500 font-semibold relative'>
 											{test.options.map((option) => (
@@ -236,7 +264,7 @@ const Page = () => {
 													/>
 													-
 													<div className={`flex w-full justify-between ${option.isCorrect ? "" : ""}`}>
-														<h1>{option.text}</h1>
+														<h1 className='text-gray-400 font-semibold'>{option.text}</h1>
 														<h1 className={` ${option.isCorrect ? "bg-green-200 border-green-300 border-2 rounded-xl px-3 text-green-500 font-semibold text-sm" : "bg-red-200 border-red-300 border-2 rounded-xl px-3 text-red-500 font-semibold text-sm"}`}>{option.isCorrect === true ? "верный" : "неверный"}</h1>
 													</div>
 												</li>
@@ -251,13 +279,13 @@ const Page = () => {
 							)}
 							{test.questionType === "FILL_IN_THE_BLANK" && (
 								<div className='relative'>
+									<div className='flex font-semibold text-gray-400'>
+										Правильные ответы:
+									</div>
 									{test.options.map((data, id)=> (
-										<div key={data.id} className='text-gray-600 font-medium mt-3 flex-col'>
-											<div className='flex'>
-												Допустимые ответы:
-											</div>
-											<div className='flex gap-3 px-3 py-2 text-green-700 bg-green-200 w-[220px] items-center justify-center rounded-lg border-2 border-green-500'>
-												<h1>
+										<div key={data.id} className='text-gray-600 font-medium mt-1 flex-col'>
+											<div className='w-full flex justify-start items-start'>
+												<h1 className='flex gap-3 px-3 py-1 text-green-500 bg-green-200 font-semibold rounded-xl border-green-300 text-sm items-center justify-center border-2'>
 													{data.text}
 													{data.isCorrect}
 												</h1>
@@ -267,20 +295,87 @@ const Page = () => {
 									))}
 								</div>
 							)}
+							{test.questionType === "AUDIOCHOOSE" && (
+									<ul className='py-3 text-gray-500 font-semibold relative'>
+											{test.options.map((option) => (
+												<li key={option.id} className='flex gap-3 h-9 border-t items-center border-gray-100 rounded-lg '>
+													<input
+														className='w-5 h-5 rounded-xl cursor-pointer transition-all'
+														type="checkbox"
+														checked={selectedAnswer[test.id] === option.id}
+														onChange={() => handleCheckboxChange(test.id, option.id)}
+													/>
+													-
+													<div className={`flex w-full justify-between ${option.isCorrect ? "" : ""}`}>
+														<h1 className='text-gray-400'>{option.text}</h1>
+														<h1 className={` ${option.isCorrect ? "bg-green-200 border-green-300 border-2 rounded-xl px-3 text-green-500 font-semibold text-sm" : "bg-red-200 border-red-300 border-2 rounded-xl px-3 text-red-500 font-semibold text-sm"}`}>{option.isCorrect === true ? "верный" : "неверный"}</h1>
+													</div>
+												</li>
+										))}
+										<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+									</ul>
+							)}
+							{test.questionType === "TRUE_OR_FALSE" && (
+									<ul className='py-3 text-gray-500 font-semibold relative flex flex-col gap-1 items-center w-full'>
+											{test.options.map((option) => (
+												<div key={option.id} className='flex justify-between items-center w-full border border-gray-100 rounded-lg'>
+													<h1 className="px-2 py-2 text-gray-400">{option.text}</h1>
+													<h1 className={`px-2 py-2 ${option.isCorrect ? "bg-green-200 rounded-lg border-2 border-green-400 text-green-500" : "bg-red-200 rounded-lg border-2 border-red-400 text-red-500"}`}>{option.isCorrect ? "Истина": "Ложь"}</h1>
+												</div>
+										))}
+										<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+									</ul>
+							)}
+							{test.questionType === "CONNECT_LETTERS" && (
+									<ul className='py-3 text-gray-500 font-semibold relative flex gap-1 items-center w-full flex-col'>
+										<span className='text-base font-semibold text-gray-400'>Загаданное слово: {test.question}</span>
+										<div className='flex gap-1'>
+											{shuffleArray(test.question.split("")).map((letter:any, id:any) => (
+													<div key={id} className='h-8 w-8 bg-green-200 flex justify-center items-center border-2 border-green-400 text-green-500 font-semibold rounded-lg'>
+															{letter.toLowerCase()}
+													</div>
+											))}
+											<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										</div>
+									</ul>
+							)}
+							{test.questionType === "BIG_TEXT_OR_STATIYA" && (
+								<ul className='relative'>
+									<div className='py-3 text-gray-500 font-semibold relative flex gap-1 items-center w-full flex-col'>
+										<Textarea className='w-fill min-h-20'/>
+									</div>
+									<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+								</ul>
+							)}
+							{test.questionType === "TEXT_PO_PORYADKY" && (
+								<ul className='relative'>
+									{shuffleArray(test.answers.map((data, id) => (
+										<div key={id}>
+											<h1 className='text-base font-semibold text-gray-400'>Предложение: {data.order}</h1>
+											<h1 className='w-full p-2 border border-gray-100 rounded-lg text-gray-400 font-medium text-sm'>{data.text}</h1>
+										</div>
+									)))}
+									{/* Правильный текст */}
+									<div className='mt-4 p-2 border border-blue-200 rounded-lg'>
+											<h1 className='font-semibold text-gray-600'>Правильный порядок:</h1>
+											<p className='text-gray-400 text-sm flex flex-col gap-3'>
+													{test.answers
+															.filter(data => data.order !== null) // Фильтрация, чтобы убрать null
+															.sort((a, b) => (a.order || 0) - (b.order || 0)) // Сортируем с проверкой на null
+															.map((data) => (<span>{data.text}</span>))
+													}
+											</p>
+									</div>
+									<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+								</ul>
+							)}
 					</div>
 						))}
 					</div>
 					
 					<div
-						onClick={() => {
-							if (currRasdel && currRasdel.id && currRasdel.lessonId) {
-								createSimpTest(currRasdel.id, currRasdel.lessonId);
-							} else {
-								console.error("currRasdel is null or its properties are undefined");
-							}
-						}}
 					>
-						createTest
+						<CreateTestModal currRasdelId={currRasdel ? currRasdel.id : ""} visov={updateVisov} lessonId={currRasdel ? currRasdel?.lessonId : ""}/>
 					</div>
 				</div>
 			</div>

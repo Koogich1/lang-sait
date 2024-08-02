@@ -13,28 +13,30 @@ import { useRouter } from 'next/navigation';
 import { IoPencil } from "react-icons/io5";
 import Soderg from './components/soderg';
 import Opisanie from './components/opisanie';
+import DeleteCourseModal from '../../components/modal/deleteCourseModal';
+import UpdateCourseModal from '../../components/modal/updateCourseModal';
 
 const CourseDetails = () => {
   const { courseId } = useParams(); // Получите courseId из query
   const [course, setCourse] = useState<courseData | null>(null);
   const [creator, setCreator] = useState<User | null>(null)
   const [currUser, setCurrUser] = useState<User | null>(null)
-  const router = useRouter()
   const [selectedMenuItem, setSelectedMenuItem] = useState("opisanie");
 
-  useEffect(() => {
-    const fetchCourse = async () => {
-      if (typeof courseId === 'string') { // Проверяй тип courseId
-        const courseData = await getCourseById(courseId);
-        if (courseData) {
-          const creatorData = await getCreator(courseData.userId)
-          console.log(creatorData)
-          setCreator(creatorData);
-          setCourse(courseData);
-        }
+  const fetchCourse = async () => {
+    if (typeof courseId === 'string') { // Проверяй тип courseId
+      const courseData = await getCourseById(courseId);
+      if (courseData) {
+        const creatorData = await getCreator(courseData.userId)
+        console.log(creatorData)
+        setCreator(creatorData);
+        setCourse(courseData);
       }
-    };
-    fetchCourse();
+    }
+  };
+
+  useEffect(() => {
+    fetchCourse()
   }, [courseId]);
 
   useEffect(() => {
@@ -61,24 +63,11 @@ const CourseDetails = () => {
             </div>
             <div className='flex gap-2'>
               {currUser.id === creator.id && <div className='font-semibold text-sm hover:bg-gray-200 hover:text-gray-600 text-gray-500 py-1 bg-gray-100  w-[120px] rounded-lg flex items-center justify-center cursor-pointer transition-all'>Ваш учебник</div>}
-              <div 
-                className='p-2 bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-600 rounded-lg flex items-center justify-center cursor-pointer transition-all'
-                onClick={() => {
-                  deleteCourse(course.id)
-                  router.push("/createCourses/materials/")
-                }}
-              >
-                <FaRegTrashCan />
-              </div>
+              <DeleteCourseModal courseId ={course.id} />
             </div>
           </div>
         </div>
-        <div
-          className='bg-gray-100 h-9 w-9 border-2 text-xl text-gray-500 hover:bg-gray-200 hover:text-gray-600 rounded-lg flex items-center justify-center cursor-pointer transition-all'
-          onClick={() => {}} //СДЕЛАТЬ РЕДАКТИРОВАНИЕ ОСНОВНОЙ ИНФОРМАЦИИ О КУРСЕ
-        >
-          <IoPencil />
-        </div>
+        <UpdateCourseModal courseId={courseId as string} updateData={fetchCourse}/>
       </header>
       <div className='border-b border-gray-100 px-3 mt-3'>
         <ul className='flex gap-5 h-10 items-center'>

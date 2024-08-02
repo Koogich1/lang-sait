@@ -113,16 +113,19 @@ model courseData {
   name        String      @default("")
   aboutCourse String      @default("")
   language    String      @default("")
-  rasdelId    String[]    @default([""])
+  rasdels     rasdelId[]
   photoUrl    String      @default("")
+  createdAt   DateTime @default(now())
 }
 
 model rasdelId {
   id              String   @id @default(cuid())
   photoUrl        String   @default("")
   coureId         String   @default("")
+  course          courseData @relation(fields: [coureId], references: [id])
   userId          String   @default("")
   name            String   @default("")
+  position       Int        @default(1)
   aboutRasdel     String   @default("")
   lessons         Lessons[]
 }
@@ -131,6 +134,7 @@ model Lessons {
   id                String      @id @default(cuid())
   photoUrl          String      @default("")
   rasdelId          String      @default("")
+  position       Int        @default(1)
   rasdel            rasdelId    @relation(fields: [rasdelId], references: [id])
   name              String      @default("")
   aboutLesson       String      @default("")
@@ -153,6 +157,7 @@ model Test {
   id             String          @id @default(cuid())
   lessonId       String
   littleRasdelId String
+  position       Int        @default(1)
   lesson         Lessons         @relation("LessonTests", fields: [lessonId], references: [id])
   littleRasdel   LittleRasdel    @relation("LittleRasdelTests", fields: [littleRasdelId], references: [id])
   question       String          @default("")
@@ -179,8 +184,13 @@ model Answer {
 
 enum QuestionType {
   MULTIPLE_CHOICE
+  AUDIOCHOOSE
   ORDERING
   FILL_IN_THE_BLANK
+  TRUE_OR_FALSE
+  CONNECT_LETTERS
+  BIG_TEXT_OR_STATIYA
+  TEXT_PO_PORYADKY
 }
 
 model Teacher {

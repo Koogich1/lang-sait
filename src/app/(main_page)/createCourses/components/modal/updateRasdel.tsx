@@ -11,17 +11,14 @@ import { useEffect, useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
   Form,
-  FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 
@@ -30,11 +27,9 @@ import { FiPlus } from "react-icons/fi";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import Image from "next/image";
 import createS3photo from "../actions/createS3photo";
 import { courseData, User } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import sendCourseData from "../actions/sendCourseData";
 import createRasdel from "../actions/createRasdel";
 
 const FormSchema = z.object({
@@ -57,7 +52,7 @@ type Props = {
 	course: courseData,
 }
 
-const CreateNewRasp = ({updateData, course}: Props) => {
+const UpdateRasdel = ({updateData, course}: Props) => {
   const [open, setOpen] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null)
@@ -108,7 +103,7 @@ const CreateNewRasp = ({updateData, course}: Props) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open}>
       <DialogTrigger className="w-full my-3">
 				<div className="flex gap-3 w-full h-[10vh] border items-center justify-center rounded-lg hover:border-2 hover:border-blue-200 text-gray-400 hover:text-blue-400 hover:bg-blue-50 transition-all"
 					onClick={() => {setOpen(true)}}
@@ -245,4 +240,4 @@ const CreateNewRasp = ({updateData, course}: Props) => {
   );
 };
 
-export default CreateNewRasp;
+export default UpdateRasdel;
