@@ -42,7 +42,7 @@ export const NewVerificationForm= () => {
 
  return(
 	<CardWrapper
-		headerLabel="Подтвердите Email"
+		headerLabel="Подтвердите Email, письмо подтверждения отправлено на вашу почту!"
 		backButtonLabel="Вернуться к авторизации" 
 		backButtonHref="/auth/login"
 	>

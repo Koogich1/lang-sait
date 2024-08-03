@@ -33,7 +33,7 @@ const UserProfile = () => {
   }
 
 	if(user.role === "MODERATOR"){
-		router.push("/createCourses")
+		router.push("/createCourses/materials")
 	}
 
 	return(
