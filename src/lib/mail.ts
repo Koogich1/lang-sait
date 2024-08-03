@@ -19,7 +19,7 @@ export const sendPasswordResetEmail = async (
 	email: string,
 	token: string,
 ) => {
-	const resetLink = `http://send.acyberg.com:3000/auth/new-password?token=${token}`
+	const resetLink = `http://send.acyberg.com/auth/new-password?token=${token}`
 	await resend.emails.send({
 		from: "mail@acyberg.com",
 		to: email,
@@ -32,7 +32,7 @@ export const sendVerificationEmail = async (
 	email: string,
 	token: string
 ) => {
-	const confirmLink = `http://send.acyberg.com:3000/auth/new-verification?token=${token}`
+	const confirmLink = `http://send.acyberg.com/auth/new-verification?token=${token}`
 
 	await resend.emails.send({
 		from: "mail@acyberg.com",
