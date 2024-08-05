@@ -49,6 +49,7 @@ import deleteLessons from "../actions/deleteLessons";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import UpdateLessonModal from "./updateLessonModal";
+import { PuffLoader } from "react-spinners";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).refine(
@@ -76,6 +77,7 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null)
   const [lessons, setLessons] = useState<Lessons[] | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const fetcher = async() => {
     const Fetchlessons = await fetchlessons({rasdId: rasdelId})
@@ -109,27 +111,48 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const file = data.photoImage;
-
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64Data = reader.result as string; // Получаем строку в формате base64
-      const folderName = `course_${user.name}_${data.name}_${Math.floor(Math.random() * (1000000 - 100 + 1)) + 100}`;
-      const fileName = `lesson-${data.name}`;
-      const fileURL = `https://storage.yandexcloud.net/langschoolacynberg/courses/${user.id}/${folderName}/${fileName}`
-
+    const name = data.name;
+    const aboutCourse = data.aboutCourse;
+    const courseId = rasdelId
+  
+    if (file) {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("name", name);
+      formData.append("aboutCourse", aboutCourse);
+      formData.append("courseId", courseId);
+  
       try {
-				await createS3photo(base64Data, folderName, fileName);
-				await createLessons({name: data.name, aboutLesson: data.aboutCourse, photoUrl: fileURL, rasdelId: rasdelId})
+        const response = await fetch('/api/user/createLesson', {
+          method: 'POST',
+          body: formData,
+        });
+        const result = await response.json();
+        if (result.success) {
+          fetcher()
+          setOpen(false);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
         fetcher()
-        updateData()
-				setOpen(false)
-      } catch (error) {
-        console.error('Ошибка при загрузке фото:', error);
       }
-    };
-
-    reader.readAsDataURL(file); // Чтение файла как Data URL, что также является строкой base64
+    }
+    setLoading(false)
+    fetcher()  // Вызовите обновление данных
   };
+
+  if(loading){
+    return(
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="flex justify-center items-center min-h-[50vh] max-w-[430px] flex-col">
+          <h1 className="text-2xl font-bold text-gray-400">Загрузка данных...</h1>
+          <PuffLoader className="" size={100} color="#835BD2"/>
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
   return (
     <div>

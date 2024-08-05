@@ -42,6 +42,7 @@ import createS3photo from "../actions/createS3photo";
 import { User } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import sendCourseData from "../actions/sendCourseData";
+import { PuffLoader } from "react-spinners";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).refine(
@@ -65,6 +66,7 @@ const CreateNewCourse = ({ updateData }: { updateData: () => void }) => {
   const [open, setOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const handleUser = async () => {
@@ -90,35 +92,55 @@ const CreateNewCourse = ({ updateData }: { updateData: () => void }) => {
     return null; // Или возвращайте что-то другое
   }
 
-  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    const file = data.photoImage;
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const file = data.photoImage
+		const name = data.name
+    const aboutCourse = data.aboutCourse
+    const language = data.language
 
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64Data = reader.result as string;
-      const folderName = `course_${user.name}_${data.name}_${Math.random().toString(36).substr(2, 9)}`; // Используем случайную строку
-      const fileName = `oblozhka.jpg`;
-      const fileURL = `https://storage.yandexcloud.net/langschoolacynberg/courses/${user.id}/${folderName}/${fileName}`;
-      
-      try {
-        await createS3photo(base64Data, folderName, fileName);
-        await sendCourseData({ name: data.name, aboutCourse: data.aboutCourse, language: data.language, photoUrl: fileURL });
-        updateData();
-      } catch (error) {
-        console.error('Ошибка при загрузке фото:', error);
+    if(file){
+      setLoading(true)
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("name", name)
+      formData.append("aboutCourse", aboutCourse)
+      formData.append("language", language)
+      try{
+        const response = await fetch('/api/user/addCourseImage', { // Путь к вашему API
+          method: 'POST',
+          body: formData,
+       });
+       const result = await response.json();
+				if(result.success){
+					updateData()
+          setLoading(false)
+					setOpen(false)
+				}
+      } catch(e){
+        console.log(e)
       }
-    };
-
-    reader.readAsDataURL(file);
+    }
+    updateData()
   };
 
+  if(loading){
+    return(
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="flex justify-center items-center min-h-[50vh] max-w-[430px] flex-col">
+          <h1 className="text-2xl font-bold text-gray-400">Загрузка данных...</h1>
+          <PuffLoader className="" size={100} color="#835BD2"/>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         className="w-[175px] h-[270px] flex flex-col items-center justify-center gap-3 border-2 border-dashed hover:border-solid hover:border-purple-600 transition-all rounded-lg"
         onClick={() => setOpen(true)}
       >
-        <h1 className="text-xl font-bold text-[#835BD2]">Создать курс</h1>
+        <h1 className="text-xl font-bold text-[#835BD2]">Новый курс</h1>
         <div className="h-6 w-6 bg-[#835BD2] rounded-lg">
           <FaPlus className="w-full h-full p-1 text-white" />
         </div>
@@ -131,7 +153,7 @@ const CreateNewCourse = ({ updateData }: { updateData: () => void }) => {
           <IoCloseOutline className="text-2xl text-white" />
         </div>
         <DialogHeader>
-          <DialogTitle className="text-gray-600 text-3xl font-bold">Новый материал</DialogTitle>
+          <DialogTitle className="text-gray-600 text-3xl font-bold">Создание курса</DialogTitle>
         </DialogHeader>
         <div className="w-full h-[1px] bg-gray-200"></div>
         <Form {...form}>
@@ -155,7 +177,7 @@ const CreateNewCourse = ({ updateData }: { updateData: () => void }) => {
                     <Input
                       id="picture"
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg, image/png"
                       className="hidden"
                       onChange={(e) => {
                         if (e.target.files && e.target.files.length > 0) {

@@ -84,7 +84,7 @@ const Soderg = ({course}: Props ) => {
 					</AccordionItem>
 				))}
 			</Accordion>
-			<CreateNewRasp updateData={fetchRasd} course={course}/>
+			<CreateNewRasp updateData={() => fetchRasd()} course={course}/>
 		</div>
 	)
 }

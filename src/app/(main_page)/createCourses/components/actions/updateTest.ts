@@ -8,6 +8,7 @@ type Props = {
   options?: { id: string; text: string; isCorrect: boolean }[]; // Массив объектов для обновления опций
   answers?: { id: string; text: string; order?: number }[]; // Массив объектов для обновления ответов
   fileUrl?: string;
+  audioName?: string;
 };
 
 const updateTest = async ({
@@ -15,13 +16,14 @@ const updateTest = async ({
   options,
   answers,
   testId,
+  audioName,
 }: Props) => {
-  // Сначала обновляем сам тест
 
   const updatedTest = await db.test.update({
     where: { id: testId },
     data: {
       question: name,
+      audioHeader: audioName,
       options: {
         // Если options не переданы, можно не обновлять их
         ...(options && {
@@ -41,6 +43,8 @@ const updateTest = async ({
       },
     },
   });
+
+
 
   return updatedTest;
 };

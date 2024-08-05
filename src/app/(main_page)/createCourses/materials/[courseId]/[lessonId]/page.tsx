@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { LittleRasdel, QuestionType, Option, Answer } from "@prisma/client"
+import { LittleRasdel, QuestionType, Option, Answer, Materials } from "@prisma/client"
 import fetchTestFromDb from '../../../components/actions/fetchTestFromDb'
 import { IoClose, IoMenuOutline } from "react-icons/io5";
 import { IoPencil } from "react-icons/io5";
@@ -41,6 +41,8 @@ import UpdateTestModal from '../../../components/modal/updateTestModal'
 import CreateTestModal from '../../../components/modal/createTestModal'
 import { Textarea } from '@/components/ui/textarea'
 import DeleteRasdelModal from '../../../components/modal/deleteRasdelModal'
+import MaterialBox from './components/materialBox'
+import getMaterailFromDb from '../../../components/actions/materials/getMaterailFromDb'
 
 const FormSchema = z.object({
   username: z.string().max(30, {
@@ -51,6 +53,7 @@ const FormSchema = z.object({
 type Test = {
   id: string;
   lessonId: string;
+	audioHeader: string | null;
   littleRasdelId: string;
   question: string;
   questionType: QuestionType; // Это значение может быть enum или типом, определенным в Prisma
@@ -66,6 +69,18 @@ const Page = () => {
 	const [currRasdel, setCurretRasdel] = useState<{ id: string; lessonId: string; name: string } | null>(null)
 	const [settingOn, setSettingOn] = useState(false)
 	const [selectedAnswer, setSelectedAnswer] = useState<{ [key: string]: string | null }>({});
+	const [testOrMaterials, setTextOrMaterials] = useState("test")
+	const [materials, setMaterials] = useState<Materials[]>([]);
+
+  const fetchMaterials = async (rasdelId: string) => {
+    const data = await getMaterailFromDb({
+      currentLessonId: lessonId as string,
+      currentLittleRasdelId: rasdelId,
+    });
+    if (data) {
+      setMaterials(data);
+    }
+  };
 
 
 	const fetchTest = async (rasdelId: string) => {
@@ -97,6 +112,7 @@ const Page = () => {
 		const loadRasdels = async () => {
 			await fetchRasdels(); // Ждем, пока данные загружены
 		}
+		fetchMaterials(currRasdel?.id ? currRasdel.id : "")
 		loadRasdels(); // Вызываем функцию загрузки данных
 	}, [lessonId])
 
@@ -169,6 +185,7 @@ const Page = () => {
 									className='flex gap-5 items-center px-3 py-[0.4rem]'
 									onClick={async () => {
 										setCurretRasdel({ id: data.id, lessonId: data.lessonId, name: data.name });
+										await fetchMaterials
 										await fetchTest(data.id);
 									}}
 								>
@@ -243,15 +260,39 @@ const Page = () => {
 										lessonId={currRasdel ? currRasdel.lessonId : ""}
 										visov={setRasdel} // это обновляет состояние, устанавливая первый раздел
 									/>
-
 								</div>
 							</h1>
 							}
 					</div>
-					<div className='flex flex-col items-center'>
+					<div className='w-full h-8 mt-1 rounded-t-lg relative flex justify-between'>
+							<ul className='flex justify-between w-full items-center px-3 text-lg font-semibold text-gray-400'>
+								<li className={`cursor-pointer w-1/2 flex items-center justify-center border border-gray-100 rounded-t-lg hover:bg-blue-50 transition-all ${testOrMaterials === "test" ? "border-b-[3px] border-b-blue-400 text-blue-400": ""}`}
+									onClick={() => {
+										setTextOrMaterials("test")
+									}}
+								>
+									Тест
+								</li>
+								<li className={`cursor-pointer w-1/2 flex items-center justify-center border border-gray-100 rounded-t-lg hover:bg-blue-50 transition-all ${testOrMaterials === "materials" ? "border-b-[3px] border-b-blue-400 text-blue-400": ""}`}
+									onClick={async() => {
+										if(!currRasdel){return}
+										setTextOrMaterials("materials")
+										await fetchMaterials(currRasdel.id ? currRasdel.id : "")
+									}}
+								>
+									Материал
+								</li>
+							</ul>
+					</div>
+					{testOrMaterials === "test" ? 
+						<div className='flex flex-col items-center'>
 						{tests?.map((test, index) => (
 							<div key={test.id} className='border border-gray-100 mt-5 flex flex-col justify-between rounded-xl p-3 pt-5 min-w-[330px] max-w-[430px] shadow-lg'>
-							{test.questionType === "AUDIOCHOOSE" ? <audio src={test.question} controls className='w-[80%] h-9'></audio> : test.questionType === "CONNECT_LETTERS" ? <h1 className='text-lg font-semibold text-gray-600'>Составьте слово из букв</h1> :<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>}
+							{test.questionType === "AUDIOCHOOSE" ? 
+							<div>
+								<h1 className='text-lg font-semibold text-gray-600'>{test.audioHeader ? test.audioHeader : "Введите название"}</h1>
+								<audio src={test.question} controls className='w-[80%] h-9 my-3'></audio>
+							</div> : test.questionType === "CONNECT_LETTERS" ? <h1 className='text-lg font-semibold text-gray-600'>Составьте слово из букв</h1> :<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>}
 							{test.questionType === "MULTIPLE_CHOICE" && (
 									<ul className='py-3 text-gray-500 font-semibold relative'>
 											{test.options.map((option) => (
@@ -372,10 +413,12 @@ const Page = () => {
 					</div>
 						))}
 					</div>
-					
+					:
+						<MaterialBox currRasdel={currRasdel ? currRasdel : null} visov={() => fetchMaterials(currRasdel?.id ? currRasdel.id : "")} materials={materials}/>
+					}
 					<div
 					>
-						<CreateTestModal currRasdelId={currRasdel ? currRasdel.id : ""} visov={updateVisov} lessonId={currRasdel ? currRasdel?.lessonId : ""}/>
+						{testOrMaterials === "test" ? <CreateTestModal currRasdelId={currRasdel ? currRasdel.id : ""} visov={updateVisov} lessonId={currRasdel ? currRasdel?.lessonId : ""}/> : ''}
 					</div>
 				</div>
 			</div>

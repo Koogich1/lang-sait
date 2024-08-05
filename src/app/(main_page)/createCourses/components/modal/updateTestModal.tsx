@@ -69,6 +69,9 @@ const FormSchema = z.object({
   }, {
     message: 'Пожалуйста, загрузите файл формата mp3.',
   }),
+	audioName: z.string().max(350, {
+		message: "Не более 350 символов"
+	})
 });
 
 
@@ -80,6 +83,7 @@ type Test = {
   questionType: QuestionType;
   options: Option[];
   answers: Answer[];
+	audioName?: string | null;
 };
 
 const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => void}) => {
@@ -87,7 +91,7 @@ const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => v
 	const [testInfo, setTestInfo] = useState(test)
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [user, setUser] = useState<User | null>(null)
-
+	
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -97,6 +101,7 @@ const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => v
 			isTrue: testInfo.options.map((data) => data.isCorrect.toString()), // массив булевых cтрок
 			answer: testInfo.answers.map((data) => data.text),
 			poriyadNum: testInfo.answers.map((data) => data.order?.toString()),
+			audioName: testInfo.audioName || '',
 		},
 	});
 
@@ -118,14 +123,15 @@ const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => v
 				setTestInfo(data);
 				form.reset({
 						question: data.question,
+						audioName: data?.audioHeader || "",
 						option: data.options.map((data) => data.text),
 						isTrue: data.options.map((data) => data.isCorrect.toString()),
 						answer: data.answers.map((data) => data.text),
-						poriyadNum: data.answers.map((data) => data.order?.toString())
+						poriyadNum: data.answers.map((data) => data.order?.toString()),
 				});
 			}
 		};
-
+		
 		async function onSubmit(data: z.infer<typeof FormSchema>) {
 			const file = data.file;
 	
@@ -149,7 +155,6 @@ const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => v
 					formData.append('testId', testInfo.id);
 					// Добавьте другие необходимые поля, такие как optionsToUpdate и answersToUpdate,
 					// если это нужно на сервере, например, в JSON-формате.
-	
 					try {
 							const response = await fetch('/api/user/addFiles', { // Путь к вашему API
 									method: 'POST',
@@ -178,11 +183,11 @@ const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => v
 					// Если файл не выбран, просто обновляем тест
 					await updateTest({
 							name: data.question,
+							audioName: data.audioName,
 							options: optionsToUpdate,
 							answers: answersToUpdate,
 							testId: testInfo.id,
 					});
-	
 					setOpen(false);
 					updateVisov();
 			}
@@ -191,7 +196,7 @@ const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => v
 	return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-				<div className="p-2 mt-3 bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 text-lg absolute top-[-50px] right-0 rounded-lg cursor-pointer">
+				<div className={`p-2 mt-3 bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 text-lg absolute top-[-50px] right-0 rounded-lg cursor-pointer ${testInfo && testInfo.questionType === "AUDIOCHOOSE" ? "top-[-6.9rem]" : ""}`}>
 					<FaPen />
 				</div>
       </DialogTrigger>
@@ -204,13 +209,25 @@ const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => v
 				<form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
 				{testInfo.questionType === "AUDIOCHOOSE" ? (
               <div>
-                <audio src={testInfo.question} controls></audio>
+								<FormField
+                control={form.control}
+                name="audioName"
+                render={({ field }) => (
+                  <FormItem className="flex items-center justify-between my-3">
+										<FormLabel className="w-1/3 text-xl font-semibold text-gray-400">Задание:</FormLabel>
+										<FormControl className="w-2/3 text-lg">
+											<Input placeholder="Введите задание!" {...field} className="flex justify-center items-center text-gray-400"/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+                )}
+              />
 								<FormField
                 control={form.control}
                 name="file"
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between">
-										<FormLabel className="w-1/3 text-lg font-semibold text-gray-600">Выберите файл:</FormLabel>
+										<FormLabel className="w-1/3 text-lg font-semibold text-gray-400">Выберите файл:</FormLabel>
 										<FormControl className="w-2/3 text-lg">
 										<Input
 												type="file"

@@ -3,13 +3,15 @@
 import Katalog from './katalog/katalog';
 import Personal from './personal/personal';
 import { FaInfo } from "react-icons/fa6";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
+import { User } from '@prisma/client';
+import { currentUser } from '@/lib/auth';
 
 const Page = () => {
 	const [selectedMenuItem, setSelectedMenuItem] = useState("personal");

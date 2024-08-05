@@ -36,6 +36,8 @@ import { courseData, User } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import sendCourseData from "../actions/sendCourseData";
 import createRasdel from "../actions/createRasdel";
+import { ClipLoader, PuffLoader } from "react-spinners";
+import updateCourse from "../actions/updateCourse";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).refine(
@@ -61,6 +63,7 @@ const CreateNewRasp = ({updateData, course}: Props) => {
   const [open, setOpen] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const handleUser = async() => {
@@ -86,26 +89,48 @@ const CreateNewRasp = ({updateData, course}: Props) => {
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const file = data.photoImage;
-
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64Data = reader.result as string; // Получаем строку в формате base64
-      const folderName = `course_${user.name}_${data.name}_${Math.floor(Math.random() * (1000000 - 100 + 1)) + 100}`;
-      const fileName = `rasdel-${data.name}`;
-      const fileURL = `https://storage.yandexcloud.net/langschoolacynberg/courses/${user.id}/${folderName}/${fileName}`
-
+    const name = data.name;
+    const aboutCourse = data.aboutCourse;
+    const courseId = course.id;
+  
+    if (file) {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("name", name);
+      formData.append("aboutCourse", aboutCourse);
+      formData.append("courseId", courseId);
+  
       try {
-				await createS3photo(base64Data, folderName, fileName);
-				await createRasdel({name: data.name, aboutRasdel: data.aboutCourse, photoUrl: fileURL, course: course})
-        updateData()
-				setOpen(false)
-      } catch (error) {
-        console.error('Ошибка при загрузке фото:', error);
+        const response = await fetch('/api/user/createNewRasdel', {
+          method: 'POST',
+          body: formData,
+        });
+        const result = await response.json();
+        if (result.success) {
+          updateData()
+          setOpen(false);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        updateData()  
       }
-    };
-
-    reader.readAsDataURL(file); // Чтение файла как Data URL, что также является строкой base64
+    }
+    setLoading(false)
+    updateData();  // Вызовите обновление данных
   };
+
+  if(loading){
+    return(
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="flex justify-center items-center min-h-[50vh] max-w-[430px] flex-col">
+          <h1 className="text-2xl font-bold text-gray-400">Загрузка данных...</h1>
+          <PuffLoader className="" size={100} color="#835BD2"/>
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -131,7 +156,7 @@ const CreateNewRasp = ({updateData, course}: Props) => {
           <IoCloseOutline className="text-2xl text-white" />
         </div>
         <DialogHeader>
-          <DialogTitle className="text-gray-600 text-3xl font-bold">Новый материал</DialogTitle>
+          <DialogTitle className="text-gray-600 text-3xl font-bold">Новый раздел</DialogTitle>
         </DialogHeader>
 				<div className="w-full h-[1px] bg-gray-200"></div>
         <Form {...form}>

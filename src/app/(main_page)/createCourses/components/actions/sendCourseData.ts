@@ -15,6 +15,7 @@ const sendCourseData = async({name, aboutCourse, language, photoUrl}: Props) => 
 	if(!user){
 		return
 	}
+	
 	console.log(name, language, aboutCourse, user.id)
 	try{
 		await db.courseData.create({

@@ -30,6 +30,7 @@ import { IoPencil } from "react-icons/io5";
 import updateRasdel from "../actions/updateRasdel";
 import fetchCourseById from "../actions/fetchCourseById";
 import updateCourse from "../actions/updateCourse";
+import { PuffLoader } from "react-spinners";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).optional(),
@@ -51,6 +52,7 @@ const UpdateCourseModal = ({ updateData, courseId }: Props) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [rasdel, setRasdel] = useState<courseData | null>(null);
+  const [loading, setLoading] = useState(false)
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -81,56 +83,67 @@ const UpdateCourseModal = ({ updateData, courseId }: Props) => {
     handleUser();
   }, [courseId]); // Обратите внимание на зависимости
 
-  const handleFileRead = async (file: File) => {
-    return new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve(reader.result as string); // Возвращаем base64
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
-      reader.readAsDataURL(file);
-    });
-  };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    console.log("Form Submitted: ", data); // Логируем данные формы
-
-    try {
-      const file = data.photoImage;
-      let base64Data;
-
-      if (file) {
-        base64Data = await handleFileRead(file); // Ждем, пока файл загрузится
+    const file = data.photoImage
+		const name = data.name
+    const aboutCourse = data.aboutCourse
+    if(file){
+      setLoading(true)
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("name", name)
+      formData.append("aboutCourse", aboutCourse)
+      formData.append("courseId", courseId)
+      try{
+        const response = await fetch('/api/user/updateCourse', { // Путь к вашему API
+          method: 'POST',
+          body: formData,
+       });
+       const result = await response.json();
+				if(result.success){
+          console.log('успешно')
+          setLoading(false)
+          setOpen(false)
+				}
+      } catch(e){
+        console.log(e)
       }
-
-      const folderName = `course_${user?.name}_${data.name}_${Math.floor(Math.random() * (1000000 - 100 + 1)) + 100}`;
-      const fileName = `rasdel-${data.name}`;
-      const fileURL = `https://storage.yandexcloud.net/langschoolacynberg/courses/${user?.id}/${folderName}/${fileName}`;
-
-      // Начинаем обновление
-      await updateCourse({ courseId, name: data.name, aboutCourse: data.aboutCourse });
-      
-      if (file) {
-				if(!base64Data){return}
-        await createS3photo(base64Data, folderName, fileName);
-        await updateCourse({ courseId, photoUrl: fileURL });
+    }else {
+      setLoading(true);
+      try {
+        await updateCourse({
+          courseId: courseId, 
+          name: name, 
+          aboutCourse: aboutCourse
+        });
         setOpen(false)
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);  // Убедитесь, что состояние загрузки выключается
       }
-      updateData();
-      setOpen(false);
-    } catch (error) {
-      console.error('Ошибка при обновлении раздела:', error);
     }
+    updateData()  
   };
+
+  if(loading){
+    return(
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="flex justify-center items-center min-h-[50vh] max-w-[430px] flex-col">
+          <h1 className="text-2xl font-bold text-gray-400">Загрузка данных...</h1>
+          <PuffLoader className="" size={100} color="#835BD2"/>
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
   if (!user || !rasdel) {
     return null; // Дожидаемся загрузки пользователя и раздела
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div className="w-9 h-9 bg-gray-200 text-xl rounded-lg mr-1 flex items-center justify-center hover:bg-gray-300 transition-all cursor-pointer">
           <IoPencil />
@@ -146,7 +159,7 @@ const UpdateCourseModal = ({ updateData, courseId }: Props) => {
           <IoCloseOutline className="text-2xl text-white" />
         </div>
         <DialogHeader>
-          <DialogTitle className="text-gray-600 text-3xl font-bold">Новый материал</DialogTitle>
+          <DialogTitle className="text-gray-600 text-3xl font-bold">Править курс</DialogTitle>
         </DialogHeader>
         <div className="w-full h-[1px] bg-gray-200"></div>
         <Form {...form}>
