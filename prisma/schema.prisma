@@ -4,7 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://gen_user:FG)ubFa2NS%269pL@93.93.207.164:5432/AsybergProd"
+  url      = "postgresql://langschool_owner:QSr2YNs6Adzi@ep-noisy-limit-a256jzax-pooler.eu-central-1.aws.neon.tech/langschool?sslmode=require"
+
 }
 
 enum UserRole {
@@ -125,7 +126,7 @@ model rasdelId {
   course          courseData @relation(fields: [coureId], references: [id])
   userId          String   @default("")
   name            String   @default("")
-  position       Int        @default(1)
+  position        Int        @default(1)
   aboutRasdel     String   @default("")
   lessons         Lessons[]
 }
@@ -141,6 +142,7 @@ model Lessons {
   littleRasdelId    String      @default("")
   littleRasdels     LittleRasdel[]  @relation("LessonLittleRasdels")
   tests             Test[]          @relation("LessonTests")
+  materials      Materials[]     @relation("LessonsMaterials")
 }
 
 model LittleRasdel {
@@ -150,11 +152,23 @@ model LittleRasdel {
   lessonId       String     @default("")
   lesson         Lessons    @relation("LessonLittleRasdels", fields: [lessonId], references: [id])
   tests          Test[]     @relation("LittleRasdelTests")
+  materials      Materials[]     @relation("littleRasdelMaterials")
 }
 
+model Materials {
+  id             String          @id @default(cuid())
+  imageSrc       String?
+  content        String?
+  lessonId       String
+  littleRasdelId String
+  position       Int             @default(1)
+  lesson         Lessons         @relation("LessonsMaterials", fields: [lessonId], references: [id])
+  littleRasdel   LittleRasdel    @relation("littleRasdelMaterials", fields: [littleRasdelId], references: [id])
+}
 
 model Test {
   id             String          @id @default(cuid())
+  audioHeader    String?         @default("")
   lessonId       String
   littleRasdelId String
   position       Int        @default(1)
