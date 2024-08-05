@@ -1,6 +1,5 @@
 "use client"
 
-
 import {
   Dialog,
   DialogContent,
@@ -45,13 +44,13 @@ const FormSchema = z.object({
 const AddImageMaterial = ({currRasdel, visov}: Props) => {
 	const [open, setOpen] = useState(false)
 
-	if(!currRasdel){
-		return
-	}
-
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
 	});
+
+    if(!currRasdel){
+		return
+	}
 
 	async function onSubmit(data: z.infer<typeof FormSchema>) {
 		console.log("работаю")
