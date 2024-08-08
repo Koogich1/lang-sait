@@ -39,7 +39,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import createS3photo from "../actions/createS3photo";
-import { Lessons, User } from "@prisma/client"; 
+import { courseData, Lessons, User } from "@prisma/client"; 
 import { currentUser } from "@/lib/auth";
 import createLessons from "../actions/createLessons";
 import fetchlessons from "../actions/fetchlessons";
@@ -50,6 +50,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import UpdateLessonModal from "./updateLessonModal";
 import { PuffLoader } from "react-spinners";
+import fetchCourseById from "../actions/fetchCourseById";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).refine(
@@ -78,6 +79,7 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
   const [user, setUser] = useState<User | null>(null)
   const [lessons, setLessons] = useState<Lessons[] | null>(null)
   const [loading, setLoading] = useState(false)
+  const [course, setCourse] = useState<courseData | null>(null)
 
   const fetcher = async() => {
     const Fetchlessons = await fetchlessons({rasdId: rasdelId})
@@ -88,9 +90,13 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
 
   useEffect(() => {
     const handleUser = async() => {
+      const course = await fetchCourseById(courseId as string)
       const userinf = await currentUser()
       if(userinf){
         setUser(userinf)
+      }
+      if(course){
+        setCourse(course)
       }
     }
     handleUser()
@@ -131,15 +137,18 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
         const result = await response.json();
         if (result.success) {
           fetcher()
+          updateData()
           setOpen(false);
         }
       } catch (e) {
         console.error(e);
       } finally {
+        updateData()
         fetcher()
       }
     }
     setLoading(false)
+    updateData()
     fetcher()  // Вызовите обновление данных
   };
 
@@ -166,25 +175,29 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
               </h1>
             </div>
             <div className="flex gap-1 items-center">
-            <UpdateLessonModal lessonId={data.id} updateData={fetcher} />
-            <DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<div className='h-7 w-7 rounded-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 transition-all cursor-pointer'>
-										<FaEllipsisH />
-									</div>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent className='text-gray-500 font-medium'>
-									<DropdownMenuItem className='hover:bg-gray-100 flex justify-between'
-                  onClick={() => {
-                    deleteLessons(data.id)
-                    fetcher()
-                  }}
-                  >
-										<FaRegTrashCan/>
-										Удалить
-									</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
+            {user.id === course?.userId &&
+            <>
+              <UpdateLessonModal lessonId={data.id} updateData={fetcher} />
+              <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className='h-7 w-7 rounded-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 transition-all cursor-pointer'>
+                      <FaEllipsisH />
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className='text-gray-500 font-medium'>
+                    <DropdownMenuItem className='hover:bg-gray-100 flex justify-between'
+                    onClick={() => {
+                      deleteLessons(data.id)
+                      fetcher()
+                    }}
+                    >
+                      <FaRegTrashCan/>
+                      Удалить
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+            </>
+            }
               <Link href={`/createCourses/materials/${courseId}/${data.id}`}>
                 <Button className="p-0 h-7 px-2 rounded-xl bg-transparent hover:bg-blue-400 text-blue-400 hover:text-white border border-blue-400">
                   Открыть
@@ -194,141 +207,143 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
           </li>
         ))}
       </ul>
-      <Dialog open={open}>
-        <DialogTrigger className="flex w-full py-2">
-          <div 
-            className="flex items-center gap-3 border-b w-full border-gray-50 py-2 text-gray-400 hover:text-blue-400 transition-all"
-            onClick={() => {setOpen(true)}}
-          >
-            <div className="transition-all h-8 w-8 bg-gray-400 hover:bg-blue-400 rounded-full flex items-center justify-center text-white transiti">
-              <FiPlus className="text-2xl"/>
+      {course?.userId === user.id &&
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger className="flex w-full py-2">
+            <div 
+              className="flex items-center gap-3 border-b w-full border-gray-50 py-2 text-gray-400 hover:text-blue-400 transition-all"
+              onClick={() => {setOpen(true)}}
+            >
+              <div className="transition-all h-8 w-8 bg-gray-400 hover:bg-blue-400 rounded-full flex items-center justify-center text-white transiti">
+                <FiPlus className="text-2xl"/>
+              </div>
+              <span className="font-bold">
+                Новый урок
+              </span>
             </div>
-            <span className="font-bold">
-              Новый урок
-            </span>
-          </div>
-        </DialogTrigger>
-        <DialogContent className="max-w-[420px]">
-          <div
-            className="w-6 h-6 bg-red-400 rounded-sm cursor-pointer hover:bg-red-500 absolute right-0 top-0 m-6"
-            onClick={() => {
-              setOpen(false);
-            }}
-          >
-            <IoCloseOutline className="text-2xl text-white" />
-          </div>
-          <DialogHeader>
-            <DialogTitle className="text-gray-600 text-3xl font-bold">Новый урок</DialogTitle>
-          </DialogHeader>
-          <div className="w-full h-[1px] bg-gray-200"></div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="">
-            <FormField
-              control={form.control}
-              name="photoImage"
-              render={({ field }) => (
-                <FormItem className="grid grid-cols-2 justify-center items-center space-y-0 gap-3 ml-0">
-                  <div className="w-[125px] h-[190px] rounded-xl bg-blue-200">
-                    {imagePreview && (
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="w-full h-full object-cover rounded-xl"
-                      />
-                    )}
-                  </div>
-                  <div className="flex flex-col w-full max-w-sm items-center gap-1.5">
-                    <Label htmlFor="picture" className="text-lg text-gray-600 font-bold">Обложка</Label>
-                    <Input
-                      id="picture"
-                      type="file"
-                      accept="image/*"
-                      className="hidden" // Скрываем стандартный input
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files.length > 0) {
-                          const selectedFile = e.target.files[0];
-                          field.onChange(selectedFile);
-                          const fileURL = URL.createObjectURL(selectedFile);
-                          setImagePreview(fileURL);
-                        }
-                      }}
-                      />
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          const input = document.getElementById('picture');
-                          if (input) {
-                            input.click(); // Имитируем клик только если элемент найден
-                          } else {
-                            console.warn('Input not found');
+          </DialogTrigger>
+          <DialogContent className="max-w-[420px]">
+            <div
+              className="w-6 h-6 bg-red-400 rounded-sm cursor-pointer hover:bg-red-500 absolute right-0 top-0 m-6"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              <IoCloseOutline className="text-2xl text-white" />
+            </div>
+            <DialogHeader>
+              <DialogTitle className="text-gray-600 text-3xl font-bold">Новый урок</DialogTitle>
+            </DialogHeader>
+            <div className="w-full h-[1px] bg-gray-200"></div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="">
+              <FormField
+                control={form.control}
+                name="photoImage"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-2 justify-center items-center space-y-0 gap-3 ml-0">
+                    <div className="w-[125px] h-[190px] rounded-xl bg-blue-200">
+                      {imagePreview && (
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="w-full h-full object-cover rounded-xl"
+                        />
+                      )}
+                    </div>
+                    <div className="flex flex-col w-full max-w-sm items-center gap-1.5">
+                      <Label htmlFor="picture" className="text-lg text-gray-600 font-bold">Обложка</Label>
+                      <Input
+                        id="picture"
+                        type="file"
+                        accept="image/*"
+                        className="hidden" // Скрываем стандартный input
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files.length > 0) {
+                            const selectedFile = e.target.files[0];
+                            field.onChange(selectedFile);
+                            const fileURL = URL.createObjectURL(selectedFile);
+                            setImagePreview(fileURL);
                           }
                         }}
-                        className="font-semibold text-lg w-full"
-                        variant='shadow2'
-                      >
-                        Загрузить
-                      </Button>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="w-full h-[1px] bg-gray-200 mt-5"></div>
-              <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem className="flex justify-center items-center space-y-0 gap-5 ml-0 mt-5">
-                      <Label htmlFor="name" className="text-base text-gray-600 font-semibold w-2/5">Название</Label>
-                      <Input
-                        {...field}
-                        placeholder="Введите название"
-                        className="w-3/5 h-[40px]"
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="aboutCourse"
-                  render={({ field }) => (
-                    <FormItem className="flex justify-center items-center space-y-0 gap-5 ml-0 mt-5">
-                      <Label htmlFor="aboutCourse" className="text-base text-gray-600 font-semibold w-2/5 text-nowrap">О уроке</Label>
-                      <Textarea
-                        {...field}
-                        placeholder="Описание"
-                        className="w-3/5 h-[40px]"
-                      />
+                        />
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            const input = document.getElementById('picture');
+                            if (input) {
+                              input.click(); // Имитируем клик только если элемент найден
+                            } else {
+                              console.warn('Input not found');
+                            }
+                          }}
+                          className="font-semibold text-lg w-full"
+                          variant='shadow2'
+                        >
+                          Загрузить
+                        </Button>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <div className="w-full h-[1px] bg-gray-200 mt-5"></div>
-              <div className="w-full h-[1px] bg-gray-200 mt-5"></div>
-              <div className="flex gap-3 mt-6">
-                <Button
-                  className="w-1/2 border-2 text-gray-300 border-gray-300 font-bold"
-                  type="button"
-                  onClick={() => {
-                    setOpen(false);
-                  }}
-                  variant="shadow2"
-                >
-                  Отмена
-                </Button>
-                <Button
-                  type="submit"
-                  className="w-1/2 text-base font-medium"
-                  variant="violetSelect"
-                >
-                  Создать
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+                <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem className="flex justify-center items-center space-y-0 gap-5 ml-0 mt-5">
+                        <Label htmlFor="name" className="text-base text-gray-600 font-semibold w-2/5">Название</Label>
+                        <Input
+                          {...field}
+                          placeholder="Введите название"
+                          className="w-3/5 h-[40px]"
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="aboutCourse"
+                    render={({ field }) => (
+                      <FormItem className="flex justify-center items-center space-y-0 gap-5 ml-0 mt-5">
+                        <Label htmlFor="aboutCourse" className="text-base text-gray-600 font-semibold w-2/5 text-nowrap">О уроке</Label>
+                        <Textarea
+                          {...field}
+                          placeholder="Описание"
+                          className="w-3/5 h-[40px]"
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="w-full h-[1px] bg-gray-200 mt-5"></div>
+                <div className="w-full h-[1px] bg-gray-200 mt-5"></div>
+                <div className="flex gap-3 mt-6">
+                  <Button
+                    className="w-1/2 border-2 text-gray-300 border-gray-300 font-bold"
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                    }}
+                    variant="shadow2"
+                  >
+                    Отмена
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="w-1/2 text-base font-medium"
+                    variant="violetSelect"
+                  >
+                    Создать
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+      }
     </div>
   );
 };

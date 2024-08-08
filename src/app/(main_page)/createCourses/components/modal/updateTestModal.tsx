@@ -89,7 +89,6 @@ type Test = {
 const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => void}) => {
 
 	const [testInfo, setTestInfo] = useState(test)
-	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [user, setUser] = useState<User | null>(null)
 	
 

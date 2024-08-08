@@ -63,11 +63,11 @@ const CourseDetails = () => {
             </div>
             <div className='flex gap-2'>
               {currUser.id === creator.id && <div className='font-semibold text-sm hover:bg-gray-200 hover:text-gray-600 text-gray-500 py-1 bg-gray-100  w-[120px] rounded-lg flex items-center justify-center cursor-pointer transition-all'>Ваш учебник</div>}
-              <DeleteCourseModal courseId ={course.id} />
+              {currUser.id === creator.id &&  <DeleteCourseModal courseId ={course.id} />}
             </div>
           </div>
         </div>
-        <UpdateCourseModal courseId={courseId as string} updateData={fetchCourse}/>
+        {currUser.id === creator.id && <UpdateCourseModal courseId={courseId as string} updateData={fetchCourse}/>}
       </header>
       <div className='border-b border-gray-100 px-3 mt-3'>
         <ul className='flex gap-5 h-10 items-center'>

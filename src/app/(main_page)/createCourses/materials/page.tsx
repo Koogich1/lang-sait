@@ -29,11 +29,11 @@ const Page = () => {
         <li 
 					onClick={() => handleMenuItemClick('personal')}
 					className={`
-						${selectedMenuItem === "personal" ? "border-b-2 border-purple-600 flex items-center gap-2" : ""}
-						pb-2 hover:bg-gray-100 transition p-2 px-5 cursor-pointer rounded-t-lg
+						${selectedMenuItem === "personal" ? "border-b-2 border-purple-600" : ""}
+						pb-2 hover:bg-gray-100 transition p-2 px-5 cursor-pointer rounded-t-lg flex items-center gap-2
 					`}
 				>
-					Мои курсы 
+						<h1>Мои курсы </h1>
 						<HoverCard>
 							<HoverCardTrigger asChild>
 								<div className='w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center'>

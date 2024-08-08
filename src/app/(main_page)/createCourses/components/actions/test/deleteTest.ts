@@ -23,6 +23,12 @@ const deleteSimpleTest = async({ testId, littleRasdelId }: { testId: string, lit
             }
         });
 
+        await db.textBlock.deleteMany({
+            where:{
+                testId: testId
+            }
+        })
+
         await db.test.delete({
             where: {
                 id: testId

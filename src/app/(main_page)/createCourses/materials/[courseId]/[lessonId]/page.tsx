@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { LittleRasdel, QuestionType, Option, Answer, Materials } from "@prisma/client"
+import { LittleRasdel, QuestionType, Option, Answer, Materials, courseData, User, TextBlock } from "@prisma/client"
 import fetchTestFromDb from '../../../components/actions/fetchTestFromDb'
 import { IoClose, IoMenuOutline } from "react-icons/io5";
 import { IoPencil } from "react-icons/io5";
@@ -26,8 +26,6 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
-import { FaRegTrashCan } from 'react-icons/fa6'
-import deleteLittleRasdel from '../../../components/actions/deleteRasdel'
 import createLittleRasdel from '../../../components/actions/createLittleRasdel'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -43,6 +41,10 @@ import { Textarea } from '@/components/ui/textarea'
 import DeleteRasdelModal from '../../../components/modal/deleteRasdelModal'
 import MaterialBox from './components/materialBox'
 import getMaterailFromDb from '../../../components/actions/materials/getMaterailFromDb'
+import getCourseById from '../../../components/actions/getCourseById'
+import { currentUser } from '@/lib/auth'
+import UpdateBigTextModal from '../../../components/modal/testCreateModal/UpdateBigTextModal'
+import UpdateWritingTasqModal from '../../../components/modal/testCreateModal/updateWritingTasqModal'
 
 const FormSchema = z.object({
   username: z.string().max(30, {
@@ -56,6 +58,7 @@ type Test = {
 	audioHeader: string | null;
   littleRasdelId: string;
   question: string;
+	textBlocks : TextBlock[];
   questionType: QuestionType; // Это значение может быть enum или типом, определенным в Prisma
   options: Option[]; // Используем массив Option
   answers: Answer[];  // Используем массив Answer
@@ -63,6 +66,7 @@ type Test = {
 
 
 const Page = () => {
+	const { courseId } = useParams();
 	const { lessonId } = useParams()
 	const [tests, setTests] = useState<Test[] | null>(null)
 	const [rasdels, setRasdels] = useState<LittleRasdel[] | null>(null)
@@ -71,8 +75,12 @@ const Page = () => {
 	const [selectedAnswer, setSelectedAnswer] = useState<{ [key: string]: string | null }>({});
 	const [testOrMaterials, setTextOrMaterials] = useState("test")
 	const [materials, setMaterials] = useState<Materials[]>([]);
+	const [course, setCourse]= useState<courseData | null>(null)
+	const [user, setUser] = useState<User | null>(null)
+	const [selectedAnswers, setSelectedAnswers] = useState<Record<string, Answer | null>>({});
 
   const fetchMaterials = async (rasdelId: string) => {
+
     const data = await getMaterailFromDb({
       currentLessonId: lessonId as string,
       currentLittleRasdelId: rasdelId,
@@ -110,6 +118,14 @@ const Page = () => {
 
 	useEffect(() => {
 		const loadRasdels = async () => {
+			const courseData = await getCourseById(courseId as string)
+			const userData = await currentUser()
+			if(userData){
+				setUser(userData)
+			}
+			if(courseData){
+				setCourse(courseData)
+			}
 			await fetchRasdels(); // Ждем, пока данные загружены
 		}
 		fetchMaterials(currRasdel?.id ? currRasdel.id : "")
@@ -162,6 +178,49 @@ const Page = () => {
     }
     return array;
 };
+	if(!user){
+		return
+	}
+
+	const handleAnswerSelect = (index: any, answer: any, testId: string) => {
+		console.log(`Выбрано: ${answer} на месте ${index} в тесте ${testId}`);
+	};
+
+	const renderFilledText = (text: any, correctAnswers: any, testId: string, index: number) => {
+    const parts = text.split(/(\[\])/g); // Разделяем текст на части
+    return parts.map((part: any, idx: any) => {
+        if (part === '[]') {
+            // Получаем выбранный ответ для текущего индекса
+            const selectedAnswer = selectedAnswers[testId];
+
+            return (
+                <DropdownMenu key={idx}>
+                    <DropdownMenuTrigger asChild>
+                        <button className='gap-button py-1 px-2 border rounded-lg font-semibold text-gray-300 hover:bg-gray-100 transition-all'>
+                            {selectedAnswer ? selectedAnswer.text : 'Выберите'}
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className='flex gap-2 border border-blue-400'>
+                        {correctAnswers.map((answer: Answer, idx: any) => (
+                            <DropdownMenuItem 
+																className='bg-blue-200 text-blue-400 font-bold hover:bg-blue-300 hover:text-blue-500'
+                                key={idx} 
+                                onClick={() => {
+                                    handleAnswerSelect(testId, answer.text, answer.testId);
+                                    // Обновляем состояние выбранных ответа
+                                }}
+                            >
+                                {answer.text}
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        }
+        return <span className='font-semibold text-gray-600' key={idx}>{part}</span>; // Возвращаем обычный текст
+    });
+};
+
 
 	return (
 		<div className='flex gap-3 mt-5'>
@@ -185,7 +244,7 @@ const Page = () => {
 									className='flex gap-5 items-center px-3 py-[0.4rem]'
 									onClick={async () => {
 										setCurretRasdel({ id: data.id, lessonId: data.lessonId, name: data.name });
-										await fetchMaterials
+										await fetchMaterials(data.id)
 										await fetchTest(data.id);
 									}}
 								>
@@ -193,12 +252,14 @@ const Page = () => {
 								</div>
 							</DropdownMenuItem>
 						))}
-						<Button variant="shadow2" className='w-full' onClick={() => {
-							createLittleRasdel(lessonId as string);
-							fetchRasdels();
-						}}>
-							Добавить раздел
-						</Button>
+						{course?.userId === user.id && 
+							<Button variant="shadow2" className='w-full' onClick={() => {
+								createLittleRasdel(lessonId as string);
+								fetchRasdels();
+							}}>
+								Добавить раздел
+							</Button>
+						}
 					</DropdownMenuContent>
 				</DropdownMenu>
 				<div className='w-7 h-[1px] bg-gray-300 mt-3' />
@@ -224,14 +285,15 @@ const Page = () => {
 											)}
 										/>
 										<Button 
-											type="button" 
-											className='p-2 text-red-300 bg-red-100 hover:bg-red-200 hover:text-red-400' 
-											variant={"shadow2"}
-											onClick={() => {
-												setSettingOn(false)
-											}}
-										>
-											<IoClose className='text-2xl'/></Button>
+												type="button" 
+												className='p-2 text-red-300 bg-red-100 hover:bg-red-200 hover:text-red-400' 
+												variant={"shadow2"}
+												onClick={() => {
+													setSettingOn(false)
+												}}
+											>
+												<IoClose className='text-2xl'/>
+											</Button>
 										<Button type="submit" className='p-2 text-green-400 bg-green-200 hover:bg-green-400 hover:text-green-700' variant={'shadow2'}>
 											<IoCheckmark className='text-2xl' />
 										</Button>
@@ -241,26 +303,30 @@ const Page = () => {
 							:
 							<h1 className='text-gray-500 font-bold text-2xl flex gap-3 items-center'>
 								<span className=''>{currRasdel?.name}</span>
-								<div
-									className='w-8 h-8 bg-gray-200 text-gray-400 rounded-sm flex items-center justify-center transition-all hover:bg-gray-300 hover:text-gray-600 hover:shadow-lg text-lg cursor-pointer'
-									onClick={() => {
-										setSettingOn(true)
-									}}
-								>
-									<IoPencil />
-								</div>
-								<div
-									className='absolute right-0'
-									onClick={async () => {
-										await fetchRasdels();
-									}}
-								>
-									<DeleteRasdelModal
-										currRasdel={currRasdel ? currRasdel.id : ""}
-										lessonId={currRasdel ? currRasdel.lessonId : ""}
-										visov={setRasdel} // это обновляет состояние, устанавливая первый раздел
-									/>
-								</div>
+								{course?.userId === user.id && 
+									<div
+										className='w-8 h-8 bg-gray-200 text-gray-400 rounded-sm flex items-center justify-center transition-all hover:bg-gray-300 hover:text-gray-600 hover:shadow-lg text-lg cursor-pointer'
+										onClick={() => {
+											setSettingOn(true)
+										}}
+									>
+										<IoPencil />
+									</div>
+								}
+								{course?.userId === user.id &&
+									<div
+										className='absolute right-0'
+										onClick={async () => {
+											await fetchRasdels();
+										}}
+									>
+										<DeleteRasdelModal
+											currRasdel={currRasdel ? currRasdel.id : ""}
+											lessonId={currRasdel ? currRasdel.lessonId : ""}
+											visov={setRasdel} // это обновляет состояние, устанавливая первый раздел
+										/>
+									</div>
+								}
 							</h1>
 							}
 					</div>
@@ -284,17 +350,71 @@ const Page = () => {
 								</li>
 							</ul>
 					</div>
-					{testOrMaterials === "test" ? 
-						<div className='flex flex-col items-center'>
+				{testOrMaterials === "test" ? 
+					<div className='flex flex-col items-center'>
 						{tests?.map((test, index) => (
-							<div key={test.id} className='border border-gray-100 mt-5 flex flex-col justify-between rounded-xl p-3 pt-5 min-w-[330px] max-w-[430px] shadow-lg'>
-							{test.questionType === "AUDIOCHOOSE" ? 
+							<div key={test.id} className='border border-gray-100 mt-5 flex flex-col justify-between rounded-xl p-3 pt-5 min-w-[330px] max-w-[660px] shadow-lg'>
+							{test.questionType === "AUDIOCHOOSE" &&
 							<div>
 								<h1 className='text-lg font-semibold text-gray-600'>{test.audioHeader ? test.audioHeader : "Введите название"}</h1>
 								<audio src={test.question} controls className='w-[80%] h-9 my-3'></audio>
-							</div> : test.questionType === "CONNECT_LETTERS" ? <h1 className='text-lg font-semibold text-gray-600'>Составьте слово из букв</h1> :<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>}
+							</div> }
+							{test.questionType === "CONNECT_LETTERS" &&
+								<h1 className='text-lg font-semibold text-gray-600'>Составьте слово из букв</h1> 
+							}
+							{	test.questionType === "ONLY_TEXT"&& 
+								<div className='relative'>
+								<div className='absolute right-0 top-8'>
+										{user.id === course?.userId && 
+											<UpdateBigTextModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										}
+							</div>
+							<div
+								dangerouslySetInnerHTML={test.question ? { __html: test.question } : undefined}
+								className="prose prose-p:m-0 prose-h1:m-0 prose-h2:m-0 prose-h3:m-0 prose-h4:m-0 prose-h5:m-0 prose-h6:m-0 prose-span:m-0 prose-li:m-0 prose-ul:m-0
+								prose-p:w-full prose-h1:w-full prose-h2:w-full prose-h3:w-full prose-h4:w-full prose-h5:w-full prose-h6:w-full prose-span:m-0 prose-li:w-full prose-ul:w-full w-full max-w-none leading-5"
+							>
+							</div>
+						</div>
+						} 
+						{test.questionType === "MULTIPLE_CHOICE" && 
+							<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
+						}
+						{test.questionType === "FILL_IN_THE_BLANK" && 
+							<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
+						}
+						{test.questionType === "CONNECT_LETTERS" && 
+							<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
+						}
+						{test.questionType === "ORDERING" && 
+							<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
+						}
+						{test.questionType === "TRUE_OR_FALSE" && 
+							<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
+						}
+						{test.questionType === "TEXT_PO_PORYADKY" && 
+							<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
+						}
+						{test.questionType === "BIG_TEXT_OR_STATIYA" && 
+							<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
+						}
+						{test.questionType === "FILL_WORDS_IN_THE_BLANK_DROPDOWN" && 
+							<div key={index}>
+								<h3>{renderFilledText(test.question, test.answers, test.id, index)}</h3>
+							</div>
+						}
+						{test.questionType === "WRITING_TASK" && 
+							<div>
+								<div
+								dangerouslySetInnerHTML={test.question ? { __html: test.question } : undefined}
+								className='pr-[3rem] pb-3 prose prose-p:m-0 prose-h1:m-0 prose-h2:m-0 prose-h3:m-0 prose-h4:m-0 prose-h5:m-0 prose-h6:m-0 prose-span:m-0 prose-li:m-0 prose-ul:m-0
+								prose-p:w-full prose-h1:w-full prose-h2:w-full prose-h3:w-full prose-h4:w-full prose-h5:w-full prose-h6:w-full prose-span:m-0 prose-li:w-full prose-ul:w-full w-full max-w-none leading-5"'
+								>
+								</div>
+							</div>
+						}
 							{test.questionType === "MULTIPLE_CHOICE" && (
-									<ul className='py-3 text-gray-500 font-semibold relative'>
+									<ul className='py-3 text-gray-500 font-semibold relative w-full'>
 											{test.options.map((option) => (
 												<li key={option.id} className='flex gap-3 h-9 border-t items-center border-gray-100 rounded-lg '>
 													<input
@@ -310,7 +430,9 @@ const Page = () => {
 													</div>
 												</li>
 										))}
-										<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										{user.id === course?.userId && 
+											<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										}
 									</ul>
 							)}
 							{test.questionType === "ORDERING" && (
@@ -331,7 +453,9 @@ const Page = () => {
 													{data.isCorrect}
 												</h1>
 											</div>
+											{user.id === course?.userId && 
 											<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										}
 										</div>
 									))}
 								</div>
@@ -353,7 +477,9 @@ const Page = () => {
 													</div>
 												</li>
 										))}
-										<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										{user.id === course?.userId && 
+											<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										}
 									</ul>
 							)}
 							{test.questionType === "TRUE_OR_FALSE" && (
@@ -364,7 +490,9 @@ const Page = () => {
 													<h1 className={`px-2 py-2 ${option.isCorrect ? "bg-green-200 rounded-lg border-2 border-green-400 text-green-500" : "bg-red-200 rounded-lg border-2 border-red-400 text-red-500"}`}>{option.isCorrect ? "Истина": "Ложь"}</h1>
 												</div>
 										))}
-										<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										{user.id === course?.userId && 
+											<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										}
 									</ul>
 							)}
 							{test.questionType === "CONNECT_LETTERS" && (
@@ -376,7 +504,9 @@ const Page = () => {
 															{letter.toLowerCase()}
 													</div>
 											))}
-											<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+											{user.id === course?.userId && 
+												<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+											}
 										</div>
 									</ul>
 							)}
@@ -385,8 +515,29 @@ const Page = () => {
 									<div className='py-3 text-gray-500 font-semibold relative flex gap-1 items-center w-full flex-col'>
 										<Textarea className='w-fill min-h-20'/>
 									</div>
-									<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										{user.id === course?.userId && 
+											<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										}
 								</ul>
+							)}
+							{test.questionType === "WRITING_TASK" && (
+								<div className='relative'>
+										{user.id === course?.userId && 
+											<UpdateWritingTasqModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										}
+										<ul>
+											{test.textBlocks.map((data) => (
+												<>
+												<li 
+												className='py-2 border-t prose prose-p:m-0 prose-h1:m-0 prose-h2:m-0 prose-h3:m-0 prose-h4:m-0 prose-h5:m-0 prose-h6:m-0 prose-span:m-0 prose-li:m-0 prose-ul:m-0
+								prose-p:w-full prose-h1:w-full prose-h2:w-full prose-h3:w-full prose-h4:w-full prose-h5:w-full prose-h6:w-full prose-span:m-0 prose-li:w-full prose-ul:w-full w-full max-w-none leading-5"' 
+												key={data.id}
+												dangerouslySetInnerHTML={data.text ? { __html: data.text} : undefined}
+												>
+												</li></>
+											))}
+										</ul>
+								</div>
 							)}
 							{test.questionType === "TEXT_PO_PORYADKY" && (
 								<ul className='relative'>
@@ -407,7 +558,9 @@ const Page = () => {
 													}
 											</p>
 									</div>
-									<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										{user.id === course?.userId && 
+											<UpdateTestModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+										}
 								</ul>
 							)}
 					</div>
@@ -418,7 +571,7 @@ const Page = () => {
 					}
 					<div
 					>
-						{testOrMaterials === "test" ? <CreateTestModal currRasdelId={currRasdel ? currRasdel.id : ""} visov={updateVisov} lessonId={currRasdel ? currRasdel?.lessonId : ""}/> : ''}
+						{user.id === course?.userId && <>{testOrMaterials === "test" ? <CreateTestModal currRasdelId={currRasdel ? currRasdel.id : ""} visov={updateVisov} lessonId={currRasdel ? currRasdel?.lessonId : ""}/> : ''}</>}
 					</div>
 				</div>
 			</div>

@@ -132,7 +132,7 @@ const UpdateLessonModal = ({ updateData, lessonId }: Props) => {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div className="w-7 h-7 bg-gray-200 text-base rounded-lg flex items-center justify-center hover:bg-gray-300 transition-all cursor-pointer">
           <IoPencil />
