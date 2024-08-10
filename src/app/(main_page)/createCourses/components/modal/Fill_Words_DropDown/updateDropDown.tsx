@@ -196,7 +196,7 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 							</div>
 							<div className="grid grid-cols-3 gap-2 m-0">
 								{test.answers.map((answer, index) => (
-										<div className="flex gap-1 items-center relative">
+										<div className="flex gap-1 items-center relative" key={answer.id}>
 											<span className="text-lg">{index + 1})</span>
 											<FormField
 													key={index}  // Добавляем уникальный ключ
