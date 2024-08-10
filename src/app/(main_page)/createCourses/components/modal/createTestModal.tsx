@@ -26,6 +26,9 @@ import { IoClose } from "react-icons/io5"
 import createTestTasq from "../actions/test/createTextTesq"
 import createWritingTasq from "../actions/test/createWritingTasq"
 import createInputText from "../actions/test/inputWordsIntext/createInputText"
+import createVideoTest from "../actions/test/videoTest/createVideoTest"
+import сreateTrueVariantsTest from "../actions/test/connectTrueVariants/createThisTest"
+import createPdfFail from "../actions/test/pdf/createPdfFail"
 
 const CreateTestModal = ({currRasdelId, visov, lessonId} : {currRasdelId: string, visov: () => void, lessonId: string}) => {
 	const[open, setOpen] = useState(false)
@@ -79,7 +82,18 @@ const CreateTestModal = ({currRasdelId, visov, lessonId} : {currRasdelId: string
 									}}
 									className="relative flex-col bg-purple-50 hover:bg-purple-100 text-[#9c76e8] hover:text-[#6f4db3] h-auto w-full overflow-hidden border border-[#835BD2]"
 								>
-									<h1 className="font-medium relative z-10 text-base">АудиоТест</h1> 
+									<h1 className="font-medium relative z-10 text-base">Аудио Тест</h1> 
+								</Button>
+								<Button 
+									variant={"shadow2"}
+									onClick={() => {
+										createVideoTest({littleRasdelId: currRasdelId, lessonId: lessonId})
+										visov()
+										setOpen(false)
+									}}
+									className="relative flex-col bg-purple-50 hover:bg-purple-100 text-[#9c76e8] hover:text-[#6f4db3] h-auto w-full overflow-hidden border border-[#835BD2]"
+								>
+									<h1 className="font-medium relative z-10 text-base">Видео Тест</h1>
 								</Button>
 								<Button 
 									variant={"shadow2"}
@@ -183,9 +197,20 @@ const CreateTestModal = ({currRasdelId, visov, lessonId} : {currRasdelId: string
 										visov();
 										setOpen(false);
 									}}
-									className="relative flex-col bg-purple-50 hover:bg-purple-100 text-[#9c76e8] hover:text-[#6f4db3] h-auto w-full overflow-hidden border border-[#835BD2]"
+									className="relative flex-col  bg-purple-50 hover:bg-purple-100 text-[#9c76e8] hover:text-[#6f4db3] h-auto w-full overflow-hidden border border-[#835BD2]"
 								>
 									<h1 className="font-medium relative z-10 text-base">Текст сочинения, задание, параметры</h1> 
+								</Button>
+								<Button 
+									variant={"shadow2"}
+									onClick={() => {
+										createPdfFail({ littleRasdelId: currRasdelId, lessonId: lessonId });
+										visov();
+										setOpen(false);
+									}}
+									className="relative flex-col bg-purple-50 hover:bg-purple-100 text-[#9c76e8] hover:text-[#6f4db3] h-auto w-full overflow-hidden border border-[#835BD2]"
+								>
+									<h1 className="font-medium relative z-10 text-base">Pdf файл</h1> 
 								</Button>
 							</div>
 						</ScrollArea>
@@ -198,9 +223,32 @@ const CreateTestModal = ({currRasdelId, visov, lessonId} : {currRasdelId: string
 					}
 					{
 						choseen === "UpScale" && 
-						<div>
-							Повышенная сложность
-						</div>
+						<ScrollArea className="w-full flex justify-center rounded-md border p-4">
+							<div className="flex flex-col gap-5">
+								<Button 
+									variant={"shadow2"}
+									onClick={() => {
+										сreateTrueVariantsTest({ littleRasdelId: currRasdelId, lessonId: lessonId })
+										visov();
+										setOpen(false);
+									}}
+									className="relative flex-col bg-purple-50 hover:bg-purple-100 text-[#9c76e8] hover:text-[#6f4db3] h-auto w-full overflow-hidden border border-[#835BD2]"
+								>
+									<h1 className="font-medium relative z-10 text-base">Соедините правильные варианты ответа</h1> 
+								</Button>
+								<Button 
+									variant={"shadow2"}
+									onClick={() => {
+										createAudioTest({ littleRasdelId: currRasdelId, lessonId: lessonId })
+										visov();
+										setOpen(false);
+									}}
+									className="relative flex-col bg-purple-50 hover:bg-purple-100 text-[#9c76e8] hover:text-[#6f4db3] h-auto w-full overflow-hidden border border-[#835BD2]"
+								>
+									<h1 className="font-medium relative z-10 text-base">Записать собственное аудио</h1> 
+								</Button>
+							</div>
+						</ScrollArea>
 					}
 			</DialogContent>
 		</Dialog>

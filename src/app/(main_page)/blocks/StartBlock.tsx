@@ -6,8 +6,7 @@ import { LoginButton } from "../../../components/auth/login-button";
 
 const StartBlock = () => {
   return (
-    <div className="w-[100%] flex justify-between items-center h-[85vh] mt-20">
-      <LittleEl />
+    <div className="w-[100%] flex flex-col md:flex-row justify-between items-center h-[85vh] mt-20">
       <div className="leftside">
         <h1 className="text-4xl font-bold mt-[-35px]">
           Научись общаться с людьми <br /> по всему миру!
@@ -26,7 +25,7 @@ const StartBlock = () => {
         </LoginButton>
       </div>
       <div className="rightside">
-        <Image alt="Main" src={"/mainImg.png"} width={550} height={550} />
+        <Image alt="Main" src={"/mainImg.png"} width={550} height={550} className="min-w-[330px]"/>
       </div>
     </div>
   );

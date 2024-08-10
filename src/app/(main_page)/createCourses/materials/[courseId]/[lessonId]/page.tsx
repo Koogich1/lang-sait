@@ -2,10 +2,11 @@
 
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { LittleRasdel, QuestionType, Option, Answer, Materials, courseData, User, TextBlock } from "@prisma/client"
+import { LittleRasdel, QuestionType, Option, Answer, Materials, courseData, User, TextBlock, CorrectAnswer } from "@prisma/client"
 import fetchTestFromDb from '../../../components/actions/fetchTestFromDb'
 import { IoClose, IoMenuOutline } from "react-icons/io5";
 import { IoPencil } from "react-icons/io5";
+import { FaBook, FaFilePdf } from "react-icons/fa6";
 
 import {
   DropdownMenu,
@@ -26,6 +27,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
+import { saveAs } from 'file-saver';
+
 import createLittleRasdel from '../../../components/actions/createLittleRasdel'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -45,6 +48,12 @@ import getCourseById from '../../../components/actions/getCourseById'
 import { currentUser } from '@/lib/auth'
 import UpdateBigTextModal from '../../../components/modal/testCreateModal/UpdateBigTextModal'
 import UpdateWritingTasqModal from '../../../components/modal/testCreateModal/updateWritingTasqModal'
+import UpdateDropDown from '../../../components/modal/Fill_Words_DropDown/updateDropDown'
+import UpdateVideo from '../../../components/modal/videoTest/updateVideo'
+import UpdateConnectModal from '../../../components/modal/connectModal/updateConnectModal'
+import UpdatePdfModal from '../../../components/modal/pdf/updatePdfModal'
+import { FaHome } from 'react-icons/fa'
+import createHomeWorkRasdel from '../../../components/actions/homework/createHomeWorkRasdel'
 
 const FormSchema = z.object({
   username: z.string().max(30, {
@@ -62,7 +71,9 @@ type Test = {
   questionType: QuestionType; // Это значение может быть enum или типом, определенным в Prisma
   options: Option[]; // Используем массив Option
   answers: Answer[];  // Используем массив Answer
+	correctAnswers?: CorrectAnswer[];
 };
+
 
 
 const Page = () => {
@@ -185,6 +196,7 @@ const Page = () => {
 	const handleAnswerSelect = (index: any, answer: any, testId: string) => {
 		console.log(`Выбрано: ${answer} на месте ${index} в тесте ${testId}`);
 	};
+	const domashniyaRabotaRasdel = rasdels?.find(data => data.name === "Домашняя работа");
 
 	const renderFilledText = (text: any, correctAnswers: any, testId: string, index: number) => {
     const parts = text.split(/(\[\])/g); // Разделяем текст на части
@@ -192,7 +204,6 @@ const Page = () => {
         if (part === '[]') {
             // Получаем выбранный ответ для текущего индекса
             const selectedAnswer = selectedAnswers[testId];
-
             return (
                 <DropdownMenu key={idx}>
                     <DropdownMenuTrigger asChild>
@@ -217,7 +228,7 @@ const Page = () => {
                 </DropdownMenu>
             );
         }
-        return <span className='font-semibold text-gray-600' key={idx}>{part}</span>; // Возвращаем обычный текст
+        return <span className='font-medium text-gray-500 text-base' key={idx}>{part}</span>; // Возвращаем обычный текст
     });
 };
 
@@ -231,12 +242,12 @@ const Page = () => {
 							<IoMenuOutline />
 						</div>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent className='text-gray-600 flex items-start flex-col space-y-2 ml-11'>
-						<DropdownMenuSeparator />
+					<DropdownMenuContent className='text-gray-600 p-1 flex items-start flex-col space-y-2 ml-11'>
 						<DropdownMenuItem className='text-lg font-semibold'>Разделы</DropdownMenuItem>
 						{rasdels && rasdels.map((data) => (
+							data.name === "Домашняя работа" ? "" : 
 							<DropdownMenuItem
-								className={`flex gap-3 p-0 w-full relative hover:bg-gray-200 border-b border-gray-100 justify-start text-gray-400 hover:text-gray-500 ${currRasdel?.id === data.id ? "border-b-blue-400 rounded-none rounded-t-lg border-b-2" : ""}`}
+								className={`flex gap-3 p-0 w-full relative hover:bg-gray-200 border-b border-gray-100 justify-start text-gray-400 hover:text-gray-500 ${currRasdel?.id === data.id ? "border-b-blue-400 text-blue-400 font-bold rounded-none rounded-t-lg border-b-2 bg-blue-50" : ""}`}
 								key={data.id}
 							>
 								<span>=</span>
@@ -248,9 +259,9 @@ const Page = () => {
 										await fetchTest(data.id);
 									}}
 								>
-									<h1 className='font-medium'>{data.name}</h1>
-								</div>
-							</DropdownMenuItem>
+								<h1 className='font-medium'>{data.name}</h1>
+							</div>
+						</DropdownMenuItem>
 						))}
 						{course?.userId === user.id && 
 							<Button variant="shadow2" className='w-full' onClick={() => {
@@ -263,7 +274,25 @@ const Page = () => {
 					</DropdownMenuContent>
 				</DropdownMenu>
 				<div className='w-7 h-[1px] bg-gray-300 mt-3' />
-				<div className='w-11 bg-white rounded-lg shadow-sm mt-3' />
+				<div className='w-11 bg-white rounded-lg flex flex-col items-center justify-center shadow-sm mt-3'>
+					<div className={`text-3xl flex items-center justify-center p-[0.3rem] mt-[0.135rem] mb-[0.135rem] hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all cursor-pointer ${currRasdel?.id === domashniyaRabotaRasdel?.id ? "text-blue-500 bg-blue-100" : "text-gray-400"}`}
+						onClick={async() => {
+							if (domashniyaRabotaRasdel) {
+								setCurretRasdel({ id: domashniyaRabotaRasdel.id, lessonId: domashniyaRabotaRasdel.lessonId, name: domashniyaRabotaRasdel.name });
+								await fetchMaterials(domashniyaRabotaRasdel.id)
+								await fetchTest(domashniyaRabotaRasdel.id);
+							}else{
+								createHomeWorkRasdel(lessonId as string)
+							}
+						}}
+					>
+						<FaHome />
+					</div>
+					<div className='w-7 h-[1px] bg-gray-300' />
+					<div className='text-2xl flex items-center justify-center p-2 m-[0.1rem] mt-[0.135rem] mb-[0.135rem] text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all cursor-pointer'>
+						<FaBook />
+					</div>
+				</div>
 			</div>
 			<div className='min-h-[80vh] w-full p-3 bg-white shadow-lg rounded-lg'>
 				<div>
@@ -301,6 +330,11 @@ const Page = () => {
 								</Form>
 							</div>
 							:
+							currRasdel?.name === "Домашняя работа" ? 
+							<h1 className='text-gray-500 font-bold text-2xl flex gap-3 items-center'>
+								<span className=''>{currRasdel?.name}</span>
+							</h1>
+							: 
 							<h1 className='text-gray-500 font-bold text-2xl flex gap-3 items-center'>
 								<span className=''>{currRasdel?.name}</span>
 								{course?.userId === user.id && 
@@ -327,7 +361,7 @@ const Page = () => {
 										/>
 									</div>
 								}
-							</h1>
+							</h1> 
 							}
 					</div>
 					<div className='w-full h-8 mt-1 rounded-t-lg relative flex justify-between'>
@@ -392,6 +426,28 @@ const Page = () => {
 						{test.questionType === "TRUE_OR_FALSE" && 
 							<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
 						}
+						{test.questionType === "PDF" && 
+							<div className='flex flex-col relative min-w-[360px]'>
+								{user.id === course?.userId && 
+									<UpdatePdfModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+								}
+								<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
+								<a className='w-full h-[4rem] mt-4 bg-red-50 border border-gray-300 rounded-lg flex items-center leading-5 hover:bg-gray-100 text-red-300 hover:text-red-400 transition-all' href={test.audioHeader ? test.audioHeader : ""}>
+									<div className='h-full text-5xl flex items-center p-2'>
+										<FaFilePdf />
+									</div>
+									<span className='w-full h-full font-semibold items-center py-5 text-gray-400'>
+										Нажмите, чтобы скачать файл
+									</span>
+								</a>
+							</div>
+						}
+						{test.questionType === "CONNECT_VATIANTS" && 
+							<div className='flex w-full justify-between relative'>
+								<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
+								<UpdateConnectModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+							</div>
+						}
 						{test.questionType === "TEXT_PO_PORYADKY" && 
 							<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
 						}
@@ -399,8 +455,12 @@ const Page = () => {
 							<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
 						}
 						{test.questionType === "FILL_WORDS_IN_THE_BLANK_DROPDOWN" && 
-							<div key={index}>
-								<h3>{renderFilledText(test.question, test.answers, test.id, index)}</h3>
+							<div key={index} className='flex relative top-0'>
+								<UpdateDropDown test={test} updateVisov={() => updateVisov()} />
+								<div className='flex flex-col gap-3'>
+									<h1 className='text-xl font-semibold text-gray-600'>{test.audioHeader}</h1>
+									<h3 className='mr-10'>{renderFilledText(test.question, test.answers, test.id, index)}</h3>
+								</div>
 							</div>
 						}
 						{test.questionType === "WRITING_TASK" && 
@@ -412,7 +472,16 @@ const Page = () => {
 								>
 								</div>
 							</div>
-						}
+						}				
+						{test.questionType === "VIDEO" && 
+						<div>
+							<div className='w-full flex items-center justify-between relative pb-5'>
+								<h1 className='text-lg font-semibold text-gray-500'>{test.audioHeader}</h1>
+								<UpdateVideo  test={test} updateVisov={() => updateVisov()}/>
+							</div>
+							<video src={test.question} controls></video>
+						</div>
+						}		
 							{test.questionType === "MULTIPLE_CHOICE" && (
 									<ul className='py-3 text-gray-500 font-semibold relative w-full'>
 											{test.options.map((option) => (
@@ -495,6 +564,32 @@ const Page = () => {
 										}
 									</ul>
 							)}
+							{test.questionType === "CONNECT_VATIANTS" && 
+							<>
+								<div className='flex min-w-[500px] justify-between pt-3'>
+								{/* Контейнер с ответами */}
+								<div className='flex flex-col gap-1 text-base font-semibold text-gray-600 w-[20%]'>
+									{test.answers.map((data) => (
+										<div key={data.id} className='px-3 py-1 border border-gray-200 rounded-lg'>
+											{data.text}
+										</div>
+									))}
+								</div>
+
+								{/* Разделитель (если нужен) */}
+								<div className='bg-gray-300 w-px mx-2'></div>
+
+								{/* Контейнер с вариантами */}
+									<div className='flex flex-col gap-1 text-xs font-medium text-gray-500 w-[80%]'>
+										{test.options.map((data) => (
+											<div key={data.id} className='px-3 py-1 border border-gray-200 rounded-lg'>
+												{data.text}
+											</div>
+										))}
+									</div>
+								</div>
+								</>
+							}
 							{test.questionType === "CONNECT_LETTERS" && (
 									<ul className='py-3 text-gray-500 font-semibold relative flex gap-1 items-center w-full flex-col'>
 										<span className='text-base font-semibold text-gray-400'>Загаданное слово: {test.question}</span>

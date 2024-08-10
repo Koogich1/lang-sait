@@ -179,6 +179,7 @@ model Test {
   questionType   QuestionType
   options        Option[]        @relation("TestOptions")
   answers        Answer[]        @relation("TestAnswers")
+  correctAnswers  CorrectAnswer[] @relation("TestCorrectAnswers")
 }
 
 model TextBlock {
@@ -195,6 +196,7 @@ model Option {
   test     Test     @relation("TestOptions", fields: [testId], references: [id])
   text     String   @default("")
   isCorrect Boolean  @default(false) // Указывает, правильный ли вариант ответа
+  correctAnswers CorrectAnswer[] @relation("OptionCorrectAnswers")
 }
 
 model Answer {
@@ -203,7 +205,19 @@ model Answer {
   test     Test     @relation("TestAnswers", fields: [testId], references: [id])
   text     String   @default("")
   order    Int?    // Для проверки порядка ответов (если применимо)
+  correctAnswers CorrectAnswer[] @relation("AnswerCorrectAnswers") 
 }
+
+model CorrectAnswer {
+  id        String   @id @default(cuid())
+  testId    String
+  optionId  String
+  answerId  String
+  test      Test     @relation("TestCorrectAnswers", fields: [testId], references: [id])
+  option    Option   @relation("OptionCorrectAnswers", fields: [optionId], references: [id])
+  answer    Answer   @relation("AnswerCorrectAnswers", fields: [answerId], references: [id])
+}
+
 
 enum QuestionType {
   MULTIPLE_CHOICE
@@ -217,6 +231,9 @@ enum QuestionType {
   ONLY_TEXT
   WRITING_TASK
   FILL_WORDS_IN_THE_BLANK_DROPDOWN
+  VIDEO
+  CONNECT_VATIANTS
+  PDF
 }
 
 model Teacher {

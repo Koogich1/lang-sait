@@ -33,13 +33,20 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
+import updateAnswer from "../../actions/test/updateConnect/updateAnswer";
+import updateOption from "../../actions/test/updateConnect/updateOption";
+import updateQuestion from "../../actions/test/updateConnect/updatequestion";
+import { ClipLoader } from "react-spinners";
+import addBlock from "../../actions/test/updateConnect/addBlock";
 
 const FormSchema = z.object({
   question: z.string().max(350, {
     message: "Не более 350 символов",
   }),
-	text: z.string(),
 	answer: z.array(z.string().max(350, {
+		message: "Не более 1000 символов",
+	})),
+	option: z.array(z.string().max(350, {
 		message: "Не более 1000 символов",
 	})),
 });
@@ -60,22 +67,17 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 
 	const [user, setUser] = useState<User | null>(null)
 	const [ content, setContent ] = useState(test.question);
+	const [loading, setLoading] = useState(false)
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
-			question: test.audioHeader ? test.audioHeader : "",
+			question: test.question,
 			answer: test.answers.map((data) => data.text),
-			text: test.question
+			option: test.options.map((data) => data.text),
 		}
 	});
 
-	const handleDeleteAnswer = async (answerId: string) => {
-		await deleteAnswer(answerId, test.id);
-		updateVisov()
-		const updatedAnswerTexts = test.answers.map((data) => data.text);
-		form.setValue("answer", updatedAnswerTexts);
-};
 
 	const [open, setOpen] = useState(false)
 
@@ -90,23 +92,43 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 	},[])
 
 	async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const answersToUpdate = test.answers.map((answer, index) => ({
-        id: answer.id, // предполагается, что у вас есть id ответа
-        text: data.answer[index] // берём текст из формы
-    }));
-		console.log(data, "обновляем оинформацию")
-    await updateInputTest({
-        testId: test.id,
-        question: data.question,
-        text: data.text,
-        answers: answersToUpdate,
-    }).then(() => {
-        updateVisov(); // обновляем видимость
-        setOpen(false); // закрываем модальное окно
-    }).catch(err => {
-        console.error(err);
-    });
+    setLoading(true); // Начинаем загрузку
+
+    try {
+        await updateQuestion(test.id, data.question); // Дождитесь завершения
+        // Обновите ответы
+        await Promise.all(
+            test.answers.map((answer, index) => 
+                updateAnswer(answer.id, data.answer[index])
+            )
+        );
+        // Обновите опции
+        await Promise.all(
+            test.options.map((option, index) => 
+                updateOption(option.id, data.option[index])
+            )
+        );
+
+        console.log("успех");
+        updateVisov();
+    } catch (error) {
+        console.error("Ошибка обновления:", error);
+    } finally {
+        setLoading(false); // Завершение состояния загрузки
+    }
 	}
+
+	if (loading) {
+    return (
+        <Dialog open={loading}>
+            <DialogContent className="flex flex-col items-center justify-center w-full min-h-[60vh] min-w-[60vh] text-2xl font-bold text-gray-400">
+                <h1>Обновление данных...</h1>
+                <ClipLoader size="100" color="#835BD2" />
+            </DialogContent>
+        </Dialog>
+    );
+	}
+
 
 
 	return (
@@ -152,33 +174,7 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 									</FormItem>
 								)}
 							/>
-							<div className="flex gap-2 items-center pt-3">
-								<h1 className="text-xl font-semibold">
-									Текст упражнения
-								</h1>
-								<HoverCard>
-									<HoverCardTrigger asChild>
-										<div className="w-6 h-6 rounded-full bg-blue-200 text-blue-400 flex items-center justify-center cursor-pointer hover:bg-blue-300 hover:text-blue-500 transition-all">
-											<FaQuestion />
-										</div>
-									</HoverCardTrigger>
-									<HoverCardContent>
-										Напишите текст, слово, которое необходимо пропустить, обозначьте так <span className="text-lg font-semibold">[]</span>, позже обязательно добавьте ответ в блоке ответы
-									</HoverCardContent>
-								</HoverCard>
-							</div>
-							<FormField
-								control={form.control}
-								name="text"
-								render={({ field }) => (
-									<FormItem>
-										<FormControl>
-											<Textarea placeholder="shadcn" className="text-base font-semibold text-gray-400"{...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+							
 							<div className="flex gap-2 items-center pt-3">
 								<h1 className="text-xl font-semibold">
 									Ответы
@@ -190,18 +186,44 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 										</div>
 									</HoverCardTrigger>
 									<HoverCardContent>
-										Порядок ответов должнен соответсвовать порядку [] в тексте!
+										Напишите несколько ответов и текстов, которые необходимо соединить!
 									</HoverCardContent>
 								</HoverCard>
 							</div>
-							<div className="grid grid-cols-3 gap-2 m-0">
+							<div className="flex gap-2">
+								<div className="w-1/5 space-y-2">
 								{test.answers.map((answer, index) => (
 										<div className="flex gap-1 items-center relative">
-											<span className="text-lg">{index + 1})</span>
+											<span className="text-lg font-bold w-6 h-6 bg-green-300 rounded-md text-green-600 flex justify-center items-center">{index + 1}</span>
 											<FormField
 													key={index}  // Добавляем уникальный ключ
 													control={form.control}
 													name={`answer.${index}`}  // Используем динамическое имя
+													render={({ field }) => (
+															<FormItem className="w-full m-0 text-gray-400">
+																	<FormControl>
+																			<Input 
+																					placeholder={`Ответ`} 
+																					className="text-base font-semibold text-gray-400 m-0 w-full" 
+																					{...field}
+																					onChange={(e) => {
+																						field.onChange(e); // Сначала вызываем стандартное поведение
+																					}}
+																			/>
+																	</FormControl>
+															</FormItem>
+													)}
+											/>
+										</div>
+								))}
+								</div>
+								<div className="w-4/5 space-y-2">
+								{test.options.map((answer, index) => (
+										<div className="flex gap-1 items-center relative">
+											<FormField
+													key={index}  // Добавляем уникальный ключ
+													control={form.control}
+													name={`option.${index}`}  // Используем динамическое имя
 													render={({ field }) => (
 															<FormItem className="w-full m-0 text-gray-400">
 																	<FormControl>
@@ -217,7 +239,7 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 											<div 
 												className="w-7 h-7 bg-red-300 border-2 border-red-500 rounded-lg absolute right-3 flex items-center justify-center hover:bg-red-500 cursor-pointer transition-all text-red-500 hover:text-white"
 												onClick={() => {
-													handleDeleteAnswer(answer.id)
+													//handleDeleteAnswer(answer.id)
 													updateVisov()
 												}}
 											>
@@ -225,16 +247,17 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 											</div>
 										</div>
 								))}
+							</div>
+							</div>
 								<div 
 									className="w-full py-[0.6rem] rounded-lg bg-green-200 flex justify-center items-center text-green-600 gap-3 font-bold text-lg border-[3px] border-green-500 hover:bg-green-500 hover:text-white transition-all cursor-pointer"
 									onClick={() => {
-										addAnswer(test.id)
+										addBlock(test.id)
 										updateVisov()
 									}}
 								>
 									Добавить 
 									<FaPlus className="w-7 h-7 bg-green-400 p-[0.255rem] rounded-lg" />
-								</div>
 							</div>
 							<div className="flex justify-between gap-2 pt-4">
 								<Button 
@@ -251,9 +274,6 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 								<Button 
 									variant={"shadow2"} 
 									className="w-1/2" 
-									onClick={() => {
-										setOpen(false)
-									}}
 								>
 									Отменить
 								</Button>

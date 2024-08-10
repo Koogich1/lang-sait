@@ -4,7 +4,6 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import DropDownMenu from '../(protected)/profile/_components/navbar/Dropdown_menu'
 import { currentUser } from '@/lib/auth'
-import { getUserById } from '@/data/user'
 import { User } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 

@@ -11,6 +11,12 @@ const deleteSimpleTest = async({ testId, littleRasdelId }: { testId: string, lit
 
     if (testToDelete) {
         // Удаляем тест
+        await db.correctAnswer.deleteMany({
+            where:{
+                testId: testId
+            }
+        })
+
         await db.answer.deleteMany({
             where: {
                 testId: testId
