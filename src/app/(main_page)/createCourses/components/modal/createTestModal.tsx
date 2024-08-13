@@ -29,6 +29,7 @@ import createInputText from "../actions/test/inputWordsIntext/createInputText"
 import createVideoTest from "../actions/test/videoTest/createVideoTest"
 import сreateTrueVariantsTest from "../actions/test/connectTrueVariants/createThisTest"
 import createPdfFail from "../actions/test/pdf/createPdfFail"
+import createAudioSendTest from "../actions/test/createAudioSendTest"
 
 const CreateTestModal = ({currRasdelId, visov, lessonId} : {currRasdelId: string, visov: () => void, lessonId: string}) => {
 	const[open, setOpen] = useState(false)
@@ -239,7 +240,7 @@ const CreateTestModal = ({currRasdelId, visov, lessonId} : {currRasdelId: string
 								<Button 
 									variant={"shadow2"}
 									onClick={() => {
-										createAudioTest({ littleRasdelId: currRasdelId, lessonId: lessonId })
+										createAudioSendTest({ littleRasdelId: currRasdelId, lessonId: lessonId })
 										visov();
 										setOpen(false);
 									}}

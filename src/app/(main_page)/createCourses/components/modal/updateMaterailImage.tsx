@@ -26,9 +26,10 @@ const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
 type UpdateMaterialModalProps = {
   materialInfo: Materials;
 	visov: () => void;
+  update: () => void;
 };
 
-const UpdateMaterialImage = ({ materialInfo, visov }: UpdateMaterialModalProps) => {
+const UpdateMaterialImage = ({ materialInfo, visov, update }: UpdateMaterialModalProps) => {
 	const [content, setContent] = useState(materialInfo.content);
 	const [open, setOpen] = useState(false)
 
@@ -39,9 +40,9 @@ const UpdateMaterialImage = ({ materialInfo, visov }: UpdateMaterialModalProps) 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="w-full absolute top-0 hover:bg-blue-100 flex rounded-lg transition-all items-center justify-center gap-3  h-full opacity-0 border-2 border-dashed z-20 hover:opacity-80">
+      <DialogTrigger className="w-20 h-20 fixed left-0 top-[44%] bg-blue-300 text-blue-600 flex rounded-lg transition-all items-center justify-center gap-3 z-20 hover:opacity-80">
         <div className="rounded-md min-h-5 min-w-5 h-1/3">
-          <FiEdit className="w-full h-full text-blue-400" />
+        <FiEdit className="w-full h-full text-3xl text-blue-600 p-[0.125rem]" />
         </div>
       </DialogTrigger>
       <DialogContent>
@@ -53,11 +54,34 @@ const UpdateMaterialImage = ({ materialInfo, visov }: UpdateMaterialModalProps) 
           onClick={() => {
             deleteMaterial(materialInfo.id, materialInfo.lessonId)
             visov()
+            update()
             setOpen(false)
           }}
         >
          <FaRegTrashCan />
         </div>
+        <div className='flex gap-3'>
+					<Button className='w-1/2 text-base' variant={"violetSelect"}
+						onClick={() => {
+							updateMaterial({materialId: materialInfo.id, materialLessonId: materialInfo.lessonId, materialRasdelId: materialInfo.littleRasdelId, content: content ? content : materialInfo.content ? materialInfo.content : "" })
+							visov()
+              update()
+							setOpen(false)
+						}}
+					>
+						Подтвердить изменения
+					</Button>
+					<Button className='w-1/2 text-base' variant={"shadow2"}
+            onClick={() => {
+              setOpen(false)
+              update()
+              visov()
+            }
+            }
+          >
+						Отменить
+					</Button>
+				</div>
       </DialogContent>
     </Dialog>
   );

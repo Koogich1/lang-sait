@@ -18,6 +18,9 @@ import {
 import getLittleRasdels from '../../../components/actions/getLittleRasdels'
 import createSimpTest from '../../../components/actions/createSimpTest'
 
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -54,6 +57,9 @@ import UpdateConnectModal from '../../../components/modal/connectModal/updateCon
 import UpdatePdfModal from '../../../components/modal/pdf/updatePdfModal'
 import { FaHome } from 'react-icons/fa'
 import createHomeWorkRasdel from '../../../components/actions/homework/createHomeWorkRasdel'
+import UpdateAudioModal from '../../../components/modal/audio_record/audioRecord'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { ClipLoader } from 'react-spinners'
 
 const FormSchema = z.object({
   username: z.string().max(30, {
@@ -89,6 +95,7 @@ const Page = () => {
 	const [course, setCourse]= useState<courseData | null>(null)
 	const [user, setUser] = useState<User | null>(null)
 	const [selectedAnswers, setSelectedAnswers] = useState<Record<string, Answer | null>>({});
+	const [loading, setLoading] = useState(false);
 
   const fetchMaterials = async (rasdelId: string) => {
 
@@ -196,6 +203,7 @@ const Page = () => {
 	const handleAnswerSelect = (index: any, answer: any, testId: string) => {
 		console.log(`Выбрано: ${answer} на месте ${index} в тесте ${testId}`);
 	};
+
 	const domashniyaRabotaRasdel = rasdels?.find(data => data.name === "Домашняя работа");
 
 	const renderFilledText = (text: any, correctAnswers: any, testId: string, index: number) => {
@@ -230,8 +238,18 @@ const Page = () => {
         }
         return <span className='font-medium text-gray-500 text-base' key={idx}>{part}</span>; // Возвращаем обычный текст
     });
-};
+	};	
 
+	if (loading) {
+		return (
+			<Dialog open={loading}>
+				<DialogContent className="flex flex-col items-center justify-center w-full min-h-[60vh] min-w-[60vh] text-2xl font-bold text-gray-400">
+						<h1>Обновление данных...</h1>
+						<ClipLoader size="100" color="#835BD2" />
+				</DialogContent>
+			</Dialog>
+		);
+	}
 
 	return (
 		<div className='flex gap-3 mt-5'>
@@ -282,11 +300,33 @@ const Page = () => {
 								await fetchMaterials(domashniyaRabotaRasdel.id)
 								await fetchTest(domashniyaRabotaRasdel.id);
 							}else{
-								createHomeWorkRasdel(lessonId as string)
+								try{
+									setLoading(true)
+									await createHomeWorkRasdel(lessonId as string)
+									await fetchRasdels()
+								}catch(e){
+									console.log(e)
+								}
+								await fetchRasdels()
+								const homeWork = rasdels?.find(data => data.name === "Домашняя работа")
+								if(homeWork){
+									setCurretRasdel({ id: homeWork.id, lessonId: homeWork.lessonId, name: homeWork.name });
+									await fetchMaterials(homeWork.id)
+									await fetchTest(homeWork.id);
+									setLoading(false)
+								}
 							}
 						}}
 					>
-						<FaHome />
+						{domashniyaRabotaRasdel ? 
+						
+						<FaHome className='text-blue-400'/> 
+						
+						: 
+
+						<FaHome className='text-gray-400'/> 
+						
+						}
 					</div>
 					<div className='w-7 h-[1px] bg-gray-300' />
 					<div className='text-2xl flex items-center justify-center p-2 m-[0.1rem] mt-[0.135rem] mb-[0.135rem] text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all cursor-pointer'>
@@ -392,7 +432,17 @@ const Page = () => {
 							<div>
 								<h1 className='text-lg font-semibold text-gray-600'>{test.audioHeader ? test.audioHeader : "Введите название"}</h1>
 								<audio src={test.question} controls className='w-[80%] h-9 my-3'></audio>
-							</div> }
+							</div> 
+							}
+							{test.questionType === "RECORD_AUDIO" &&
+							<div className='relative'>
+								<h1 className='text-lg font-semibold text-gray-600'>{test.audioHeader ? test.audioHeader : "Введите название"}</h1>
+								<audio src={test.question} controls className='w-[80%] h-9 my-3'></audio>
+								{user.id === course?.userId && 
+									<UpdateAudioModal test={test} updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}/>
+								}
+							</div> 
+							}
 							{test.questionType === "CONNECT_LETTERS" &&
 								<h1 className='text-lg font-semibold text-gray-600'>Составьте слово из букв</h1> 
 							}
@@ -551,6 +601,25 @@ const Page = () => {
 										}
 									</ul>
 							)}
+							{test.questionType === "RECORD_AUDIO" && (
+									<ul className='py-3 text-gray-500 font-semibold relative'>
+											{test.options.map((option) => (
+												<li key={option.id} className='flex gap-3 h-9 border-t items-center border-gray-100 rounded-lg '>
+													<input
+														className='w-5 h-5 rounded-xl cursor-pointer transition-all'
+														type="checkbox"
+														checked={selectedAnswer[test.id] === option.id}
+														onChange={() => handleCheckboxChange(test.id, option.id)}
+													/>
+													-
+													<div className={`flex w-full justify-between ${option.isCorrect ? "" : ""}`}>
+														<h1 className='text-gray-400'>{option.text}</h1>
+														<h1 className={` ${option.isCorrect ? "bg-green-200 border-green-300 border-2 rounded-xl px-3 text-green-500 font-semibold text-sm" : "bg-red-200 border-red-300 border-2 rounded-xl px-3 text-red-500 font-semibold text-sm"}`}>{option.isCorrect === true ? "верный" : "неверный"}</h1>
+													</div>
+												</li>
+										))}
+									</ul>
+							)}
 							{test.questionType === "TRUE_OR_FALSE" && (
 									<ul className='py-3 text-gray-500 font-semibold relative flex flex-col gap-1 items-center w-full'>
 											{test.options.map((option) => (
@@ -662,7 +731,7 @@ const Page = () => {
 						))}
 					</div>
 					:
-						<MaterialBox currRasdel={currRasdel ? currRasdel : null} visov={() => fetchMaterials(currRasdel?.id ? currRasdel.id : "")} materials={materials}/>
+							<MaterialBox currRasdel={currRasdel ? currRasdel : null} visov={() => fetchMaterials(currRasdel?.id ? currRasdel.id : "")} materials={materials}/>
 					}
 					<div
 					>
