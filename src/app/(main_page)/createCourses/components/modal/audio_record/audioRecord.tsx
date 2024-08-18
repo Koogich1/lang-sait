@@ -53,11 +53,12 @@ type Test = {
   id: string;
   lessonId: string;
   littleRasdelId: string;
+	audioHeader: string | null;
   question: string;
   questionType: QuestionType;
   options: Option[];
   answers: Answer[];
-  audioName?: string | null;
+	audioName?: string | null;
 };
 
 const UpdateAudioModal = ({ test, updateVisov }: { test: Test; updateVisov: () => void }) => {
@@ -76,7 +77,7 @@ const UpdateAudioModal = ({ test, updateVisov }: { test: Test; updateVisov: () =
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
 		defaultValues:{
-			question: test.audioName ? test.audioName : "введите название",
+			question: test.audioHeader ? test.audioHeader : "",
 			option: test.options.map((data) => data.text), // массив строк
 			isTrue: test.options.map((data) => data.isCorrect.toString()),
 		}
@@ -170,6 +171,9 @@ const UpdateAudioModal = ({ test, updateVisov }: { test: Test; updateVisov: () =
 
 						if (result.success) {
 								// Обновляем тест с URL файла
+								if(data.question === "введите название"){
+									data.question === test.question
+								}
 						await updateTest({
 							audioName: data.question,
 							options: optionsToUpdate,
@@ -186,6 +190,14 @@ const UpdateAudioModal = ({ test, updateVisov }: { test: Test; updateVisov: () =
 				}
 			}
 	} else {
+		if(data.question === "введите название"){
+									data.question === test.question
+								}
+						await updateTest({
+							audioName: data.question,
+							options: optionsToUpdate,
+							testId: test.id,
+						});
 			await updateTest({
 					audioName: data.question,
 					options: optionsToUpdate,
@@ -201,8 +213,8 @@ const UpdateAudioModal = ({ test, updateVisov }: { test: Test; updateVisov: () =
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className="p-2 mt-3 bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 text-lg absolute top-[-23px] right-0 rounded-lg cursor-pointer">
-          <FaPen />
+				<div className={`p-2 mt-3 bg-purple-200 hover:bg-[#835BD2] text-[#835BD2] hover:text-white transition-all text-lg absolute top-[-20px] right-0 rounded-lg cursor-pointer`}>
+          <FaPen className="text-base"/>
         </div>
       </DialogTrigger>
       <DialogContent className="text-gray-500 max-w-[500px]">
@@ -302,7 +314,6 @@ const UpdateAudioModal = ({ test, updateVisov }: { test: Test; updateVisov: () =
 							<div className="w-full h-20 bg-gray-50 border-2 border-dashed rounded-lg border-gray-300 text-gray-400 flex items-center justify-center cursor-pointer hover:bg-gray-100 hover:border-gray-400 hover:text-gray-500 transition-all"
 								onClick={() => {
 									createNewMultipleChoose(test.id)
-									updateVisov()
 								}}
 							>
 								<h1 className="text-lg font-semibold">

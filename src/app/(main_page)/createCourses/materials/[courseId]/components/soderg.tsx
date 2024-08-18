@@ -68,8 +68,7 @@ const Soderg = ({course}: Props ) => {
 
 	return (
 		<div className='px-3'>
-			<Accordion type="multiple">
-				{currUser.id === course.userId && <SetPositonModal rasdels={rasd}/>}
+			<Accordion type="multiple">	
 				{rasd?.map((data, id) => (
 					<AccordionItem value={id.toString()} key={id} className='relative'>
 						<div className='absolute top-0 right-0 mt-[1.7rem] mr-[5%] lg:mr-[2%] flex items-center justify-center'>

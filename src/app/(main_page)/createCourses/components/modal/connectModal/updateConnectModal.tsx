@@ -38,6 +38,7 @@ import updateOption from "../../actions/test/updateConnect/updateOption";
 import updateQuestion from "../../actions/test/updateConnect/updatequestion";
 import { ClipLoader } from "react-spinners";
 import addBlock from "../../actions/test/updateConnect/addBlock";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const FormSchema = z.object({
   question: z.string().max(350, {
@@ -134,11 +135,11 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 	return (
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<div className={`p-2 bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 text-lg absolute right-0 top-0 rounded-lg cursor-pointer`}>
-						<FaPen />
+				<div className={`p-2 mt-3 bg-purple-200 hover:bg-[#835BD2] text-[#835BD2] hover:text-white transition-all text-lg absolute top-[-20px] right-0 rounded-lg cursor-pointer`}>
+						<FaPen className="text-base"/>
 					</div>
 				</DialogTrigger>
-				<DialogContent className="text-gray-500 max-w-[900px]">
+				<DialogContent className="text-gray-500 max-w-[700px]">
 					<DialogHeader className="text-xl font-semibold text-gray-600">
 						<DialogTitle className="text-2xl text-gray-500 flex justify-between pb-2">
 							<h2>
@@ -159,7 +160,7 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 					</DialogHeader>
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-2">
-							<h1 className="text-xl font-semibold">
+							<h1 className="text-lg font-semibold">
 								Задание
 							</h1>
 							<FormField
@@ -168,7 +169,7 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 								render={({ field }) => (
 									<FormItem>
 										<FormControl>
-											<Textarea placeholder="shadcn" className="text-xl font-semibold text-gray-400"{...field} />
+											<Textarea placeholder="shadcn" className="text-base font-medium text-gray-400"{...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -176,7 +177,7 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 							/>
 							
 							<div className="flex gap-2 items-center pt-3">
-								<h1 className="text-xl font-semibold">
+								<h1 className="text-lg font-semibold">
 									Ответы
 								</h1>
 								<HoverCard>
@@ -190,74 +191,76 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 									</HoverCardContent>
 								</HoverCard>
 							</div>
-							<div className="flex gap-2">
-								<div className="w-1/5 space-y-2">
-								{test.answers.map((answer, index) => (
-										<div className="flex gap-1 items-center relative" key={answer.id}>
-											<span className="text-lg font-bold w-6 h-6 bg-green-300 rounded-md text-green-600 flex justify-center items-center">{index + 1}</span>
-											<FormField
-													key={index}  // Добавляем уникальный ключ
-													control={form.control}
-													name={`answer.${index}`}  // Используем динамическое имя
-													render={({ field }) => (
-															<FormItem className="w-full m-0 text-gray-400">
-																	<FormControl>
-																			<Input 
-																					placeholder={`Ответ`} 
-																					className="text-base font-semibold text-gray-400 m-0 w-full" 
-																					{...field}
-																					onChange={(e) => {
-																						field.onChange(e); // Сначала вызываем стандартное поведение
-																					}}
-																			/>
-																	</FormControl>
-															</FormItem>
-													)}
-											/>
-										</div>
-								))}
-								</div>
-								<div className="w-4/5 space-y-2">
-								{test.options.map((answer, index) => (
-										<div className="flex gap-1 items-center relative" key={answer.id}>
-											<FormField
-													key={index}  // Добавляем уникальный ключ
-													control={form.control}
-													name={`option.${index}`}  // Используем динамическое имя
-													render={({ field }) => (
-															<FormItem className="w-full m-0 text-gray-400">
-																	<FormControl>
-																			<Input 
-																					placeholder={`Ответ`} 
-																					className="text-base font-semibold text-gray-400 m-0 w-full" 
-																					{...field} 
-																			/>
-																	</FormControl>
-															</FormItem>
-													)}
-											/>
-											<div 
-												className="w-7 h-7 bg-red-300 border-2 border-red-500 rounded-lg absolute right-3 flex items-center justify-center hover:bg-red-500 cursor-pointer transition-all text-red-500 hover:text-white"
-												onClick={() => {
-													//handleDeleteAnswer(answer.id)
-													updateVisov()
-												}}
-											>
-												<FaTrashCan className="text-base"/>
+							<ScrollArea className="w-full h-[250px] rounded-md border p-2">
+								<div className="flex gap-2">
+									<div className="w-2/3 space-y-2">
+									{test.answers.map((answer, index) => (
+											<div className="flex gap-1 items-center relative" key={answer.id}>
+												<span className="text-lg font-bold w-6 h-6 bg-green-300 rounded-md text-green-600 flex justify-center items-center">{index + 1}</span>
+												<FormField
+														key={index}  // Добавляем уникальный ключ
+														control={form.control}
+														name={`answer.${index}`}  // Используем динамическое имя
+														render={({ field }) => (
+																<FormItem className="w-full m-0 text-gray-400">
+																		<FormControl>
+																				<Input 
+																						placeholder={`Ответ`} 
+																						className="text-xs font-semibold text-gray-400 m-0 w-full" 
+																						{...field}
+																						onChange={(e) => {
+																							field.onChange(e); // Сначала вызываем стандартное поведение
+																						}}
+																				/>
+																		</FormControl>
+																</FormItem>
+														)}
+												/>
 											</div>
-										</div>
-								))}
-							</div>
-							</div>
+									))}
+									</div>
+									<div className="w-4/5 space-y-2">
+									{test.options.map((answer, index) => (
+											<div className="flex gap-1 items-center relative" key={answer.id}>
+												<FormField
+														key={index}  // Добавляем уникальный ключ
+														control={form.control}
+														name={`option.${index}`}  // Используем динамическое имя
+														render={({ field }) => (
+																<FormItem className="w-full m-0 text-gray-400">
+																		<FormControl>
+																				<Input 
+																						placeholder={`Ответ`} 
+																						className="text-xs font-semibold text-gray-400 m-0 w-full" 
+																						{...field} 
+																				/>
+																		</FormControl>
+																</FormItem>
+														)}
+												/>
+												<div 
+													className="w-7 h-7 bg-red-300 border-2 border-red-500 rounded-lg absolute right-3 flex items-center justify-center hover:bg-red-500 cursor-pointer transition-all text-red-500 hover:text-white"
+													onClick={() => {
+														//handleDeleteAnswer(answer.id)
+														updateVisov()
+													}}
+												>
+													<FaTrashCan className="text-base"/>
+												</div>
+											</div>
+									))}
+								</div>
+								</div>
+							</ScrollArea>
 								<div 
-									className="w-full py-[0.6rem] rounded-lg bg-green-200 flex justify-center items-center text-green-600 gap-3 font-bold text-lg border-[3px] border-green-500 hover:bg-green-500 hover:text-white transition-all cursor-pointer"
+									className="w-full py-[0.6rem] rounded-lg bg-green-200 flex justify-center items-center text-green-600 gap-3 font-bold text-base border-[3px] border-green-500 hover:bg-green-500 hover:text-white transition-all cursor-pointer"
 									onClick={() => {
 										addBlock(test.id)
 										updateVisov()
 									}}
 								>
 									Добавить 
-									<FaPlus className="w-7 h-7 bg-green-400 p-[0.255rem] rounded-lg" />
+									<FaPlus className="w- h-6 bg-green-400 p-[0.255rem] rounded-lg" />
 							</div>
 							<div className="flex justify-between gap-2 pt-4">
 								<Button 

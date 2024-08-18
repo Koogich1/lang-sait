@@ -32,6 +32,7 @@ import fetchCourseById from "../actions/fetchCourseById";
 import updateCourse from "../actions/updateCourse";
 import fetchLessonById from "../actions/fetchLessonById";
 import updateLesson from "../actions/updateLesson";
+import { PuffLoader } from "react-spinners";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).optional(),
@@ -53,6 +54,7 @@ const UpdateLessonModal = ({ updateData, lessonId }: Props) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [lesson, setLesson] = useState<Lessons | null>(null);
+  const [loading, setLoading] = useState(false)
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -96,35 +98,57 @@ const UpdateLessonModal = ({ updateData, lessonId }: Props) => {
     });
   };
 
+  if(loading){
+    return(
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="flex justify-center items-center min-h-[50vh] max-w-[430px] flex-col">
+          <h1 className="text-2xl font-bold text-gray-400">Загрузка данных...</h1>
+          <PuffLoader className="" size={100} color="#835BD2"/>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    console.log("Form Submitted: ", data); // Логируем данные формы
-
-    try {
-      const file = data.photoImage;
-      let base64Data;
-
-      if (file) {
-        base64Data = await handleFileRead(file); // Ждем, пока файл загрузится
+    const file = data.photoImage
+		const name = data.name
+    const aboutCourse = data.aboutCourse
+    if(file){
+      setLoading(true)
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("name", name)
+      formData.append("aboutLesson", aboutCourse)
+      formData.append("lessonId", lessonId)
+      try{
+        const response = await fetch('/api/user/updateLesson', { // Путь к вашему API
+          method: 'POST',
+          body: formData,
+       });
+       const result = await response.json();
+       updateData()
+				if(result.success){
+          console.log('успешно')
+          updateData()
+          setLoading(false)
+          setOpen(false)
+          updateData()
+				}
+      } catch(e){
+        console.log(e)
       }
-
-      const folderName = `course_${user?.name}_${data.name}_${Math.floor(Math.random() * (1000000 - 100 + 1)) + 100}`;
-      const fileName = `rasdel-${data.name}`;
-      const fileURL = `https://storage.yandexcloud.net/langschoolacynberg/courses/${user?.id}/${folderName}/${fileName}`;
-
-      // Начинаем обновление
-      await updateLesson({ lessonId, name: data.name, aboutLesson: data.aboutCourse });
-      
-      if (file) {
-				if(!base64Data){return}
-        await createS3photo(base64Data, folderName, fileName);
-        await updateLesson({ lessonId, photoUrl: fileURL });
+    }else {
+      setLoading(true);
+      try {
+        updateLesson({lessonId: lessonId, name: data.name, aboutLesson: data.aboutCourse})
         setOpen(false)
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);  // Убедитесь, что состояние загрузки выключается
       }
-      updateData();
-      setOpen(false);
-    } catch (error) {
-      console.error('Ошибка при обновлении раздела:', error);
     }
+    updateData()  
   };
 
   if (!user || !lesson) {

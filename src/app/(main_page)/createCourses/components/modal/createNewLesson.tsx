@@ -186,10 +186,17 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className='text-gray-500 font-medium'>
                     <DropdownMenuItem className='hover:bg-gray-100 flex justify-between'
-                    onClick={() => {
-                      deleteLessons(data.id)
-                      fetcher()
-                    }}
+                      onClick={async () => {
+                        try {
+                          setLoading(true);
+                          await deleteLessons(data.id);
+                          await fetcher(); // Wait for the data to be refreshed
+                        } catch (e) {
+                          console.log(e);
+                        } finally {
+                          setLoading(false); // Make sure to set loading to false here after the process
+                        }
+                      }}
                     >
                       <FaRegTrashCan/>
                       Удалить

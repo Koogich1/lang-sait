@@ -3,12 +3,14 @@
 import { db } from "@/lib/db"
 
 const createNewMultipleChoose = async(testId: string) => {
-	await db.option.create({
+	const data = await db.option.create({
 		data:{
 			testId: testId,
-			text: "Новый вариант"
+			text: "Новый вариант",
+			isCorrect: false,
 		}
 	})
+	return data
 }
 
 export default createNewMultipleChoose

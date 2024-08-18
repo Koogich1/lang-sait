@@ -31,7 +31,7 @@ export async function S3UpdateRasdel(fileBuffer: Buffer, folderName: string, fil
         console.log(question)
 				
         try{
-					updateRasdel({ name: name, aboutRasdel: aboutCourse, photoUrl: question, rasdelId: rasdelId});
+			updateRasdel({ name: name, aboutRasdel: aboutCourse, photoUrl: question, rasdelId: rasdelId});
         }catch(e){
             console.log(e)
         }

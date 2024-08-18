@@ -3,7 +3,6 @@
 import { db } from "@/lib/db"
 
 const createNewOrdering = async (testId: string) => {
-    // Создаем новую опцию
     const newOption = {
         text: "опция", // текст новой опции
     };
@@ -22,10 +21,10 @@ const createNewOrdering = async (testId: string) => {
         throw new Error("Test not found");
     }
 
-    const order = (test.answers.length + 1) // Новый номер опции
+    const order = test.answers.length + 1; // Новый номер опции
 
     // Обновляем тест, добавляя новую опцию
-    await db.test.update({
+    const createdOption = await db.test.update({
         where: {
             id: testId,
         },
@@ -34,7 +33,13 @@ const createNewOrdering = async (testId: string) => {
                 create: [{ ...newOption, order }], // добавляем опцию с указанным порядком
             },
         },
+        select: {
+            answers: true, // Получаем актуальные опции после обновления
+        }
     });
+
+    // Возвращаем последнюю созданную опцию
+    return createdOption.answers[createdOption.answers.length - 1]; 
 };
 
 export default createNewOrdering;

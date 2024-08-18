@@ -7,14 +7,12 @@ import { useParams } from 'next/navigation';
 import { currentUser } from '@/lib/auth';
 import { HashLoader } from 'react-spinners';
 import getCreator from '../../components/actions/getCreator';
-import { FaRegTrashCan } from "react-icons/fa6";
-import deleteCourse from '../../components/actions/deleteCourse';
-import { useRouter } from 'next/navigation';
-import { IoPencil } from "react-icons/io5";
 import Soderg from './components/soderg';
 import Opisanie from './components/opisanie';
 import DeleteCourseModal from '../../components/modal/deleteCourseModal';
 import UpdateCourseModal from '../../components/modal/updateCourseModal';
+import BackButton from '../../components/backButton';
+import Raspolozhenie from './components/raspolozhit';
 
 const CourseDetails = () => {
   const { courseId } = useParams(); // Получите courseId из query
@@ -53,7 +51,7 @@ const CourseDetails = () => {
 
   return (
     <div className='w-full min-h-[80vh] bg-white rounded-2xl mt-5 shadow-lg text-gray-600'>
-      <header className='p-3 flex justify-between'>
+      <header className='p-3 flex justify-between relative'>
         <div className='flex gap-3'>
           <img src={course.photoUrl} alt="" className='w-[80px] h-[120px] object-cover rounded-lg'/>
           <div className='ml-5 flex flex-col justify-between'>
@@ -64,6 +62,9 @@ const CourseDetails = () => {
             <div className='flex gap-2'>
               {currUser.id === creator.id && <div className='font-semibold text-sm hover:bg-gray-200 hover:text-gray-600 text-gray-500 py-1 bg-gray-100  w-[120px] rounded-lg flex items-center justify-center cursor-pointer transition-all'>Ваш учебник</div>}
               {currUser.id === creator.id &&  <DeleteCourseModal courseId ={course.id} />}
+            </div>
+            <div className='absolute right-3 bottom-3'>
+              <BackButton />
             </div>
           </div>
         </div>
@@ -79,10 +80,15 @@ const CourseDetails = () => {
             className={`font-semibold ${selectedMenuItem==="soderg" ? "text-gray-600 border-b-2 border-blue-300" : "text-gray-300"} transition-all cursor-pointer hover:bg-gray-100 h-full flex items-center px-2 rounded-t-lg`}
             onClick={() => {setSelectedMenuItem("soderg")}}
           >Описание</li>
+          <li
+            className={`font-semibold ${selectedMenuItem==="raspolozhit" ? "text-gray-600 border-b-2 border-blue-300" : "text-gray-300"} transition-all cursor-pointer hover:bg-gray-100 h-full flex items-center px-2 rounded-t-lg`}
+            onClick={() => {setSelectedMenuItem("raspolozhit")}}
+          >Расположить</li>
         </ul>
       </div>
       {selectedMenuItem === 'opisanie' && <Soderg course={course}/>}
       {selectedMenuItem === 'soderg' && <Opisanie />}
+      {selectedMenuItem === "raspolozhit" && <Raspolozhenie />}
     </div>
   );
 };

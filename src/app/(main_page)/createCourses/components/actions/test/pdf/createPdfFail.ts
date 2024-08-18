@@ -8,8 +8,17 @@ type Props = {
 }
 
 const createPdfFail = async({lessonId, littleRasdelId}: Props) => {
+	const tests = await db.test.findMany({
+		where:{
+			littleRasdelId: littleRasdelId
+		}
+	})
+
+	const position = tests.length + 1
+
 	await db.test.create({
 		data:{
+			position: position,
 			lessonId: lessonId,
 			littleRasdelId: littleRasdelId,
 			questionType: "PDF",

@@ -88,14 +88,14 @@ const UpdateVideo = ({test, updateVisov} : {test: Test, updateVisov: () => void}
 	return (
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<div className={`p-2 bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 text-lg absolute right-0 top-0 rounded-lg cursor-pointer`}>
+					<div className={`p-2 mt-3 bg-purple-200 hover:bg-[#835BD2] text-[#835BD2] hover:text-white transition-all text-lg absolute top-[-20px] right-0 rounded-lg cursor-pointer`}>
 						<FaPen />
 					</div>
 				</DialogTrigger>
-				<DialogContent className="text-gray-500 max-w-[900px]">
-					<DialogHeader className="text-xl font-semibold text-gray-600">
+				<DialogContent className="text-gray-500 max-w-[500px]">
+					<DialogHeader className="text-xl font-semibold text-gray-400">
 						<DialogTitle className="text-2xl text-gray-500 flex justify-between pb-2">
-							<h2>
+							<h2 className="text-xl text-[#6345a0]">
 								Изменить текст
 							</h2>
 							<div 
@@ -113,7 +113,7 @@ const UpdateVideo = ({test, updateVisov} : {test: Test, updateVisov: () => void}
 					</DialogHeader>
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-2">
-							<h1 className="text-xl font-semibold">
+							<h1 className="text-base font-medium">
 								Задание
 							</h1>
 							<FormField
@@ -122,13 +122,13 @@ const UpdateVideo = ({test, updateVisov} : {test: Test, updateVisov: () => void}
 								render={({ field }) => (
 									<FormItem>
 										<FormControl>
-											<Textarea placeholder="shadcn" className="text-xl font-semibold text-gray-400"{...field} />
+											<Textarea placeholder="" className="text-xs font-medium p-1 text-gray-400 min-h-10"{...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
-							<h1 className="text-xl font-semibold pt-5">
+							<h1 className="text-base font-medium pt-2">
 								Ссылка на видео с облака
 							</h1>
 							<FormField
@@ -137,13 +137,16 @@ const UpdateVideo = ({test, updateVisov} : {test: Test, updateVisov: () => void}
 								render={({ field }) => (
 									<FormItem>
 										<FormControl>
-											<Input placeholder="shadcn" className="text-base font-semibold text-gray-400"{...field} />
+											<Input placeholder="вставьте ссылку..." className="text-xs min-h-5 p-2 h-9 font-medium text-gray-400"{...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
-							<div className="flex justify-between gap-2 pt-4">
+							<div className="pt-2">
+								<div className="w-full h-[1px] bg-gray-100 "/>
+							</div>
+							<div className="flex justify-between gap-2 pt-2a">
 								<Button 
 									variant={"violetSelect"} 
 									className="w-1/2"

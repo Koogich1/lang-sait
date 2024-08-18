@@ -16,7 +16,9 @@ const fetchTestFromDb = async ({ lessonId, littleRasdelId }: Props) => {
 			textBlocks: {
 				orderBy: { position: "asc" } // Сортируем textBlocks по позиции
 			},
-			options: true,
+			options: {
+				orderBy: { order: "asc"}
+			},
 			answers: {
 				orderBy: {order: "asc"}
 			}, 

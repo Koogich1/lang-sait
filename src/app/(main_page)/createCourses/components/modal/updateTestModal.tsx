@@ -81,6 +81,7 @@ type Test = {
   littleRasdelId: string;
   question: string;
   questionType: QuestionType;
+	audioHeader: string | null;
   options: Option[];
   answers: Answer[];
 	audioName?: string | null;
@@ -100,7 +101,7 @@ const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => v
 			isTrue: testInfo.options.map((data) => data.isCorrect.toString()), // массив булевых cтрок
 			answer: testInfo.answers.map((data) => data.text),
 			poriyadNum: testInfo.answers.map((data) => data.order?.toString()),
-			audioName: testInfo.audioName || '',
+			audioName: test.audioHeader ? test.audioHeader : "",
 		},
 	});
 
@@ -195,8 +196,8 @@ const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => v
 	return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-				<div className={`p-2 mt-3 bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 text-lg absolute top-[-50px] right-0 rounded-lg cursor-pointer ${testInfo && testInfo.questionType === "AUDIOCHOOSE" ? "top-[-6.9rem]" : ""}`}>
-					<FaPen />
+				<div className={`p-2 mt-3 bg-purple-200 hover:bg-[#835BD2] text-[#835BD2] hover:text-white transition-all text-lg absolute top-[-50px] right-0 rounded-lg cursor-pointer ${testInfo && testInfo.questionType === "AUDIOCHOOSE" ? "top-[-10.1rem]" : ""}`}>
+					<FaPen className="text-base"/>
 				</div>
       </DialogTrigger>
       <DialogContent className="text-gray-500">
@@ -325,7 +326,7 @@ const UpdateTestModal = ({test, updateVisov} : {test: Test, updateVisov: () => v
 							control={form.control}
 							name={`answer.${index}`} // Динамические имена для массива
 							render={({ field }) => (
-								<FormItem className="flex items-center w-[89%] justify-between ">
+								<FormItem className="flex items-center w-[89%] justify-between">
 									<FormLabel className="w-1/3 text-lg font-semibold text-gray-600">{`Ответ ${index + 1}:`}</FormLabel>
 									<FormControl className="text-lg">
 										<Textarea placeholder="Введите ответ" {...field}/>

@@ -112,10 +112,13 @@ const UpdateRasdelModal = ({ updateData, rasdelId }: Props) => {
           body: formData,
        });
        const result = await response.json();
+       updateData()
 				if(result.success){
           console.log('успешно')
+          updateData()
           setLoading(false)
           setOpen(false)
+          updateData()
 				}
       } catch(e){
         console.log(e)

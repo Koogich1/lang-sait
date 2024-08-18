@@ -119,8 +119,8 @@ const UpdateBigTextModal = ({test, updateVisov} : {test: Test, updateVisov: () =
 	return (
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<div className={`p-2 mt-3 bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 text-lg absolute top-[-50px] right-0 rounded-lg cursor-pointer`}>
-						<FaPen />
+				<div className={`p-2 mt-3 bg-purple-200 hover:bg-[#835BD2] text-[#835BD2] hover:text-white transition-all text-lg absolute top-[-50px] right-0 rounded-lg cursor-pointer`}>
+						<FaPen className="text-base"/>
 					</div>
 				</DialogTrigger>
 				<DialogContent className="text-gray-500 max-w-[900px]">

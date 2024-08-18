@@ -12,6 +12,7 @@ const fetchCourses = async({courseID}: Props) => {
 			coureId: courseID
 		}
 	})
+	console.log(fetchData)
 	return fetchData
 }
 

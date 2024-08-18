@@ -1,19 +1,20 @@
 "use client";
 
-import UpdateTestModal from "@/app/(main_page)/createCourses/components/modal/updateTestModal";
+import UpdateOrdering from "@/app/(main_page)/createCourses/components/modal/UpdateTest/updateOrdering";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Option, QuestionType } from "@prisma/client";
-import React, { useState } from "react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-
-const shuffleArray = (array: any) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-};
+import React, { useEffect, useState } from "react";
+import {
+  DndContext,
+  DragOverlay,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  KeyboardSensor,
+} from "@dnd-kit/core";
+import { useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 type Answer = {
   id: string;
@@ -27,23 +28,76 @@ type Test = {
   lessonId: string;
   littleRasdelId: string;
   question: string;
-  questionType: QuestionType; // Это значение может быть enum или типом, определенным в Prisma
-  options: Option[]; // Используем массив Option
-  answers: Answer[];  // Используем массив Answer
+  audioHeader: string | null;
+  questionType: QuestionType;
+  options: Option[];
+  answers: Answer[];
 };
 
-const OrderBlock = ({ answers, test, visov, currRasdel}: { answers: Answer[], test: Test, visov: () => void, currRasdel: string}) => {
-  const shuffledAnswers = shuffleArray([...answers]);
+const OrderBlock = ({ answers, test, visov, currRasdel }: { answers: Answer[], test: Test, visov: () => void, currRasdel: string }) => {
+  const [items, setItems] = useState<Answer[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  // Инициализация items с перемешанными ответами
+  useEffect(() => {
+    const shuffled = [...answers].sort(() => Math.random() - 0.5);
+    setItems(shuffled);
+  }, [answers]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor)
+  );
+
+  const handleDragStart = (event: any) => {
+    setActiveId(event.active.id);
+  };
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = items.findIndex(item => item.id === active.id);
+      const newIndex = items.findIndex(item => item.id === over?.id);
+
+      const newItems = [...items];
+      newItems.splice(oldIndex, 1);
+      newItems.splice(newIndex, 0, items[oldIndex]);
+      setItems(newItems);
+    }
+
+    setActiveId(null);
+  };
+
+  // Функция для проверки правильного порядка
+  const isCorrectOrder = (item: Answer, index: number) => {
+    return item.order === index + 1; // Позиции начинаются с 1
+  };
 
   return (
-    <div className="mt-1 relative">
-      <UpdateTestModal test={test} updateVisov={() => visov()}/>
-      {shuffledAnswers.map((data: Answer, index: number) => (
-        <div key={data.id} className="py-1">
-          <h1 className="font-medium text-gray-400">Положение: {data.order}</h1>
-          {index + 1}) {data.text}
-        </div>
-      ))}
+    <div className="mt-1 relative py-4">
+      <UpdateOrdering test={test} updateVisov={() => visov()} />
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
+          {items.map((data: Answer, index: number) => (
+            <SortableItem 
+              key={data.id} 
+              id={data.id} 
+              text={data.text} 
+              isActive={activeId === data.id} 
+              isCorrect={isCorrectOrder(data, index)} 
+            />
+          ))}
+        </SortableContext>
+        <DragOverlay>
+          {activeId ? <SortableItem id={activeId} text={items.find(item => item.id === activeId)?.text!} isActive={false} isCorrect={false}/> : null}
+        </DragOverlay>
+      </DndContext>
+
       <div className="pt-3 flex gap-2">
         <Input type="text" className="h-9 w-20" placeholder="321" />
         <Button
@@ -53,6 +107,34 @@ const OrderBlock = ({ answers, test, visov, currRasdel}: { answers: Answer[], te
           Отправить
         </Button>
       </div>
+    </div>
+  );
+};
+
+const SortableItem = ({ id, text, isActive, isCorrect }: { id: string; text: string; isActive: boolean; isCorrect: boolean }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    backgroundColor: isCorrect ? 'lightgreen' : 'white', // Цвет элемента в зависимости от корректности
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`border-2 text-blue-400 border-blue-300 font-semibold text-base p-2 my-1 ${isActive ? "bg-blue-100" : ""} ${isCorrect ? "text-green-600 border-green-500" : ""} rounded-lg`}
+    >
+      {text}
     </div>
   );
 };

@@ -191,11 +191,12 @@ model TextBlock {
 }
 
 model Option {
-  id       String   @id @default(cuid())
-  testId   String
-  test     Test     @relation("TestOptions", fields: [testId], references: [id])
-  text     String   @default("")
+  id        String   @id @default(cuid())
+  testId    String
+  test      Test     @relation("TestOptions", fields: [testId], references: [id])
+  text      String   @default("")
   isCorrect Boolean  @default(false) // Указывает, правильный ли вариант ответа
+  order     Int?
   correctAnswers CorrectAnswer[] @relation("OptionCorrectAnswers")
 }
 
@@ -235,6 +236,7 @@ enum QuestionType {
   CONNECT_VATIANTS
   PDF
   RECORD_AUDIO
+  FILL_WORDS_IN_THE_TEXT_MENU
 }
 
 model Teacher {

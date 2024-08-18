@@ -5,9 +5,9 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
     const data = await request.formData(); // Получаем данные формы
     const file = data.get('file') as File; // Приводим к типу File
-		const name = data.get("name") as string;
-		const aboutCourse = data.get('aboutCourse') as string;
-    const courseId = data.get("courseId") as string;
+    const name = data.get("name") as string;
+	const aboutCourse = data.get('aboutCourse') as string;
+    const courseId = data.get("rasdelId") as string;
 
     if (!file) {
         return NextResponse.json({ success: false, error: "Файл не найден." }, { status: 400 });

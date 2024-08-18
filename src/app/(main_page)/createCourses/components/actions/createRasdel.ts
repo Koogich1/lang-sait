@@ -17,7 +17,6 @@ const createRasdel = async({name, aboutRasdel, photoUrl, course}: Props) => {
 		});
 
         const order = allRasdels.length + 1
-    
 
     await prisma.rasdelId.create({
         data: {

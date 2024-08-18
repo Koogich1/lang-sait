@@ -8,11 +8,14 @@ const fetchCurrTest = async(testId: string) => {
 			id: testId
 		},
 		include:{
-			answers: true,
+			answers: {
+        orderBy: {
+          order: 'asc' // Сортировка по полю order
+        }
+      },
 			options: true,
-		}
+		},
 	})
-	console.log(data)
 	return data
 }
 

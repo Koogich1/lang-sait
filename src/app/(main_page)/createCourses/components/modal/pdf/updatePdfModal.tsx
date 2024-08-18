@@ -89,32 +89,32 @@ const UpdatePdfModal = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 	return (
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<div className={`p-2 bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 text-lg absolute right-0 top-0 rounded-lg cursor-pointer`}>
-						<FaPen />
+				<div className={`p-2 mt-3 bg-purple-200 hover:bg-[#835BD2] text-[#835BD2] hover:text-white transition-all text-lg absolute top-[-20px] right-0 rounded-lg cursor-pointer`}>
+						<FaPen className="text-base"/>
 					</div>
 				</DialogTrigger>
-				<DialogContent className="text-gray-500 max-w-[900px]">
+				<DialogContent className="text-gray-500 max-w-[450px]">
 					<DialogHeader className="text-xl font-semibold text-gray-600">
-						<DialogTitle className="text-2xl text-gray-500 flex justify-between pb-2">
+						<DialogTitle className="text-xl text-[#835BD2] flex justify-between pb-2">
 							<h2>
 								Изменить текст
 							</h2>
 							<div 
-								className="w-10 h-10 bg-red-300 border-2 border-red-500 rounded-lg flex items-center justify-center hover:bg-red-500 cursor-pointer transition-all text-red-500 hover:text-white"
+								className="w-8 h-8 bg-red-300 border-2 border-red-500 rounded-lg flex items-center justify-center hover:bg-red-500 cursor-pointer transition-all text-red-500 hover:text-white"
 								onClick={() => {
 									deleteSimpleTest({testId: test.id, littleRasdelId: test.littleRasdelId})
 									updateVisov()
 									setOpen(false)
 								}}
 							>
-								<FaTrashCan className="text-2xl"/>
+								<FaTrashCan className="text-xl"/>
 							</div>
 						</DialogTitle>
-						<div className="w-full h-[1px] bg-gray-100"></div>
+						<div className="w-full h-[1px] bg-gray-100" />
 					</DialogHeader>
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-2">
-							<h1 className="text-xl font-semibold">
+							<h1 className="text-lg font-semibold">
 								Задание
 							</h1>
 							<FormField
@@ -123,28 +123,29 @@ const UpdatePdfModal = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 								render={({ field }) => (
 									<FormItem>
 										<FormControl>
-											<Textarea placeholder="shadcn" className="text-xl font-semibold text-gray-400"{...field} />
+											<Textarea placeholder="" className="text-base font-semibold text-gray-400"{...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
-							<h1 className="text-xl font-semibold pt-5">
+							<h1 className="text-lg font-semibold pt-2">
 								Ссылка на pdf с облака
 							</h1>
 							<FormField
 								control={form.control}
 								name="video"
 								render={({ field }) => (
-									<FormItem>
+									<FormItem className="pb-2">
 										<FormControl>
-											<Input placeholder="shadcn" className="text-base font-semibold text-gray-400"{...field} />
+											<Input placeholder="" className="text-base font-semibold text-gray-400"{...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
-							<div className="flex justify-between gap-2 pt-4">
+							<div className="w-full h-[1px] bg-gray-100" />
+							<div className="flex justify-between gap-2 pt-2">
 								<Button 
 									variant={"violetSelect"} 
 									className="w-1/2"
