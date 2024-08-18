@@ -61,7 +61,7 @@ const Raspolozhenie = () => {
 
       const updatedItems = newItems.map((item, index) => ({
         ...item,
-        position: index + 1, // Обновляем позицию
+        position: index, // Обновляем позицию
       }));
   
       try {
