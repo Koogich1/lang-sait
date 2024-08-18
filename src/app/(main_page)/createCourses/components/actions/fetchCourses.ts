@@ -10,9 +10,11 @@ const fetchCourses = async({courseID}: Props) => {
 	const fetchData = await db.rasdelId.findMany({
 		where:{
 			coureId: courseID
+		},
+		orderBy: {
+			position: 'asc' // или 'desc' для убывающего порядка
 		}
 	})
-	console.log(fetchData)
 	return fetchData
 }
 
