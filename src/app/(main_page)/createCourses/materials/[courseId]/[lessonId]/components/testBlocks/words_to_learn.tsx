@@ -44,7 +44,7 @@ const WordsToLearn: React.FC<AudioChooseProps> = ({ test, userId, courseUserId, 
 						</div>
 						<div className="flex flex-col gap-3 font-medium text-green-500">
 							{test.answers.map((data) => (
-								<FaArrowRight className="text-blue-400"/>
+								<FaArrowRight className="text-blue-400" key={`${data.id}+1`}/>
 							))}
 						</div>
 						{/* Контейнер с вариантами */}
