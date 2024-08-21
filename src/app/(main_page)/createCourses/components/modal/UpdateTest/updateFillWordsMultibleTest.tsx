@@ -39,6 +39,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import addOrderBlock from "../../actions/test/inputWordsIntext/addOrderBlock";
 import removeOrderBlock from "../../actions/test/inputWordsIntext/deleteOrderBlock";
 import { updateOptions } from "../../actions/test/inputWordsIntext/updateOptions";
+import updateFillWordsMultibleOptions from "../../actions/test/inputWordsIntext/updateFillWordsMultibleOptions";
+import updateTrueOrFalse from "../../actions/test/inputWordsIntext/updateTrueOrFalse";
+import { ClipLoader } from "react-spinners";
 
 const FormSchema = z.object({
   question: z.string().max(350, {
@@ -67,6 +70,7 @@ const UpdateFillWordsMultibleText = ({test, updateVisov} : {test: Test, updateVi
 
 	const [user, setUser] = useState<User | null>(null)
 	const [ content, setContent ] = useState(test.question);
+	const [loading, setLoading] = useState(false)
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -77,7 +81,6 @@ const UpdateFillWordsMultibleText = ({test, updateVisov} : {test: Test, updateVi
 			isTrue: test.options.map((data) => data.isCorrect.toString()), // массив булевых строк
 		}
 	});
-
 
 	const [open, setOpen] = useState(false)
 
@@ -91,60 +94,28 @@ const UpdateFillWordsMultibleText = ({test, updateVisov} : {test: Test, updateVi
 		fetchUser()
 	},[])
 
-	async function onSubmit(data: z.infer<typeof FormSchema>) {
-		const { question, text, option, isTrue } = data;
-	
-		// Обновляем текст задания
-		await updateBigText({ testId: test.id, text: text });
-	
-		// Определение типа OptionData
-		type OptionData = {
-			id: string;
-			text: string;
-			isCorrect: boolean;
-		};
-	
-		const optionsToUpdate: OptionData[] = [];
-	
-		// Объявляем тип для grouped
-		type Option = {
-			id: string;
-		};
-	
-		type GroupedOptions = {
-			[key: string]: Option[];
-		};
-	
-		const grouped: GroupedOptions = groupOptionsByOrder();
-	
-		// Проход по каждой группе
-		Object.keys(grouped).forEach(order => {
-			const group = grouped[order]; // теперь TypeScript знает, что это Option[]
-			group.forEach((opt: Option, index: number) => {
-				const optionData: OptionData = {
-					id: opt.id,
-					text: option[index],
-					isCorrect: isTrue[index] === "true",
-				};
-				optionsToUpdate.push(optionData);
-			});
-		});
-	
-		console.log(optionsToUpdate);
-	
-		// Обновляем options в базе данных
-		await updateOptions(test.id, optionsToUpdate);
-	
-		updateVisov();
-		setOpen(false);
-	}	
+	const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+		setLoading(true)
+		await updateBigText({testId: test.id, text: data.text, question: data.question})
+    await Promise.all(data.option.map((option, index) => (
+      updateFillWordsMultibleOptions(test.options[index].id, option)
+    )));
+    updateVisov();
+		setLoading(false)
+		setOpen(false)
+  };
+
+  const handleToggleCorrect = async (optionId: string, value: string) => {
+    const isCorrect = value === "true";
+    await updateTrueOrFalse(optionId, isCorrect);
+  };
 
 	type GroupedOptions = {
 		[order: number]: Option[]; // Ключ - это порядок (number), значение - массив опций (Option[])
 	};
 
 	const handleAddOrder = async (order: number) => {
-    await addOrder({ testId: test.id, order }); // только обновляем видимость
+    await addOrder({ testId: test.id, order }); 
 		updateVisov()
 	};
 
@@ -164,6 +135,17 @@ const UpdateFillWordsMultibleText = ({test, updateVisov} : {test: Test, updateVi
 	};
 	
 	const groupedOptions = groupOptionsByOrder();
+
+	if (loading) {
+    return (
+        <Dialog open={loading}>
+            <DialogContent className="flex flex-col items-center justify-center w-full min-h-[60vh] min-w-[60vh] text-2xl font-bold text-gray-400">
+                <h1>Обновление данных...</h1>
+                <ClipLoader size="100" color="#835BD2" />
+            </DialogContent>
+        </Dialog>
+    );
+	}
 
 	return (
 			<Dialog open={open} onOpenChange={setOpen}>
@@ -293,13 +275,31 @@ const UpdateFillWordsMultibleText = ({test, updateVisov} : {test: Test, updateVi
 																<FormItem className="flex items-center justify-between w-[25%] mr-2">
 																	<FormControl>
 																		<div className=""> 
-																			<Select onValueChange={field.onChange} defaultValue={option.isCorrect.toString()}>
+																			<Select 
+																				onValueChange={async (value) => {
+                                					handleToggleCorrect(option.id, value)}
+																				}
+																				defaultValue={option.isCorrect.toString()}
+																			>
 																				<SelectTrigger className={`text-xs w-[105px] ${option.isCorrect ?  "bg-green-200 text-green-500 border-2 border-green-400 font-semibold" : "bg-red-200 text-red-500 border-2 border-red-400 font-semibold" }`}>
 																					<SelectValue placeholder="Выберите правильный ответ" />
 																				</SelectTrigger>
 																				<SelectContent>
-																					<SelectItem value="false">неверный</SelectItem>
-																					<SelectItem value="true">верный</SelectItem>
+																					<SelectItem 
+																						value="false"
+																					>
+																						неверный
+																					</SelectItem>
+																					<SelectItem 
+																						value="true"
+																						onClick={async() => {
+																							console.log("работаю")
+																							await updateTrueOrFalse(option.id, false)
+																							updateVisov()
+																						}}
+																					>
+																						верный
+																					</SelectItem>
 																				</SelectContent>
 																			</Select>
 																		</div>
@@ -341,9 +341,7 @@ const UpdateFillWordsMultibleText = ({test, updateVisov} : {test: Test, updateVi
 									variant={"violetSelect"} 
 									className="w-1/2"
 									onClick={() => {
-										updateBigText({testId: test.id, text: content})
 										updateVisov()
-										setOpen(false)
 									}}
 								>
 									Подтвердить
@@ -352,7 +350,8 @@ const UpdateFillWordsMultibleText = ({test, updateVisov} : {test: Test, updateVi
 									variant={"shadow2"} 
 									className="w-1/2" 
 									onClick={() => {
-										
+										setOpen(false)
+										updateVisov()
 									}}
 								>
 									Отменить

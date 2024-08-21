@@ -5,15 +5,17 @@ import { db } from "@/lib/db"
 type Props ={
 	testId: string;
 	text: string;
+	question?: string;
 }
 
-const updateBigText = async({testId, text}: Props) => {
+const updateBigText = async({testId, text, question}: Props) => {
 	await db.test.update({
 		where:{
 			id: testId,
 		},
 		data:{
-			question: text
+			question: text,
+			audioHeader: question
 		}
 	})
 }

@@ -8,12 +8,19 @@ type Props = {
 }
 
 const addOrder = async({testId, order}: Props) => {
+	const allOptions = await db.option.findMany({
+		where:{
+			testId: testId,
+			order: order
+		}
+	})
 	await db.option.create({
 		data:{
 			testId: testId,
 			order: order,
 			isCorrect: false,
-			text: "вариант"
+			text: "вариант",
+			OptionMiniOrder: allOptions.length + 1
 		}
 	})
 }

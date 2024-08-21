@@ -20,6 +20,7 @@ const addOrderBlock = async (testId: string) => {
 	// Создаем новую запись с incremented order
 	await db.option.create({
 		data: {
+			OptionMiniOrder: 1,
 			testId: testId,
 			text: "",
 			order: orders ? orders + 1 : 1,

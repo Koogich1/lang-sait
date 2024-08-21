@@ -33,10 +33,13 @@ const FillWordsInTheBlankDropDown: React.FC<AudioChooseProps> = ({ test, userId,
   const [draggingAnswer, setDraggingAnswer] = useState<Answer | null>(null);
 
   const renderFilledText = (text: string) => {
+    let colvo = 1;
     const parts = text.split(/(\[\])/g);
     return parts.map((part, idx) => {
       if (part === '[]') {
-        return <DroppableAnswer key={idx} index={idx} />;
+        return (
+          <DroppableAnswer key={idx} index={idx} position={colvo++}/>
+        )
       } else {
         return (
           <span className='font-medium text-gray-500 text-base leading-9' key={idx}>
@@ -47,18 +50,23 @@ const FillWordsInTheBlankDropDown: React.FC<AudioChooseProps> = ({ test, userId,
     });
   };
 
-  const DroppableAnswer: React.FC<{ index: number }> = ({ index }) => {
+  
+
+  const DroppableAnswer: React.FC<{ index: number, position: number }> = ({ index, position }) => {
     const { setNodeRef } = useDroppable({ id: `droppable-${index}` });
 
     return (
       <div ref={setNodeRef} className='inline-block mr-2'>
         {selectedAnswers[index] ? (
-          <span className='font-medium text-blue-500 py-1 px-4 border-2 border-blue-400 rounded-lg bg-blue-200'>
-            {selectedAnswers[index]}
+          <span className={``}>
+            {test.answers.map((data, id) => 
+              (data.text === selectedAnswers[index] ? data.order === position ? <div className="font-medium text-green-500 py-1 px-4 border-2 border-green-400 rounded-lg bg-green-200">{selectedAnswers[index]}</div> : <div className="font-medium text-red-500 py-1 px-4 border-2 border-red-400 rounded-lg bg-red-200">{selectedAnswers[index]}</div>  : "")
+            )}
           </span>
         ) : (
           <span className='border-2 px-2 py-1 rounded-lg bg-blue-100 border-blue-400 font-semibold text-blue-500 cursor-pointer hover:bg-blue-200 transition-all'>
             Блок...
+            {position}
           </span>
         )}
       </div>
@@ -99,17 +107,31 @@ const FillWordsInTheBlankDropDown: React.FC<AudioChooseProps> = ({ test, userId,
       if (!droppedAnswer) return;
 
       const droppedAnswerText = droppedAnswer.text;
+      const position = droppedAnswer.order;
 
       setSelectedAnswers(prev => {
         const updatedAnswers = [...prev];
         updatedAnswers[index] = droppedAnswerText || null;
         return updatedAnswers;
       });
-
       setAvailableAnswers(prev => prev.filter(answer => answer.id !== droppedId));
       setDraggingAnswer(null);
-  
-      console.log(`Dropped answer "${droppedAnswerText}" on blank ${index}`);
+      
+      const isCorrectPosition = true
+
+      console.log(`${droppedAnswerText} / `);
+
+      if (!isCorrectPosition) {
+        // Если неправильный, ждем полсекунды и сбрасываем выбор
+        setTimeout(() => {
+          setSelectedAnswers(prev => {
+            const updatedAnswers = [...prev];
+            updatedAnswers[index] = null; // Возвращаем обратно
+            return updatedAnswers;
+          });
+          setAvailableAnswers(prev => [...prev, droppedAnswer]); // Возвращаем ответ обратно
+        }, 1000);
+      }
     } else {
       setActiveId(null);
       setDraggingAnswer(null);
@@ -136,16 +158,16 @@ const FillWordsInTheBlankDropDown: React.FC<AudioChooseProps> = ({ test, userId,
           <h3 className='mr-10'>{renderFilledText(test.question)}</h3>
         </div>
         <div className="w-full h-[1px] bg-gray-100 my-3" />
-          <button onClick={resetAnswers} className="absulute right-0 bg-gray-300 top-0 w-9 h-9 p-0 text-white flex items-center justify-center rounded-lg hover:bg-red-600 transition-all mb-4">
+          <button onClick={resetAnswers} className="absulute z-50 right-0 bg-gray-300 top-0 w-9 h-9 p-0 text-white flex items-center justify-center rounded-lg hover:bg-red-600 transition-all mb-4">
             <IoReload className="text-2xl text-gray-400"/>
           </button>
-        <div className="flex gap-1">
+        <div className="grid grid-cols-3 gap-1 text-center sm:grid-cols-5 md:grid-cols-6 ">
           {availableAnswers.length > 0 ? (
             availableAnswers.map((answer) => (
               <DraggableAnswer key={answer.id} answer={answer} />
             ))
           ) : (
-            <span className='text-gray-500'>Нет доступных ответов</span>
+            <span className='z-10 text-gray-500 w-full'>Нет доступных ответов</span>
           )}
         </div>
 
@@ -153,6 +175,7 @@ const FillWordsInTheBlankDropDown: React.FC<AudioChooseProps> = ({ test, userId,
           {draggingAnswer ? (
             <div className="border-2 px-3 py-1 rounded-lg bg-blue-200 border-blue-400 font-semibold text-blue-500">
               {draggingAnswer.text}
+              {draggingAnswer.order}
             </div>
           ) : null}
         </DragOverlay>

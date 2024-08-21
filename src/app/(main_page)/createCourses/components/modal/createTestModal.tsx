@@ -31,6 +31,7 @@ import сreateTrueVariantsTest from "../actions/test/connectTrueVariants/createT
 import createPdfFail from "../actions/test/pdf/createPdfFail"
 import createAudioSendTest from "../actions/test/createAudioSendTest"
 import createMultipleText from "../actions/test/inputWordsIntext/createMultiInputText"
+import createWordToLearn from "../actions/test/wordToLearn/createWordToLearn"
 
 const CreateTestModal = ({currRasdelId, visov, lessonId} : {currRasdelId: string, visov: () => void, lessonId: string}) => {
 	const[open, setOpen] = useState(false)
@@ -59,11 +60,10 @@ const CreateTestModal = ({currRasdelId, visov, lessonId} : {currRasdelId: string
 						<div className="flex justify-between text-lg gap-2 font-semibold text-gray-400">
 							<div className={`px-3 py-1 border border-gray-300 rounded-t border-b-0 transition-all hover:bg-gray-100 hover:text-gray-400 cursor-pointer ${choseen === "Simple" ? "text-blue-500 border-b-2 border-blue-500 hover:text-blue-500" : ""}`} onClick={() => setChoosen("Simple")}>Обычные тесты</div>
 							<div className={`px-3 py-1 border border-gray-300 rounded-t border-b-0 transition-all hover:bg-gray-100 hover:text-gray-400 cursor-pointer ${choseen === "Wreating" ? "text-blue-500 border-b-2 border-blue-500 hover:text-blue-500" : ""}`} onClick={() => setChoosen("Wreating")}>Правописание</div>
-							<div className={`px-3 py-1 border border-gray-300 rounded-t border-b-0 transition-all hover:bg-gray-100 hover:text-gray-400 cursor-pointer ${choseen === "Speaking" ? "text-blue-500 border-b-2 border-blue-500 hover:text-blue-500" : ""}`} onClick={() => setChoosen("Speaking")}>Говорение</div>
 							<div className={`px-3 py-1 border border-gray-300 rounded-t border-b-0 transition-all hover:bg-gray-100 hover:text-gray-400 cursor-pointer ${choseen === "UpScale" ? "text-blue-500 border-b-2 border-blue-500 hover:text-blue-500" : ""}`} onClick={() => setChoosen("UpScale")}>Тесты повышенной сложности</div>
 						</div>
 					{choseen === "Simple" && 
-						<ScrollArea className="w-full flex justify-center rounded-md border p-4">
+						<ScrollArea className="w-full flex justify-center rounded-md border p-4 ">
 							<div className="flex flex-col gap-5">
 								<Button 
 									variant={"shadow2"}
@@ -173,6 +173,17 @@ const CreateTestModal = ({currRasdelId, visov, lessonId} : {currRasdelId: string
 									className="relative flex-col bg-purple-50 hover:bg-purple-100 text-[#9c76e8] hover:text-[#6f4db3] h-auto w-full overflow-hidden border border-[#835BD2]"
 								>
 									<h1 className="font-medium relative z-10 text-base">Текстовое задание</h1>
+								</Button>
+								<Button 
+									variant={"shadow2"}
+									onClick={() => {
+										createWordToLearn({littleRasdelId: currRasdelId, lessonId: lessonId})
+										visov()
+										setOpen(false)
+									}}
+									className="relative flex-col bg-purple-50 hover:bg-purple-100 text-[#9c76e8] hover:text-[#6f4db3] h-auto w-full overflow-hidden border border-[#835BD2]"
+								>
+									<h1 className="font-medium relative z-10 text-base">Слова для изучения</h1>
 								</Button>
 							</div>
 						</ScrollArea>

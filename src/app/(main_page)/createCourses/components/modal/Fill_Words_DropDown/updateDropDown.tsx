@@ -33,6 +33,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
+import { ClipLoader } from "react-spinners";
 
 const FormSchema = z.object({
   question: z.string().max(350, {
@@ -60,6 +61,7 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 
 	const [user, setUser] = useState<User | null>(null)
 	const [ content, setContent ] = useState(test.question);
+	const [loading, setLoading] = useState(false)
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -90,6 +92,7 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 	},[])
 
 	async function onSubmit(data: z.infer<typeof FormSchema>) {
+		setLoading(true)
     const answersToUpdate = test.answers.map((answer, index) => ({
         id: answer.id, // предполагается, что у вас есть id ответа
         text: data.answer[index] // берём текст из формы
@@ -106,8 +109,18 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
     }).catch(err => {
         console.error(err);
     });
+		setLoading(false)
 	}
-
+	if (loading) {
+    return (
+        <Dialog open={loading}>
+            <DialogContent className="flex flex-col items-center justify-center w-full min-h-[60vh] min-w-[60vh] text-2xl font-bold text-gray-400">
+                <h1>Обновление данных...</h1>
+                <ClipLoader size="100" color="#835BD2" />
+            </DialogContent>
+        </Dialog>
+    );
+	}
 
 	return (
 			<Dialog open={open} onOpenChange={setOpen}>

@@ -49,7 +49,6 @@ const FillWordsInTheBlankTextMenu: React.FC<AudioChooseProps> = ({ test, userId,
         if (part === '[]') {
             const optionsForThisBlank = groupedOptions[currentOrder] || []; 
             currentOrder++;
-
             return (
                 <DropdownMenu key={idx}>
                     <DropdownMenuTrigger asChild>

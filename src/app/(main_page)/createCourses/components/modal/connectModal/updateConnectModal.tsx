@@ -39,6 +39,7 @@ import updateQuestion from "../../actions/test/updateConnect/updatequestion";
 import { ClipLoader } from "react-spinners";
 import addBlock from "../../actions/test/updateConnect/addBlock";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import deleteAnswerOptionCorrect from "../../actions/test/connectTrueVariants/deleteAnswerOptionCorrect";
 
 const FormSchema = z.object({
   question: z.string().max(350, {
@@ -241,7 +242,7 @@ const UpdateDropDown = ({test, updateVisov} : {test: Test, updateVisov: () => vo
 												<div 
 													className="w-7 h-7 bg-red-300 border-2 border-red-500 rounded-lg absolute right-3 flex items-center justify-center hover:bg-red-500 cursor-pointer transition-all text-red-500 hover:text-white"
 													onClick={() => {
-														//handleDeleteAnswer(answer.id)
+														deleteAnswerOptionCorrect(answer.order ? answer.order : 1, test.id)
 														updateVisov()
 													}}
 												>

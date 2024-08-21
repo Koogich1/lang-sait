@@ -4,8 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://gen_user:FG)ubFa2NS%269pL@93.93.207.164:5432/AsybergProd"
-
+  url      = "postgresql://langschool_owner:QSr2YNs6Adzi@ep-noisy-limit-a256jzax-pooler.eu-central-1.aws.neon.tech/langschool?sslmode=require"
 }
 
 enum UserRole {
@@ -197,6 +196,7 @@ model Option {
   text      String   @default("")
   isCorrect Boolean  @default(false) // Указывает, правильный ли вариант ответа
   order     Int?
+  OptionMiniOrder   Int?
   correctAnswers CorrectAnswer[] @relation("OptionCorrectAnswers")
 }
 
@@ -237,6 +237,7 @@ enum QuestionType {
   PDF
   RECORD_AUDIO
   FILL_WORDS_IN_THE_TEXT_MENU
+  WORDS_TO_LEARN
 }
 
 model Teacher {

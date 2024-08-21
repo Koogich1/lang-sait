@@ -1,7 +1,7 @@
 "use client"
 
 import UpdateAudioModal from "@/app/(main_page)/createCourses/components/modal/audio_record/audioRecord";
-import UpdateFillInTheBlank from "@/app/(main_page)/createCourses/components/modal/UpdateTest/updateFillInTheBlank";
+import UpdateFillInTheBlank from "@/app/(main_page)/createCourses/components/modal/Fill_Words_DropDown/updateFillInTheBlank";
 import UpdateTestModal from "@/app/(main_page)/createCourses/components/modal/updateTestModal";
 import { Answer, CorrectAnswer, Option, QuestionType, TextBlock } from "@prisma/client";
 

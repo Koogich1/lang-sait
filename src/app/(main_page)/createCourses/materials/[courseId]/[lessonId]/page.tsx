@@ -60,6 +60,9 @@ import FillWordsInTheBlankDropDown from './components/testBlocks/fillWordsInTheB
 import WritingTask from './components/testBlocks/writingTask'
 import Video from './components/testBlocks/video'
 import FillWordsInTheBlankTextMenu from './components/testBlocks/FillWordsInTheBlankTextMenu'
+import WordsToLearn from './components/testBlocks/words_to_learn'
+import { Switch } from '@/components/ui/switch'
+import PechatWordsInTheBlankDropDown from './components/testBlocks/pechatWordsInTheBlankDorpDown'
 
 const FormSchema = z.object({
   username: z.string().max(30, {
@@ -94,6 +97,7 @@ const Page = () => {
 	const [course, setCourse]= useState<courseData | null>(null)
 	const [user, setUser] = useState<User | null>(null)
 	const [loading, setLoading] = useState(false);
+	const [isSwitchOn, setIsSwitchOn] = useState(true);
 
   const fetchMaterials = async (rasdelId: string) => {
 
@@ -149,12 +153,14 @@ const Page = () => {
 	}, [lessonId])
 
 	useEffect(() => {
+		setLoading(true)
 		if (currRasdel) {
 			form.setValue("username", currRasdel.name);
 		} else if (rasdels && rasdels.length > 0) {  // Если currRasdel не установлен
 			setCurretRasdel(rasdels[0]); // Установить первый раздел
 			fetchTest(rasdels[0].id); // Получить тесты для первого раздела
 		}
+		setLoading(false)
 	}, [currRasdel, rasdels]); // Добавить rasdels как зависимостьl
 
 	const form = useForm<z.infer<typeof FormSchema>>({
@@ -184,17 +190,6 @@ const Page = () => {
 	}
 
 	const domashniyaRabotaRasdel = rasdels?.find(data => data.name === "Домашняя работа");
-
-	if (loading) {
-		return (
-			<Dialog open={loading}>
-				<DialogContent className="flex flex-col items-center justify-center w-full min-h-[60vh] min-w-[60vh] text-2xl font-bold text-gray-400">
-						<h1>Обновление данных...</h1>
-						<ClipLoader size="100" color="#835BD2" />
-				</DialogContent>
-			</Dialog>
-		);
-	}
 
 	return (
 		<div className='flex gap-3 mt-5'>
@@ -425,6 +420,14 @@ const Page = () => {
 									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")} 
 								/>
 							}
+							{test.questionType === "WORDS_TO_LEARN" &&
+								<WordsToLearn 
+									test={test} 
+									userId={user.id} 
+									courseUserId={course?.userId ? course?.userId : ""}
+									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")} 
+								/>
+							}
 							{test.questionType === "ONLY_TEXT"&& 
 								<OnlyText 
 									test={test} 
@@ -506,13 +509,33 @@ const Page = () => {
 								/>
 							}
 							{test.questionType === "FILL_WORDS_IN_THE_BLANK_DROPDOWN" && 
-								<FillWordsInTheBlankDropDown
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
+								<div className='relative'>
+									<div className='absolute left-[-100px] top-[-21px] h-20 w-20 bg-gray-100 shadow-lg rounded-lg border-gray-300 border-[2px] p-2 flex flex-col items-center justify-center'>
+										<h1 className='text-center text-gray-500 text-xs font-semibold pb-2'>Сменить тип</h1>
+										<Switch
+											checked={isSwitchOn}
+											onClick={() => setIsSwitchOn(prev => !prev)}
+										/>
+									</div>
+									{isSwitchOn ?
+									
+									<FillWordsInTheBlankDropDown
+										test={test} 
+										userId={user.id} 
+										courseUserId={course?.userId ? course?.userId : ""}
+										updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
+									/> 
+									: 
+									<PechatWordsInTheBlankDropDown
+										test={test} 
+										userId={user.id} 
+										courseUserId={course?.userId ? course?.userId : ""}
+										updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
+									/>}
+									
+								</div>
 							}
+
 							{test.questionType === "FILL_WORDS_IN_THE_TEXT_MENU" && 
 								<FillWordsInTheBlankTextMenu
 									test={test} 

@@ -9,6 +9,11 @@ const addBlock = async(testId: string) => {
 			testId: testId
 		}
 	})
+	const allOrders = await db.option.findMany({
+		where:{
+			testId: testId
+		}
+	})
 	const answer = await db.answer.create({
 		data: {
 			testId: testId,
@@ -20,6 +25,7 @@ const addBlock = async(testId: string) => {
 		data: {
 			testId: testId,
 			text: "ответ",
+			order: allOrders.length + 1
 		}
 	})
 	await db.correctAnswer.create({

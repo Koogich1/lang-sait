@@ -42,6 +42,7 @@ import createNewMultipleChoose from "../../actions/createNewMultipleChoose";
 import deleteSimpleTest from "../../actions/test/deleteTest";
 import { currentUser } from "@/lib/auth";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ClipLoader } from "react-spinners";
 
 const FormSchema = z.object({
   question: z.string().max(350, {
@@ -84,6 +85,7 @@ type Test = {
 const UpdateFillInTheBlank = ({ test, updateVisov }: { test: Test, updateVisov: () => void }) => {
   const [testInfo, setTestInfo] = useState(test);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false)
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -143,68 +145,35 @@ const UpdateFillInTheBlank = ({ test, updateVisov }: { test: Test, updateVisov: 
 	
   
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const file = data.file;
-
+    setLoading(true)
     const optionsToUpdate = data.option.map((text, index) => ({
       id: testInfo.options[index].id,
       text,
       isCorrect: data.isTrue[index] === "true",
     }));
 
-    const answersToUpdate = data.answer.map((text, index) => ({
-      id: testInfo.answers[index]?.id,
-      text,
-      order: data.poriyadNum[index] ? parseInt(data.poriyadNum[index]) : undefined,
-    }));
-
-    // Проверяем, выбран ли файл
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('question', data.question);
-      formData.append('testId', testInfo.id);
-      // Добавьте другие необходимые поля, такие как optionsToUpdate и answersToUpdate,
-      // если это нужно на сервере, например, в JSON-формате.
-      try {
-        const response = await fetch('/api/user/addFiles', { // Путь к вашему API
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          // Обновляем тест с URL файла
-          await updateTest({
-            options: optionsToUpdate,
-            answers: answersToUpdate,
-            testId: testInfo.id,
-          });
-
-          setOpen(false); // Закрытие модального окна
-          updateVisov(); // Обновление данных
-        } else {
-          console.error('Ошибка загрузки файла на сервер:', result.error);
-        }
-      } catch (error) {
-        console.error('Ошибка при отправке запроса:', error);
-      }
-    } else {
-      // Если файл не выбран, просто обновляем тест
-      await updateTest({
-        name: data.question,
-        audioName: data.audioName,
-        options: optionsToUpdate,
-        answers: answersToUpdate,
-        testId: testInfo.id,
-      });
-      setOpen(false);
-			fechCurrTestInfo()
-      updateVisov();
-    }
+    await updateTest({
+      name: data.question,
+      audioName: data.audioName,
+      options: optionsToUpdate,
+      testId: testInfo.id,
+    })
+    setLoading(false)
+    setOpen(false);
 		fechCurrTestInfo()
 		updateVisov()
   }
+
+  if (loading) {
+    return (
+        <Dialog open={loading}>
+            <DialogContent className="flex flex-col items-center justify-center w-full min-h-[60vh] min-w-[60vh] text-2xl font-bold text-gray-400">
+                <h1>Обновление данных...</h1>
+                <ClipLoader size="100" color="#835BD2" />
+            </DialogContent>
+        </Dialog>
+    );
+	}
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

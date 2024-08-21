@@ -79,7 +79,7 @@ const ConnectLetters: React.FC<AudioChooseProps> = ({ test, userId, courseUserId
         <SortableContext items={letters} strategy={verticalListSortingStrategy}>
           <div className='flex gap-1 py-3 text-gray-500 font-semibold relative '>
             {letters.map((letter, index) => (
-              <SortableLetter key={letter} id={letter} text={letter.toLowerCase()} />
+              <SortableLetter key={`${index} - ${letter}`} id={letter} text={letter.toLowerCase()} />
             ))}
           </div>
         </SortableContext>
@@ -113,7 +113,7 @@ const SortableLetter = ({ id, text }: { id: string; text: string; }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="h-8 w-8 bg-green-200 flex justify-center items-center border-2 border-green-400 text-green-500 font-semibold rounded-lg my-1"
+      className="h-12 w-12 bg-green-200 flex justify-center text-2xl items-center border-2 border-green-400 text-green-500 font-semibold rounded-lg my-1"
     >
       {text}
     </div>

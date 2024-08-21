@@ -1,8 +1,8 @@
 "use client"
-import UpdateAudioModal from "@/app/(main_page)/createCourses/components/modal/audio_record/audioRecord";
-import UpdateTestModal from "@/app/(main_page)/createCourses/components/modal/updateTestModal";
+
 import { Answer, CorrectAnswer, Option, QuestionType, TextBlock } from "@prisma/client";
 import UpdateConnectModal from "../../../../../components/modal/connectModal/updateConnectModal"
+import { FaArrowRight } from "react-icons/fa6";
 
 type Test = {
   id: string;
@@ -24,28 +24,29 @@ interface AudioChooseProps {
   updateVisov: () => void; // Function to update visibility
 }
 
-const ConnectVariants: React.FC<AudioChooseProps> = ({ test, userId, courseUserId, updateVisov }) => {
+const WordsToLearn: React.FC<AudioChooseProps> = ({ test, userId, courseUserId, updateVisov }) => {
 	
   return (
     <div>
     	<div className='flex w-full justify-between relative'>
-				<h3 className='font-semibold text-lg 0 max-w-[80%]'>{test.question}</h3>
+				<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
 				<UpdateConnectModal test={test} updateVisov={() => updateVisov()}/>
 			</div>
       <>
-				<div className='flex min-w-[600px] justify-between pt-3'>
+				<div className='flex min-w-[400px] justify-between pt-6 items-center gap-5'>
 					{/* Контейнер с ответами */}
-						<div className='flex flex-col gap-1 text-xs text-green-500 font-medium w-[50%]'>
+						<div className='flex flex-col gap-1 text-xs font-medium text-green-500 w-[50%]'>
 							{test.answers.map((data) => (
-								<div key={data.id} className='px-3 py-1 border bg-green-100 border-green-300 rounded-lg'>
+								<div key={data.id} className='px-3 py-1 border border-green-300 bg-green-100 rounded-lg'>
 									{data.text}
 								</div>
 							))}
 						</div>
-
-						{/* Разделитель (если нужен) */}
-						<div className='bg-gray-300 w-px mx-2'></div>
-
+						<div className="flex flex-col gap-3 font-medium text-green-500">
+							{test.answers.map((data) => (
+								<FaArrowRight className="text-blue-400"/>
+							))}
+						</div>
 						{/* Контейнер с вариантами */}
 						<div className='flex flex-col gap-1 text-xs font-medium text-blue-500 w-[50%]'>
 						{test.options.map((data) => (
@@ -60,4 +61,4 @@ const ConnectVariants: React.FC<AudioChooseProps> = ({ test, userId, courseUserI
   )
 }
 
-export default ConnectVariants;
+export default WordsToLearn;

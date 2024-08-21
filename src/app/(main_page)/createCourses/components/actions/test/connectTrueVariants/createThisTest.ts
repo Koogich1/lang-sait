@@ -25,8 +25,8 @@ const createTrueVariantsTest = async ({ lessonId, littleRasdelId }: Props) => {
 			questionType: "CONNECT_VATIANTS",
 			options: {
 				create: [
-					{ text: "текст 1", isCorrect: false },
-					{ text: "текст 2", isCorrect: true }, // Пример правильного варианта
+					{ text: "текст 1", order: 1},
+					{ text: "текст 2", order: 2},
 				]
 			},
 			answers: {
