@@ -108,6 +108,7 @@ const UpdateFillWordsMultibleText = ({test, updateVisov} : {test: Test, updateVi
   const handleToggleCorrect = async (optionId: string, value: string) => {
     const isCorrect = value === "true";
     await updateTrueOrFalse(optionId, isCorrect);
+		updateVisov()
   };
 
 	type GroupedOptions = {
@@ -267,54 +268,30 @@ const UpdateFillWordsMultibleText = ({test, updateVisov} : {test: Test, updateVi
 																</FormItem>
 															)}
 														/>
-														<FormField
-															key={option.id + 1}
-															control={form.control}
-															name={`isTrue.${index}`}
-															render={({ field }) => (
-																<FormItem className="flex items-center justify-between w-[25%] mr-2">
-																	<FormControl>
-																		<div className=""> 
-																			<Select 
-																				onValueChange={async (value) => {
-                                					handleToggleCorrect(option.id, value)}
-																				}
-																				defaultValue={option.isCorrect.toString()}
-																			>
-																				<SelectTrigger className={`text-xs w-[105px] ${option.isCorrect ?  "bg-green-200 text-green-500 border-2 border-green-400 font-semibold" : "bg-red-200 text-red-500 border-2 border-red-400 font-semibold" }`}>
-																					<SelectValue placeholder="Выберите правильный ответ" />
-																				</SelectTrigger>
-																				<SelectContent>
-																					<SelectItem 
-																						value="false"
-																					>
-																						неверный
-																					</SelectItem>
-																					<SelectItem 
-																						value="true"
-																						onClick={async() => {
-																							console.log("работаю")
-																							await updateTrueOrFalse(option.id, false)
-																							updateVisov()
-																						}}
-																					>
-																						верный
-																					</SelectItem>
-																				</SelectContent>
-																			</Select>
-																		</div>
-																	</FormControl>
-																	<FormMessage />
-																</FormItem>
-															)}
-														/>
-													</div>
+														 <div className="flex items-center justify-between w-[25%] mr-2">
+																<Select
+																	onValueChange={(value) => {
+																		handleToggleCorrect(option.id, value);
+																	}}
+																	defaultValue={option.isCorrect.toString()} // Используем значение по умолчанию
+																>
+																	<SelectTrigger className={`text-xs w-[105px] ${option.isCorrect ? "bg-green-200 text-green-500 border-2 border-green-400 font-semibold" : "bg-red-200 text-red-500 border-2 border-red-400 font-semibold"}`}>
+																		<SelectValue placeholder="Выберите правильный ответ" />
+																	</SelectTrigger>
+																	<SelectContent>
+																		<SelectItem value="false">неверный</SelectItem>
+																		<SelectItem value="true">верный</SelectItem>
+																	</SelectContent>
+																</Select>
+															</div>
+														</div>
 												))}
 												<Button
 													className="w-full py-[0.6rem] rounded-lg bg-green-200 flex justify-center items-center text-green-600 gap-3 font-semibold text-lg border-[2px] border-green-500 hover:bg-green-500 hover:text-white transition-all cursor-pointer"
 													type="button"
 													onClick={() => {
 														handleAddOrder(index + 1)
+														updateVisov()
 														setOpen(true)
 													}} // Используйте новую функцию
 												>
