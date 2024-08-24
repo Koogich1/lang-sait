@@ -178,7 +178,7 @@ const UpdateFillInTheBlank = ({ test, updateVisov }: { test: Test, updateVisov: 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className={`p-2 mt-3 bg-purple-200 hover:bg-[#835BD2] text-[#835BD2] hover:text-white transition-all text-lg absolute top-[-50px] right-0 rounded-lg cursor-pointer ${testInfo && testInfo.questionType === "AUDIOCHOOSE" ? "top-[-10rem]" : ""}`}>
+        <div className={`p-2 mt-3 bg-purple-200 hover:bg-[#835BD2] text-[#835BD2] hover:text-white transition-all text-lg absolute right-0 top-[-22px] rounded-lg cursor-pointer ${testInfo && testInfo.questionType === "AUDIOCHOOSE" ? "top-[-10rem]" : ""}`}>
           <FaPen className="text-base" />
         </div>
       </DialogTrigger>

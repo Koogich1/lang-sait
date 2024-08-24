@@ -20,6 +20,7 @@ const createTestTasq = async({lessonId, littleRasdelId} : {littleRasdelId: strin
 			position: position+1,
 			littleRasdelId: littleRasdelId,
 			lessonId: lessonId,
+			audioHeader: "obichniy"
 		}
 	})
 }

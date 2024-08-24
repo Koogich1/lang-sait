@@ -27,8 +27,11 @@ interface AudioChooseProps {
 
 const FillInTheBlank: React.FC<AudioChooseProps> = ({ test, userId, courseUserId, updateVisov }) => {
   return (
-    <div>
-    	<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.question}</h3>
+    <div className="relative">
+    	<h3 className='font-semibold text-lg text-gray-600 max-w-[80%] '>{test.question}</h3>
+			{userId === courseUserId && 
+				<UpdateFillInTheBlank test={test} updateVisov={() => updateVisov()}/>
+			}
       <div className='relative'>
 				<div className='flex font-semibold text-gray-400'>
 					Правильные ответы:
@@ -41,9 +44,6 @@ const FillInTheBlank: React.FC<AudioChooseProps> = ({ test, userId, courseUserId
 							{data.isCorrect}
 						</h1>
 					</div>
-					{userId === courseUserId && 
-						<UpdateFillInTheBlank test={test} updateVisov={() => updateVisov()}/>
-					}
 					</div>
 				))}
 			</div>

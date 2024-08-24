@@ -9,7 +9,7 @@ const LogoutButton = () => {
 	}
 
 	return (
-			<div onClick={onClick}>Выйти</div>
+			<div onClick={onClick}>Выйти из аккаунта</div>
 	)
 }
 

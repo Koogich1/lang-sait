@@ -3,6 +3,8 @@
 import UpdateAudioModal from "@/app/(main_page)/createCourses/components/modal/audio_record/audioRecord";
 import UpdateTestModal from "@/app/(main_page)/createCourses/components/modal/updateTestModal";
 import { Answer, CorrectAnswer, Option, QuestionType, TextBlock } from "@prisma/client";
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
 
 type Test = {
   id: string;
@@ -29,7 +31,7 @@ const RecordAudio: React.FC<AudioChooseProps> = ({ test, userId, courseUserId, u
     <div>
     	<div className='relative'>
 				<h3 className='font-semibold text-lg text-gray-600 max-w-[80%]'>{test.audioHeader ? test.audioHeader : "Введите название"}</h3>
-				<audio src={test.question} controls className='w-[80%] h-9 my-3'></audio>
+				<AudioPlayer src={test.question} className='w-full my-3'></AudioPlayer>
 				{userId === courseUserId && 
           <UpdateAudioModal test={test} updateVisov={() => updateVisov()} />
         }

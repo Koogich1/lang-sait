@@ -63,6 +63,7 @@ import FillWordsInTheBlankTextMenu from './components/testBlocks/FillWordsInTheB
 import WordsToLearn from './components/testBlocks/words_to_learn'
 import { Switch } from '@/components/ui/switch'
 import PechatWordsInTheBlankDropDown from './components/testBlocks/pechatWordsInTheBlankDorpDown'
+import ConnectPhotoVariants from './components/testBlocks/connectPhotoVariants'
 
 const FormSchema = z.object({
   username: z.string().max(30, {
@@ -266,7 +267,7 @@ const Page = () => {
 				</div>
 				<div className='w-7 lg:w-full h-[1px] bg-gray-300 mt-3' />
 				<div className='w-11 lg:w-full bg-white rounded-lg flex flex-col lg:flex-row items-center justify-center shadow-sm mt-3'>
-					<div className={`text-3xl lg:w-1/2 flex items-center justify-center p-[0.3rem] mt-[0.135rem] mb-[0.135rem] hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all cursor-pointer ${currRasdel?.id === domashniyaRabotaRasdel?.id ? "text-blue-500 bg-blue-100" : "text-gray-400"}`}
+					<div className={`text-3xl lg:w-[97%] flex items-center justify-center p-[0.3rem] mt-[0.135rem] mb-[0.135rem] hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all cursor-pointer ${currRasdel?.id === domashniyaRabotaRasdel?.id ? "text-blue-500 bg-blue-100" : "text-gray-400"}`}
 						onClick={async() => {
 							if (domashniyaRabotaRasdel) {
 								setCurretRasdel({ id: domashniyaRabotaRasdel.id, lessonId: domashniyaRabotaRasdel.lessonId, name: domashniyaRabotaRasdel.name });
@@ -277,6 +278,12 @@ const Page = () => {
 									setLoading(true)
 									await createHomeWorkRasdel(lessonId as string)
 									await fetchRasdels()
+									const data = rasdels?.find(data => data.name === "Домашняя работа");
+									if(data){
+										setCurretRasdel({ id: data.id, lessonId: data.lessonId, name: data.name });
+										await fetchMaterials(data.id)
+										await fetchTest(data.id);
+									}
 								}catch(e){
 									console.log(e)
 								}
@@ -300,10 +307,6 @@ const Page = () => {
 						<FaHome className='text-gray-400'/> 
 						
 						}
-					</div>
-					<div className='w-7 h-[1px] lg:h-full lg:w-[1px] lg:m-[3px] bg-gray-300' />
-					<div className='text-2xl lg:w-1/2 flex items-center justify-center p-2 m-[0.1rem] mt-[0.135rem] mb-[0.135rem] text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all cursor-pointer'>
-						<FaBook />
 					</div>
 				</div>
 			</div>
@@ -486,6 +489,14 @@ const Page = () => {
 							}
 							{test.questionType === "CONNECT_VATIANTS" && 
 								<ConnectVariants 
+									test={test} 
+									userId={user.id} 
+									courseUserId={course?.userId ? course?.userId : ""}
+									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
+								/>
+							}
+							{test.questionType === "CONNECT_PHOTO_VARIANTS" && 
+								<ConnectPhotoVariants 
 									test={test} 
 									userId={user.id} 
 									courseUserId={course?.userId ? course?.userId : ""}

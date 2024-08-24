@@ -32,6 +32,7 @@ import createPdfFail from "../actions/test/pdf/createPdfFail"
 import createAudioSendTest from "../actions/test/createAudioSendTest"
 import createMultipleText from "../actions/test/inputWordsIntext/createMultiInputText"
 import createWordToLearn from "../actions/test/wordToLearn/createWordToLearn"
+import createTrueVariantsPhotoTest from "../actions/test/connectTrueVariants/createPhotoTest"
 
 const CreateTestModal = ({currRasdelId, visov, lessonId} : {currRasdelId: string, visov: () => void, lessonId: string}) => {
 	const[open, setOpen] = useState(false)
@@ -237,6 +238,17 @@ const CreateTestModal = ({currRasdelId, visov, lessonId} : {currRasdelId: string
 									className="relative flex-col bg-purple-50 hover:bg-purple-100 text-[#9c76e8] hover:text-[#6f4db3] h-auto w-full overflow-hidden border border-[#835BD2]"
 								>
 									<h1 className="font-medium relative z-10 text-base">Соедините правильные варианты ответа</h1> 
+								</Button>
+								<Button 
+									variant={"shadow2"}
+									onClick={() => {
+										createTrueVariantsPhotoTest({ littleRasdelId: currRasdelId, lessonId: lessonId })
+										visov();
+										setOpen(false);
+									}}
+									className="relative flex-col bg-purple-50 hover:bg-purple-100 text-[#9c76e8] hover:text-[#6f4db3] h-auto w-full overflow-hidden border border-[#835BD2]"
+								>
+									<h1 className="font-medium relative z-10 text-base">Соедините фото и текст</h1> 
 								</Button>
 								<Button 
 									variant={"shadow2"}
