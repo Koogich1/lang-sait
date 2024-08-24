@@ -80,6 +80,7 @@
     "draftjs-to-html": "^0.9.1",
     "draftjs-to-markdown": "^0.6.0",
     "easy-yandex-s3": "^2.0.0",
+    "embla-carousel-react": "^8.2.0",
     "express": "^4.19.2",
     "file-saver": "^2.0.5",
     "git": "^0.1.5",
