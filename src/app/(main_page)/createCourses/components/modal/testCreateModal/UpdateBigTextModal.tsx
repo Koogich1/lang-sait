@@ -26,13 +26,6 @@ import addPhotoTOTextTasq from "../../actions/test/addPhotoTOTextTasq";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; 
 import updatePhotoVariants from "../../actions/updatePhotoVariants";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { ClipLoader } from "react-spinners";
@@ -246,7 +239,6 @@ const UpdateBigTextModal = ({test, updateVisov} : {test: Test, updateVisov: () =
 								<SelectContent>
 									<SelectItem value="obichniy">Друг под другом</SelectItem>
 									<SelectItem value="row">В ряд</SelectItem>
-									<SelectItem value="carus">Карусель</SelectItem>
 								</SelectContent>
 							</Select>
 							{typePhoto === "row" && 
@@ -266,19 +258,6 @@ const UpdateBigTextModal = ({test, updateVisov} : {test: Test, updateVisov: () =
 										</div>
 									))}
 								</div>
-							}
-							{typePhoto === "carus" &&
-								<Carousel className="w-full max-w-xs bg-green ml-20">
-									<CarouselContent>
-										{test.options.map((data, index) => (
-											<CarouselItem key={index} className="w-[250px] bg-blue-300 rounded-lg" onClick={() => handleImageClick(data)}>
-												<img src={data.text} alt="" className="w-full object-cover rounded-lg hover:opacity-30 transition-all cursor-pointer"/>
-											</CarouselItem>
-										))}
-									</CarouselContent>
-									<CarouselPrevious />
-									<CarouselNext />
-								</Carousel>
 							}
 						</ScrollArea>
 						<Button 

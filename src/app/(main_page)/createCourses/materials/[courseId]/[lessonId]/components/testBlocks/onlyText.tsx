@@ -3,7 +3,6 @@
 import UpdateAudioModal from "@/app/(main_page)/createCourses/components/modal/audio_record/audioRecord";
 import UpdateBigTextModal from "@/app/(main_page)/createCourses/components/modal/testCreateModal/UpdateBigTextModal";
 import UpdateTestModal from "@/app/(main_page)/createCourses/components/modal/updateTestModal";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Answer, CorrectAnswer, Option, QuestionType, TextBlock } from "@prisma/client";
 
 type Test = {
@@ -57,19 +56,6 @@ const OnlyText: React.FC<AudioChooseProps> = ({ test, userId, courseUserId, upda
 											</div>
 										))}
 									</div>
-								}
-								{test.audioHeader === "carus" &&
-								<Carousel className="w-full max-w-xs bg-green">
-									<CarouselContent>
-										{test.options.map((data, index) => (
-											<CarouselItem key={index} className="w-[250px]">
-												<img src={data.text} alt="" className="w-full object-cover rounded-lg"/>
-											</CarouselItem>
-										))}
-									</CarouselContent>
-									<CarouselPrevious />
-									<CarouselNext />
-								</Carousel>
 								}
         </div>
       </div>
