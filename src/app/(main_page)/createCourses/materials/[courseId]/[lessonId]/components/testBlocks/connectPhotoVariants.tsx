@@ -50,7 +50,7 @@ const ConnectPhotoVariants: React.FC<AudioChooseProps> = ({ test, userId, course
 						{/* Контейнер с вариантами */}
 							<div className='flex flex-col gap-1 text-xs items-center justify-center text-green-500 font-medium w-[30%]'>
 							{test.answers.map((data) => (
-								<img src={data.text} className="w-[6rem] h-[6rem] object-cover rounded-lg shadow-sm" />
+								<img src={data.text} key={data.id} className="w-[6rem] h-[6rem] object-cover rounded-lg shadow-sm" />
 							))}
 						</div>
 						</div>
