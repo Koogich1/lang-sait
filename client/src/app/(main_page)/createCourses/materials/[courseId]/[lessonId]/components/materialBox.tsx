@@ -26,6 +26,7 @@ import upateMaterialPosition from '@/app/(main_page)/createCourses/components/ac
 import { Dialog, DialogContent } from '@radix-ui/react-dialog';
 import { ClipLoader } from 'react-spinners';
 import UpdateMaterialImage from '@/app/(main_page)/createCourses/components/modal/updateMaterailImage';
+import Image from 'next/image';
 
 const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -269,7 +270,7 @@ const SortableItem: React.FC<{ id: string; content: string | null; imageSrc: str
           dangerouslySetInnerHTML={{ __html: content }} />
        </div>
       ) : (
-        <img className="max-w-[150px]" src={imageSrc ? imageSrc : ""} alt="" />
+        <Image width={1000} height={1000} className="max-w-[150px]" src={imageSrc ? imageSrc : ""} alt="" />
       )}
     </div>
   );

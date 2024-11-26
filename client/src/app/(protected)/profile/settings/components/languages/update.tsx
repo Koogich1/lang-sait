@@ -27,7 +27,7 @@ const Update = ({language, back, update}: Props) => {
 		language&&
 			setLevel(language.level)
 			setPrefers(language.prefers)
-	},[])
+	},[language])
 	
 	const Submit = async() => {
 		if(updated){

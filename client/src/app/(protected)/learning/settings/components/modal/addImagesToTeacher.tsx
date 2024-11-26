@@ -235,7 +235,9 @@ const AddImagesToTeacher = ({ open, setOpenModal, teacherId, visov }: Props) => 
               onComplete={(c) => setCompletedCrop(c)}
               className='max-h-[60vh] flex items-center justify-center'
             >
-              <img
+              <Image
+                width={1000}
+                height={1000}
                 ref={imgRef}
                 alt="Crop me"
                 src={imgSrc}

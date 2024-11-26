@@ -1,21 +1,21 @@
 "use client"
 import findCourseInRasdel from "@/app/(main_page)/createCourses/watching/actions/findMaterials/findCourseInRasdel";
 import { courseData } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const RasdelCourse = ({courseId}: {courseId: string}) => {
 	const [course, setCourse] = useState<courseData>()
 
-	const fetchCourses = async() => {
-		const fetchedInf = await findCourseInRasdel(courseId)
-		if(fetchedInf){
-			setCourse(fetchedInf)
+	const fetchCourses = useCallback(async () => {
+		const fetchedLessons = await findCourseInRasdel(courseId);
+		if (fetchedLessons) {
+			setCourse(fetchedLessons);
 		}
-	}
+	}, [courseId]);
 
 	useEffect(() => {
 		fetchCourses()
-	}, [])
+	}, [fetchCourses])
 
 	const languageTranslations: any = {
     China: "Китайский",

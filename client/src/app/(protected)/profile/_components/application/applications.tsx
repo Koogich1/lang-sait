@@ -1,6 +1,6 @@
 import { Application, User } from "@prisma/client";
 import getUserAplication from "../actions/application/getUserApplication";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FaArchive } from "react-icons/fa";
 import Teacher from "./teacher";
@@ -46,13 +46,13 @@ const Applications = ({ user }: Props) => {
     setFilterType(type);
   };
 
-  const fetchApplication = async () => {
+  const fetchApplication = useCallback(async () => {
     const data = await getUserAplication(user.id);
     if (data) {
       console.log(data)
       setApplications(data);
     }
-  };
+  }, [user.id])
 
   const color = (data: Application) => {
     if (data.status === "accepted") {
@@ -68,7 +68,7 @@ const Applications = ({ user }: Props) => {
 
   useEffect(() => {
     fetchApplication();
-  }, [filterType]); // вызов fetchApplication() каждый раз, когда filterType меняется
+  }, [filterType, fetchApplication]); // вызов fetchApplication() каждый раз, когда filterType меняется
 
   if(!applications){
     return(

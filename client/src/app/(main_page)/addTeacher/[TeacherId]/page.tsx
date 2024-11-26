@@ -57,21 +57,17 @@ const Page = () => {
 
 	
 	useEffect(() => {
-		const fetchUser = async () => {
-			const data = await getTeacherById(TeacherId as string)
-			if (data) {
-				const isaAdded = await findIsTeacherAdded(data?.teacherId)
-				if(isaAdded){
-					setIsTeacherAdded(true)
-				} else{
-					setIsTeacherAdded(false)
-				}
-				setUser(data)
-			}
-			
-		}
-		fetchUser()
-	}, [])
+    const fetchUser = async () => {
+        const data = await getTeacherById(TeacherId as string);
+        if (data) {
+            const isaAdded = await findIsTeacherAdded(data?.teacherId);
+            setIsTeacherAdded(isaAdded);
+            setUser(data);
+        }
+    };
+    
+    fetchUser();
+}, [TeacherId]);  // Добавляем TeacherId
 
 
 
@@ -162,6 +158,7 @@ const Page = () => {
 						{user.teacherInfo.languages.map((data) => (
 								<div 
 									onClick={() => {setActiveLanguage(data.language as languageVariants)}}
+									key={data.language}
 								>
 								{data.language === "China" ? 
 									<div className={`bg-[#f20520] p-2 overflow-hidden hover:opacity-100 cursor-pointer transition-all relative max-h-[40px] w-full flex flex-col justify-between rounded-xl shadow-lg ${activeLanguage === data.language as languageVariants ? "scale-105" : "opacity-30"}`}>

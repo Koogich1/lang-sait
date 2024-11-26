@@ -68,7 +68,7 @@ const TeacherProfile = ({teacherId}: Props) => {
 			}
 		} 
 		fetchInfo()
-	}, [])
+	}, [teacherId])
 
 	return (
 		<div className="w-1/2 h-[40vh] bg-white shadow-lg rounded-lg flex flex-col gap-3 items-center justify-around px-2 py-4">

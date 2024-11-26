@@ -4,6 +4,7 @@ import UpdateAudioModal from "@/app/(main_page)/createCourses/components/modal/a
 import UpdateBigTextModal from "@/app/(main_page)/createCourses/components/modal/testCreateModal/UpdateBigTextModal";
 import UpdateTestModal from "@/app/(main_page)/createCourses/components/modal/updateTestModal";
 import { Answer, CorrectAnswer, Option, QuestionType, TextBlock } from "@prisma/client";
+import Image from "next/image";
 
 type Test = {
   id: string;
@@ -43,7 +44,7 @@ const OnlyText: React.FC<AudioChooseProps> = ({ test, userId, courseUserId, upda
 									<div className="grid grid-cols-3 gap-5 justify-center">
 										{test.options.map((data, index) => (
 											<div key={index} className="">
-												<img src={data.text} alt="" className="w-full h-full object-cover rounded-lg"/>
+												<Image width={1000} height={1000} src={data.text} alt="" className="w-full h-full object-cover rounded-lg"/>
 											</div>
 										))}
 									</div>
@@ -52,7 +53,7 @@ const OnlyText: React.FC<AudioChooseProps> = ({ test, userId, courseUserId, upda
 									<div className="grid grid-cols-1 gap-5 justify-center">
 										{test.options.map((data, index) => (
 											<div key={index} className="">
-												<img src={data.text} alt="" className="w-1/3 object-cover rounded-lg"/>
+												<Image width={1000} height={1000} src={data.text} alt="" className="w-1/3 object-cover rounded-lg"/>
 											</div>
 										))}
 									</div>

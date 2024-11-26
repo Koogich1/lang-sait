@@ -4,7 +4,7 @@ import findCourses from "@/app/(main_page)/createCourses/watching/actions/findMa
 import { courseData, customCourse } from "@prisma/client"
 import Image from "next/image"
 import { useParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react" // Импортируем useCallback
 import { format } from 'date-fns'; // Импорт функции format
 import { Button } from "@/components/ui/button"
 import { IoSettingsSharp } from "react-icons/io5"
@@ -28,27 +28,23 @@ interface CustomCourseSet {
   courses: CustomCourse[]; // убедитесь, что это свойство существует
 }
 
-type Props = {
-	
-}
-
 const CourseBox = () => {
   const { CustomSet } = useParams();
   const [courseSets, setCourseSets] = useState<CustomCourseSet[]>([]);
   const [enter, setEnter] = useState(false);
   const [open, setOpen] = useState(false);
   const [course, setCourse] = useState<CustomCourse>();
-	const [customSetId, setCustomSetId] = useState<string>()
+  const [customSetId, setCustomSetId] = useState<string>();
 
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     const data = await findCourses(CustomSet as string);
-		console.log(data);
+    console.log(data);
     if (data) {
       setCourseSets(data); // Теперь устанавливаем наборы курсов
     }
-  };
+  }, [CustomSet]); // Добавляем CustomSet в зависимости
 
-	const languageTranslations: any = {
+  const languageTranslations: any = {
     China: "Китайский",
     Korean: "Корейский",
     English: "Английский",
@@ -56,13 +52,13 @@ const CourseBox = () => {
     // Добавьте другие языки по мере необходимости
   };
 
-	const translatedLanguage = (course: any) => {
+  const translatedLanguage = (course: any) => {
     return languageTranslations[course] || "Неизвестный язык";
   }
 
   useEffect(() => {
     fetchCourses();
-  }, [CustomSet]);
+  }, [fetchCourses]); // Зависим только от fetchCourses
 
   return (
     <div>
@@ -91,7 +87,7 @@ const CourseBox = () => {
                   <div 
                     className="bg-gray-200 text-gray-400 flex items-center justify-center rounded-lg text-3xl w-10 h-10 hover:bg-gray-300 cursor-pointer transit"
                     onClick={() => {
-											setCustomSetId(set.id)
+                      setCustomSetId(set.id);
                       setCourse(data);
                       setOpen(true);
                     }}
@@ -117,4 +113,4 @@ const CourseBox = () => {
   )
 }
 
-export default CourseBox
+export default CourseBox;

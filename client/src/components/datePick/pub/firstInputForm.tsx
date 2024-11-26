@@ -12,6 +12,7 @@ import {
 import { FaRegTrashCan } from "react-icons/fa6";
 import saveTeacherAvailability from "../AllTimeLineCreate";
 import { FaRegCalendarCheck } from "react-icons/fa";
+import weekCreateLogic from "../weekCreateLogic";
 
 const hours = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
 
@@ -31,11 +32,9 @@ type TimeSlotsData = {
   vs: TimeSlot[];
 };
 
-type Props = {
-  visov: () => void
-}
 
-export const FirstTimeInputForm = ({ visov }: Props) => {
+
+export const FirstTimeInputForm = () => {
   const [active, setActive] = useState<string>("pn");
   const [timeSlots, setTimeSlots] = useState<{ [key: string]: TimeSlot[] }>({
     pn: [],
@@ -252,7 +251,7 @@ export const FirstTimeInputForm = ({ visov }: Props) => {
               <Button 
                 onClick={() => {
                   submit();
-                  visov()
+                  weekCreateLogic()
                 }}
                 className="w-full"
                 variant={"violetSelect"}

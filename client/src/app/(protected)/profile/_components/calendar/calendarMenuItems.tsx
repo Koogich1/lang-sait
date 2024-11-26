@@ -35,7 +35,7 @@ const CalendarMenuItems = ({teacherId, lessons, active}: Props) => {
 			}
 		}
 		fetchTeacher()
-	},[])
+	},[teacherId])
 
 	const Surname = teacher?.user.surname ? teacher.user.surname.charAt(0).toUpperCase() : "";
 

@@ -70,7 +70,7 @@ const ByePage = () => {
 			}
 		}
 		fetchInfo()
-	}, [])
+	}, [teacherId])
 
 	if (!user || !teacher) {
 		return

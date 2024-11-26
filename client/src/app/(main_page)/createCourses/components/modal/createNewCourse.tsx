@@ -165,7 +165,9 @@ const CreateNewCourse = ({ updateData }: { updateData: () => void }) => {
                 <FormItem className="grid grid-cols-2 justify-center items-center space-y-0 gap-3 ml-0">
                   <div className="w-[125px] h-[190px] rounded-xl bg-blue-200">
                     {imagePreview && (
-                      <img
+                      <Image
+                        width={1000}
+                        height={1000}
                         src={imagePreview}
                         alt="Preview"
                         className="w-full h-full object-cover rounded-xl"

@@ -35,12 +35,13 @@ const ChangePhoto = ({ open, setOpenModal, user, visov }: Props) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const blobUrlRef = useRef<string>('');
   const [acceptCrop, setAcceptCrop] = useState<boolean>(false);
+	const [loading, setLoading] = useState(false);
 
-	const [loading, setLoading] = useState(false)
-
-	if(!user){
-		return
-	}
+  useEffect(() => {
+    if(!user) {
+      return;
+    }
+  }, [user]);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -89,7 +90,7 @@ const ChangePhoto = ({ open, setOpenModal, user, visov }: Props) => {
         URL.revokeObjectURL(blobUrlRef.current);
       }
       blobUrlRef.current = URL.createObjectURL(blob);
-      setCroppedImageUrl(blobUrlRef.current);  // Устанавливаем обрезанное изображение
+      setCroppedImageUrl(blobUrlRef.current);
     }
     setAcceptCrop(true);
   };
@@ -149,11 +150,11 @@ const ChangePhoto = ({ open, setOpenModal, user, visov }: Props) => {
             console.error(e);
         } finally {
             setLoading(false);
-            visov()
+            visov();
         }
     }
-    visov()
-    setLoading(false)
+    visov();
+    setLoading(false);
 	};
 
   if(loading){
@@ -198,7 +199,7 @@ const ChangePhoto = ({ open, setOpenModal, user, visov }: Props) => {
 						</Button>
 						:
 						<Button onClick={() => fileInputRef.current?.click()} variant={"violetSelect"} className="w-full h-20 border-[3px] border-[#835BD2]">
-							Нажмите, что-бы выбрать
+							Нажмите, чтобы выбрать
 						</Button>
 						}
           </div>
@@ -218,7 +219,9 @@ const ChangePhoto = ({ open, setOpenModal, user, visov }: Props) => {
               onComplete={(c) => setCompletedCrop(c)}
               aspect={1} // Устанавливаем соотношение сторон 1:1 для квадратной обрезки
             >
-              <img
+              <Image
+                width={1000}
+                height={1000}
                 ref={imgRef}
                 alt="Crop me"
                 src={imgSrc}

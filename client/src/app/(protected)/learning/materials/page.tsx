@@ -197,7 +197,7 @@ const Page = () => {
                             <h1 className='text-5xl text-white'>{data.name.charAt(0).toUpperCase()}</h1>
                           </div>
                         ) : (
-                          <img src={data.imageSrc ? data.imageSrc : ""} alt={data.name} className='w-full h-4/5 object-cover' />
+                          <Image src={data.imageSrc ? data.imageSrc : ""} alt={data.name} className='w-full h-4/5 object-cover' />
                         )}
                         <div className='absolute text-sm bottom-0 p-3 rounded-xl bg-white w-full h-1/5 flex items-center justify-center text-gray-400'>
                           <p className='absolute text-xs top-2 right-1 font-light text-gray-300'>{formatDate(data.createdAt)}</p>
@@ -281,7 +281,7 @@ const Page = () => {
                 <li className='flex items-center justify-center cursor-pointer' key={data.id}>
                   <div>
                     <div className='w-[175px] h-[275px] rounded-lg overflow-hidden relative flex justify-center hover:scale-105 hover:shadow-lg transition-all duration-300'>
-                      <img src={data.photoUrl} alt="" className='w-full h-4/5 object-cover' />
+                      <Image width={1000} height={1000} src={data.photoUrl} alt="" className='w-full h-4/5 object-cover' />
                       <div className='absolute text-sm bottom-0 p-3 bg-white w-full h-1/5'>
                         {data.name}
                       </div>

@@ -30,6 +30,7 @@ import fetchRasdelById from "../actions/fethRasdelById";
 import { IoPencil } from "react-icons/io5";
 import updateRasdel from "../actions/updateRasdel";
 import { PuffLoader } from "react-spinners";
+import Image from "next/image";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).optional(),
@@ -80,7 +81,7 @@ const UpdateRasdelModal = ({ updateData, rasdelId }: Props) => {
 
     fetchRasdel();
     handleUser();
-  }, [rasdelId]); // Обратите внимание на зависимости
+  }, [rasdelId, form]); // Обратите внимание на зависимости
 
   
 
@@ -170,7 +171,9 @@ const UpdateRasdelModal = ({ updateData, rasdelId }: Props) => {
                 <FormItem className="grid grid-cols-2 justify-center items-center space-y-0 gap-3 ml-0">
                   <div className="w-[125px] h-[190px] rounded-xl bg-blue-200">
                     {imagePreview && (
-                      <img
+                      <Image
+                        width={1000}
+                        height={1000}
                         src={imagePreview}
                         alt="Preview"
                         className="w-full h-full object-cover rounded-xl"

@@ -27,15 +27,13 @@ const RightPart = ({friendId}: Props) => {
 			if(data){
 				setUser(data)
 			}
-			console.log(friendId as string)
 			const frientInfo = await getUserByIdChat(friendId as string)
-			console.log(frientInfo)
 			if(frientInfo){
 				setFriend(frientInfo)
 			}
 		}
 		fetchUser()
-	},[])
+	},[friendId])
 
 	if(!friendId || !user){
 		return(

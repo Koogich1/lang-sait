@@ -15,6 +15,7 @@ import { User } from '@prisma/client'
 import { currentUser } from '@/lib/auth'
 
 import _ from "lodash"
+import Image from 'next/image'
 
 const UpdateProfilePhoto = () => {
 	const [fileUpload, setFileUpload] = useState<string | null>(null);
@@ -99,7 +100,7 @@ const UpdateProfilePhoto = () => {
 		<div className="w-[30%] flex flex-col items-center justify-start">
 				<h1 className="text-lg font-semibold text-gray-600 text-center">Изображение профиля</h1>
 					<div className="w-[70%] h-auto mt-3 p-0">
-						{url && <img src={url} alt="Profile Picture" className="w-full h-full rounded-full"/>}
+						{url && <Image width={1000} height={1000} src={url} alt="Profile Picture" className="w-full h-full rounded-full"/>}
 					</div>
 					<Button
 						className="text-sm font-semibold p-5 mt-3"
@@ -120,7 +121,9 @@ const UpdateProfilePhoto = () => {
 							</DialogHeader>
 							{selectedFile && (
 								<div className="flex justify-center relative">
-									<img
+									<Image
+										width={1000}
+										height={1000}
 										src={URL.createObjectURL(selectedFile)}
 										alt="Выбранное изображение"
 										className="object-cover h-[300px] w-[300px] rounded-full"

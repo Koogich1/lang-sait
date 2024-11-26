@@ -1,96 +1,90 @@
-"use client"
+"use client";
 
-import initializeSocket from "@/lib/socket"
-import { callStore } from "@/lib/useStore"
-import { Video } from "lucide-react"
-import CallComponent from "./callComponent"
-import { useEffect, useState } from "react"
-import { User } from "@prisma/client"
-import getUserByIdChat from "../actions/getUserById"
+import initializeSocket from "@/lib/socket";
+import { callStore } from "@/lib/useStore";
+import { Video } from "lucide-react";
+import CallComponent from "./callComponent";
+import { useEffect, useState } from "react";
+import { User } from "@prisma/client";
+import getUserByIdChat from "../actions/getUserById";
 
 type Props = {
-	reciverId: string
-	currentUserId: string
-}
+	reciverId: string;
+	currentUserId: string;
+};
 
-interface CallData {
-	roomId: string
-}
-
-const MoreMenu = ({reciverId, currentUserId}: Props) => {
-	const [open, setOpen] = useState<boolean>(false)
-	const [user, setUser] = useState<User | null>(null)
+const MoreMenu = ({ reciverId, currentUserId }: Props) => {
+	const [open, setOpen] = useState<boolean>(false);
+	const [user, setUser] = useState<User | null>(null);
 
 	useEffect(() => {
-		const fetchCurrentUser = async() => {
-			const data = await getUserByIdChat(reciverId)
-			if(data){
-				setUser(data)
+		const fetchCurrentUser = async () => {
+			const data = await getUserByIdChat(reciverId);
+			if (data) {
+				setUser(data);
 			}
-		}
-		fetchCurrentUser()
-	}, [])
+		};
+		fetchCurrentUser();
+	}, [reciverId]);  // Добавлено
 
-	const socket = initializeSocket(currentUserId)
-	const {active, setActive, callData, setCallData} = callStore(state => ({
+	const socket = initializeSocket(currentUserId);
+	const { active, setActive, callData, setCallData } = callStore((state) => ({
 		active: state.active,
 		setActive: state.setActive,
 		callData: state.callData,
-		setCallData: state.setCallData
-	}))
-
+		setCallData: state.setCallData,
+	}));
 
 	useEffect(() => {
 		socket.on("incomingCall", (data) => {
 			console.log("Incoming call data:", data);
 			setCallData({
 				from: data.from,
-				roomId: data.roomId
-			})
+				roomId: data.roomId,
+			});
+			setOpen(true);
+		});
 
-			setOpen(true)
-		})
+		return () => {
+			socket.off("incomingCall");
+		};
+	}, [socket, setCallData]);  // Добавлено
 
-		return() => {
-			socket.off("incomingCall")
-		}
-	}, [socket])
-
-	if(!user){
-		return(
+	if (!user) {
+		return (
 			<div>
 				Не вышло
 			</div>
-		)
+		);
 	}
 
 	const initializeCall = () => {
-		const roomId = Date.now().toString()
-		setOpen(true)
+		const roomId = Date.now().toString();
+		setOpen(true);
 		setCallData({
-			from:{
+			from: {
 				id: currentUserId,
-				name: user?.name ?? "", 
+				name: user?.name ?? "",
 				profilePic: user.image ?? "",
 			},
-			roomId
-		})
+			roomId,
+		});
 		socket.emit("initialiseCall", {
-			from:{
+			from: {
 				id: currentUserId,
-				name: user?.name ?? "", 
+				name: user?.name ?? "",
 				profilePic: user.image ?? "",
 			},
-			roomId
-		}, reciverId)
-	}
+			roomId,
+		}, reciverId);
+	};
 
 	return (
 		<div className="flex items-center justify-end pr-10">
 			<Video strokeWidth={2} onClick={initializeCall} />
-			<CallComponent open={open} setOpen={setOpen}/>
+			<CallComponent open={open} setOpen={setOpen} />
 		</div>
-	)
-}
+	);
+};
 
-export default MoreMenu
+export default MoreMenu;

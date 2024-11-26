@@ -1,4 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+"use client"
+
+import { useEffect, useState, useRef, useCallback } from "react";
 import findLessonsByRasdel from "@/app/(main_page)/createCourses/watching/actions/findLessonsByRasdel";
 import { Lessons } from "@prisma/client";
 import { gsap } from "gsap"; // Импортируем GSAP
@@ -7,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import AddLesson from "@/app/(main_page)/createCourses/watching/components/modal/adding/addLesson";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 
 type Props = {
 	rasdelId: string;
@@ -17,20 +20,20 @@ const LessonsBox = ({ rasdelId }: Props) => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const lessonsBoxRef = useRef<HTMLDivElement[]>([]); // Массив рефов для каждого элемента
 	const [lesson, setLesson] = useState<Lessons>();
-	const [open, setOpen] = useState(false)
-	const {CustomSet} = useParams()
+	const [open, setOpen] = useState(false);
+	const { CustomSet } = useParams();
 
-	const findLessons = async () => {
+	const findLessons = useCallback(async () => {
 		const lessonsData = await findLessonsByRasdel(rasdelId);
 		if (lessonsData) {
 			setLessons(lessonsData);
 		}
 		setLoading(false);
-	};
+	}, [rasdelId]);
 
 	useEffect(() => {
 		findLessons();
-	}, [rasdelId]);
+	}, [findLessons]);
 
 	useEffect(() => {
 		if (lessons) {
@@ -43,7 +46,7 @@ const LessonsBox = ({ rasdelId }: Props) => {
 				);
 			});
 		}
-	}, [lessons]); // Запускаем анимацию при изменении уроков
+	}, [lessons , findLessons]); // Запускаем анимацию при изменении уроков
 
 	// Функция для получения рефа
 	const setRef = (el: HTMLDivElement) => {
@@ -55,7 +58,9 @@ const LessonsBox = ({ rasdelId }: Props) => {
 	return (
 		<div className="flex flex-col gap-1">
 			{loading ? (
-				<div className="flex items-center justify-center w-full gap-3 text-blue-400"><ClipLoader color="#60a5fa"/> Загрузка уроков...</div>
+				<div className="flex items-center justify-center w-full gap-3 text-blue-400">
+					<ClipLoader color="#60a5fa" /> Загрузка уроков...
+				</div>
 			) : (
 				lessons && lessons.length > 0 ? (
 					lessons.map((data) => (
@@ -65,25 +70,33 @@ const LessonsBox = ({ rasdelId }: Props) => {
 							className="flex gap-1 justify-between items-center border-t border-gray-100 p-1 opacity-0"
 						>
 							<div className="flex gap-1 items-center">
-								<img src={data.photoUrl} alt="" className="w-12 h-12 object-cover" />
+								<Image
+									width={1000}
+									height={1000}
+									src={data.photoUrl}
+									alt={data.name}
+									className="w-12 h-12 object-cover"
+								/>
 								<h1>{data.name}</h1>
 							</div>
 							<Button className='bg-blue-400 text-white p-0 z-50 flex items-center justify-center rounded-full mr-3 h-8 w-8 hover:bg-blue-500 transition-all cursor-pointer'
 								onClick={(e) => {
 									e.stopPropagation(); // предотвращаем всплытие события
-									setLesson(data)
-									setOpen(true)
-									}}
+									setLesson(data);
+									setOpen(true);
+								}}
 							>
-								<FaPlus className='text-lg'/>
+								<FaPlus className='text-lg' />
 							</Button>
 						</div>
 					))
 				) : (
-					<div className="text-gray-400 flex items-center py-3 justify-center w-full gap-4">Нет доступных уроков <HashLoader color="#9ca3af" size={40}/></div>
+					<div className="text-gray-400 flex items-center py-3 justify-center w-full gap-4">
+						Нет доступных уроков <HashLoader color="#9ca3af" size={40} />
+					</div>
 				)
 			)}
-			<AddLesson openModal={open} setOpenModal={setOpen} lesson={lesson} customSet={CustomSet as string}/>
+			<AddLesson openModal={open} setOpenModal={setOpen} lesson={lesson} customSet={CustomSet as string} />
 		</div>
 	);
 };

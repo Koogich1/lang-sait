@@ -4,7 +4,7 @@ import findCourses from "@/app/(main_page)/createCourses/watching/actions/findMa
 import { courseData, customCourse } from "@prisma/client"
 import Image from "next/image"
 import { useParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { format } from 'date-fns'; // Импорт функции format
 import { Button } from "@/components/ui/button"
 import { IoSettingsSharp } from "react-icons/io5"
@@ -40,15 +40,17 @@ const CourseBox = () => {
   const [course, setCourse] = useState<CustomCourse>();
 	const [customSetId, setCustomSetId] = useState<string>()
 
-  const fetchCourses = async () => {
-    const data = await findCourses(CustomSet as string);
-		console.log(data);
-    if (data) {
-      setCourseSets(data); // Теперь устанавливаем наборы курсов
-    }
-  };
+  
 
-	const languageTranslations: any = {
+  const fetchCourses = useCallback(async () => {
+    const data = await findCourses(CustomSet as string);
+    console.log(data);
+    if (data) {
+      setCourseSets(data);
+    }
+  }, [CustomSet]); // Добавлен CustomSet здесь
+
+  const languageTranslations: Record<string, string> = {
     China: "Китайский",
     Korean: "Корейский",
     English: "Английский",
@@ -56,13 +58,13 @@ const CourseBox = () => {
     // Добавьте другие языки по мере необходимости
   };
 
-	const translatedLanguage = (course: any) => {
+  const translatedLanguage = (course: any) => {
     return languageTranslations[course] || "Неизвестный язык";
-  }
+  };
 
   useEffect(() => {
     fetchCourses();
-  }, [CustomSet]);
+  }, [fetchCourses]); // В зависимости только fetchCourses
 
   return (
     <div>

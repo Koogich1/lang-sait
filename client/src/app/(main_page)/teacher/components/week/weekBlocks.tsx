@@ -3,7 +3,7 @@
 import getTeacherAviabillityByTeacherID from "@/actions/getTeacherAviabillityByTeacherID";
 import ModalBooking from "@/app/(protected)/learning/components/modal/ModalBooking";
 import { bookedEtaps, DayOfWeek, User, UserSubscriptions } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button";
@@ -82,13 +82,13 @@ const WeekBlocks = ({ Teacher, userSubs, user, isTeacherAdded, visov}: Props) =>
     const currentHours = currentTime.getHours();
     const currentMinutes = currentTime.getMinutes();
 
-    const fetchDays = async () => {
+    const fetchDays = useCallback(async () => {
         const days = await getTeacherAviabillityByTeacherID(Teacher.teacherId);
         if (days) {
             setDays(days);
             setLoading(false);
         }
-    };
+    }, [Teacher.teacherId]); // Добавляем зависимость
 
     const updateDays = () => {
         fetchDays();
@@ -97,7 +97,7 @@ const WeekBlocks = ({ Teacher, userSubs, user, isTeacherAdded, visov}: Props) =>
 
     useEffect(() => {
         fetchDays();
-    }, []);
+    }, [fetchDays]);
 
 
     const isToday = (date: Date) => {

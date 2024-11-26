@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { getUserById } from '@/data/user'
 import { courseData, User } from '@prisma/client'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { HiArrowUturnLeft } from "react-icons/hi2";
 import RasdelsList from './rasdelsBox'
 import { FaPlus } from 'react-icons/fa'
@@ -24,19 +24,20 @@ const OpenMaterial = ({ onMaterialSelect, selectedMaterial, isMaterialOpen, onBa
     const {CustomSet} = useParams()
     const [selectMaterial, setSelectMaterial] = useState<courseData | null>(null);
     const [creator, setCreator] = useState<User | null>(null);
-		const [open, setOpen] = useState(false)
+	const [open, setOpen] = useState(false)
 
-    const findMaterialInfo = async() => {
-        const materialData = await getMaterialInfoById(selectedMaterial as string);
-        if (materialData) {
-            setSelectMaterial(materialData);
+    const findMaterialInfo = useCallback(async () => {
+        if (selectedMaterial) {
+            const materialData = await getMaterialInfoById(selectedMaterial);
+            if (materialData) {
+                setSelectMaterial(materialData);
+            }
         }
-    };
-    
-    const findCreatorName = async() => {
-        let infoAboutTeacher;
+    }, [selectedMaterial]); // Убрали setSelectMaterial, так как он не должен быть здесь
+
+    const findCreatorName = useCallback(async () => {
         if (selectMaterial) {
-            infoAboutTeacher = await findCreatorById(selectMaterial.userId);
+            const infoAboutTeacher = await findCreatorById(selectMaterial.userId);
             console.log(infoAboutTeacher);
             if (infoAboutTeacher) {
                 setCreator(infoAboutTeacher);
@@ -44,11 +45,15 @@ const OpenMaterial = ({ onMaterialSelect, selectedMaterial, isMaterialOpen, onBa
         } else {
             console.log("еще нет материала");
         }
-    }
+    }, [selectMaterial]); // Добавили selectMaterial
 
     useEffect(() => {
         findMaterialInfo();
-    }, []);
+    }, [findMaterialInfo]);
+
+    useEffect(() => {
+        findCreatorName();
+    }, [selectMaterial]); // Вызываем при изменении selectMaterial
 
     return (
         <>

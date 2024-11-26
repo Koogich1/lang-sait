@@ -28,6 +28,7 @@ import deleteAnswerOptionCorrect from "../../actions/test/connectTrueVariants/de
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import deleteSimpleTest from "../../actions/test/deleteTest";
 import addImageBlock from "../../actions/test/updateConnect/addImageBlock";
+import Image from "next/image";
 
 const FormSchema = z.object({
   question: z.string().max(350, { message: "Не более 350 символов" }),
@@ -237,8 +238,10 @@ const UpdateConnectModalPhoto = ({ test, updateVisov }: { test: Test; updateViso
                     {test.answers.map((answer) => (
                       <div className="flex justify-center w-full" key={answer.id}>
                         <div className="bg-blue-400 rounded-lg">
-                          <img 
+                          <Image
                             src={answer.text} 
+                            width={1000}
+                            height={1000}
                             alt="" 
                             className="w-[5rem] h-[5rem] rounded-lg object-cover hover:opacity-30 transition-all cursor-pointer" 
                             onClick={() => {
@@ -291,7 +294,7 @@ const UpdateConnectModalPhoto = ({ test, updateVisov }: { test: Test; updateViso
                 <DialogTitle className="text-xl font-semibold text-gray-400">Изменить изображение</DialogTitle>
               </DialogHeader>
               <div className="my-3 flex items-center justify-center flex-col gap-3">
-                <img src={previewImage || selectedOption.text || ""} alt="" className="w-1/2 object-cover rounded-lg" />
+                <Image src={previewImage || selectedOption.text || ""} width={1000} height={1000} alt="" className="w-1/2 object-cover rounded-lg" />
                 <div>
                   <Input
                     type="file"

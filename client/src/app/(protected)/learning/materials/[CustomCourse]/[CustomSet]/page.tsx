@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams, useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import findRasdelByCourseId from '../../actions/findRasdelByLesson'
 import { CustomRasdelBox } from '@prisma/client'
 import { Button } from '@/components/ui/button'
@@ -9,7 +9,7 @@ import CreateRasdelModal from '../../components/modal/createRasdelModal'
 import { HashLoader } from 'react-spinners'
 import ContentRigth from './components/contentRigth'
 
-const page = () => {
+const Page = () => {
 	const { CustomSet } = useParams()
 	const { CustomCourse } = useParams()
 	const router = useRouter()
@@ -18,17 +18,20 @@ const page = () => {
 	const [rasdels, setRasdels] = useState<CustomRasdelBox[] | null>(null)
 	const [loading, setLoading] = useState(true)
 
-	const fetchRasdels = async () => {
-		const rasdelsinf = await findRasdelByCourseId(CustomCourse as string)
-		if (rasdelsinf && rasdelsinf.length > 0) {
-			setRasdels(rasdelsinf)
+	// Обозначаем функцию fetchRasdels внутри useEffect
+	const fetchRasdels = useCallback(async () => {
+		if (CustomCourse) {
+			const rasdelsinf = await findRasdelByCourseId(CustomCourse as string);
+			if (rasdelsinf && rasdelsinf.length > 0) {
+				setRasdels(rasdelsinf);
+			}
+			setLoading(false);
 		}
-	}
+	}, [CustomCourse]);
 
 	useEffect(() => {
-		fetchRasdels()
-		setLoading(false)
-	}, [])
+		fetchRasdels();
+	}, [fetchRasdels]);
 
 	if (loading) {
 		return (
@@ -49,10 +52,9 @@ const page = () => {
 						{rasdels?.map((data) => (
 							<div className={`${data.id === CustomSet ? "text-white bg-blue-400" : "text-gray-400"} rounded-sm w-full border-dashed transition-all text-sm py-2 border text-center cursor-pointer`}
 								onClick={() => {
-									// Заменяем последнюю часть URL на data.id
 									router.push(`/learning/materials/${CustomCourse}/${data.id}`);
 								}}
-								key={data.id} // добавляем ключ для элемента
+								key={data.id} 
 							>
 								{data.name}
 							</div>
@@ -74,9 +76,9 @@ const page = () => {
 					<ContentRigth customSet={CustomSet as string} />
 				</div>
 			</div>
-			<CreateRasdelModal openModal={open} setOpenModal={setOpen} visov={() => fetchRasdels()} courseId={CustomCourse as string} />
+			<CreateRasdelModal openModal={open} setOpenModal={setOpen} visov={fetchRasdels} courseId={CustomCourse as string} />
 		</>
 	)
 }
 
-export default page
+export default Page

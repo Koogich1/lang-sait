@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import userImg from '@/actions/getImageUser';
+import Image from 'next/image';
 
 
 const LogoUpload = () => {
@@ -21,7 +22,7 @@ const LogoUpload = () => {
 
 	return(
 		<div className='w-full h-full'>
-			<img src={image.toString()} alt="Profile Picture" className="w-full h-full rounded-full" width={100} height={100}/>
+			<Image src={image.toString()} alt="Profile Picture" className="w-full h-full rounded-full" width={100} height={100}/>
 		</div>
 	)
 }

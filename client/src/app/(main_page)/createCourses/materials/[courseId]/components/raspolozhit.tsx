@@ -13,11 +13,12 @@ import { useSortable, SortableContext, verticalListSortingStrategy } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import { rasdelId } from '@prisma/client';
 import { useParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import fetchCourses from '../../../components/actions/fetchCourses';
 import { ClipLoader } from 'react-spinners'; // Loader for loading states
 import { Button } from '@/components/ui/button';
 import upateRasdelPosition from '../../../components/actions/test/updateRasdelPosition';
+import Image from 'next/image';
 
 const Raspolozhenie = () => {
   const { courseId } = useParams();
@@ -31,17 +32,17 @@ const Raspolozhenie = () => {
     useSensor(KeyboardSensor)
   );
 
-  const fetchRasd = async () => {
+  const fetchRasd = useCallback(async () => {
     const fetcher = await fetchCourses({ courseID: courseId as string });
     if (fetcher) {
       setRasd(fetcher);
     }
     setLoading(false);
-  };
+  }, [courseId]);
 
   useEffect(() => {
     fetchRasd();
-  }, [courseId]); // Fetch data on courseId change
+  }, [courseId, fetchRasd]); // Fetch data on courseId change
 
   const handleDragStart = (event: any) => {
     setActiveId(event.active.id);
@@ -154,8 +155,8 @@ const SortableItem: React.FC<{ id: string; content: string | null; imageSrc: str
       {...listeners} 
       className="border border-blue-300 p-2 my-1 bg-blue-50 hover:bg-blue-100 transition-all rounded-lg relative flex gap-2 items-center mx-3"
     >
-      <img className="h-[3.5rem] w-[3.5rem] object-cover" src={imageSrc ? imageSrc : ""} alt={content || "Material image"} />
-			<h1 className='text-lg font-semibold'>{content}</h1>
+      <Image className="h-[3.5rem] w-[3.5rem] object-cover" src={imageSrc ? imageSrc : ""} alt={content || "Material image"} width={1000} height={1000}/>
+      <h1 className='text-lg font-semibold'>{content}</h1>
     </div>
   );
 };

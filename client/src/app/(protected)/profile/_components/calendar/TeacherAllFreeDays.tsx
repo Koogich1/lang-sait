@@ -4,7 +4,7 @@
 import getTeacherAviabillityByTeacherID from "@/actions/getTeacherAviabillityByTeacherID";
 import ModalBooking from "@/app/(protected)/learning/components/modal/ModalBooking";
 import { bookedEtaps, DayOfWeek, TeacherScheduleDay } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ClipLoader, PacmanLoader } from "react-spinners";
 
 type Props = {
@@ -49,13 +49,15 @@ const TeacherAllFreeDays = ({ teacherId, lessons, updateAll}: Props) => {
     const [loading, setLoading] = useState(true);
     const [days, setDays] = useState<AllSchedule[] | null>(null);
 
-		const fetchDays = async () => {
-			const days = await getTeacherAviabillityByTeacherID(teacherId);
-				if (days) {
-						setDays(days);
-						setLoading(false);
-				}
-		};
+		const fetchDays = useCallback(
+			async () => {
+				const days = await getTeacherAviabillityByTeacherID(teacherId);
+					if (days) {
+							setDays(days);
+							setLoading(false);
+					}
+			}, [teacherId]
+		)
 
 		const updateDays = () => {
 			fetchDays()
@@ -64,7 +66,7 @@ const TeacherAllFreeDays = ({ teacherId, lessons, updateAll}: Props) => {
 
 		useEffect(() => {
 			fetchDays()
-		},[])
+		},[fetchDays])
 
     if (!days) {
         return null;
@@ -133,7 +135,9 @@ const TeacherAllFreeDays = ({ teacherId, lessons, updateAll}: Props) => {
 													className={`h-2/3 relative w-[55px] flex items-center cursor-pointer justify-center text-[#835BD2] font-base border border-[#835BD2] rounded-lg hover:bg-[#835BD2] hover:text-white transition-all ${getStatusColor(hour.status)}`}
 												>
 													<h1>{hour.time}</h1>
-													<ModalBooking day={day.date} hour={hour.time} dayId={day.id} status={hour.status} teacherId={teacherId} lessons={lessons} updateDays={updateDays}/>
+													{
+													 //	<ModalBooking day={day.date} hour={hour.time} dayId={day.id} status={hour.status} Teacher={} lessons={lessons} updateDays={updateDays}/>
+													}
 												</div>
 											))} 
 											</div>

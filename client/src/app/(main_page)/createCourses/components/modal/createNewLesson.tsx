@@ -51,6 +51,8 @@ import { useParams } from "next/navigation";
 import UpdateLessonModal from "./updateLessonModal";
 import { PuffLoader } from "react-spinners";
 import fetchCourseById from "../actions/fetchCourseById";
+import { useCallback } from "react"; // Импортируйте useCallback
+import Image from "next/image";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).refine(
@@ -81,27 +83,27 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
   const [loading, setLoading] = useState(false)
   const [course, setCourse] = useState<courseData | null>(null)
 
-  const fetcher = async() => {
-    const Fetchlessons = await fetchlessons({rasdId: rasdelId})
-    if(Fetchlessons){
-      setLessons(Fetchlessons)
-    }
-  }
+const fetcher = useCallback(async () => {
+	const Fetchlessons = await fetchlessons({ rasdId: rasdelId });
+	if (Fetchlessons) {
+		setLessons(Fetchlessons);
+	}
+}, [rasdelId]); // Добавляем зависимость rasdelId
 
   useEffect(() => {
-    const handleUser = async() => {
-      const course = await fetchCourseById(courseId as string)
-      const userinf = await currentUser()
-      if(userinf){
-        setUser(userinf)
+    const handleUser = async () => {
+      const course = await fetchCourseById(courseId as string);
+      const userinf = await currentUser();
+      if (userinf) {
+        setUser(userinf);
       }
-      if(course){
-        setCourse(course)
+      if (course) {
+        setCourse(course);
       }
-    }
-    handleUser()
-    fetcher()
-  }, [])
+    };
+    handleUser();
+    fetcher();
+  }, [courseId, fetcher]);  // Добавляем courseId и fetcher
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -169,7 +171,7 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
       {lessons?.map((data, id) => (
          <li key={id} className="h-10 w-full flex items-center border-t border-gray-100 justify-between">
             <div className="flex items-center gap-3">
-              <img src={data.photoUrl} alt="" className="w-8 h-8 rounded-lg object-cover"/>
+              <Image width={1000} height={1000} src={data.photoUrl} alt="" className="w-8 h-8 rounded-lg object-cover"/>
               <h1 className="font-medium">
                 {data.name}
               </h1>
@@ -251,7 +253,9 @@ const CreateNewLesson = ({updateData, rasdelId}: Props) => {
                   <FormItem className="grid grid-cols-2 justify-center items-center space-y-0 gap-3 ml-0">
                     <div className="w-[125px] h-[190px] rounded-xl bg-blue-200">
                       {imagePreview && (
-                        <img
+                        <Image
+                          width={1000}
+                          height={1000}
                           src={imagePreview}
                           alt="Preview"
                           className="w-full h-full object-cover rounded-xl"

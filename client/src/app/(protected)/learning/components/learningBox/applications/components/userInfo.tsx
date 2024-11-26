@@ -21,7 +21,7 @@ const UserInfo = ({userId}: Props) => {
 			}
 		}
 		fetchUser()
-	},[])
+	},[userId])
 
 	if(!user){
 		return(

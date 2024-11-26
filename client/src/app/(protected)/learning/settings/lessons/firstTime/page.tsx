@@ -8,15 +8,23 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { FirstTimeInputForm } from "@/components/datePick/pub/firstInputForm"
 
+type TimeSlot = [string, string];
+type TimeSlotsData = {
+  [key: string]: TimeSlot[];
+};
+
+type DayKey = 'pn' | 'vt' | 'sr' | 'ct' | 'pt' | 'sb' | 'vs';
+
 
 const FirstTimeChoosePage = () => {
+	const [timeSlotsData, setTimeSlotsData] = useState<TimeSlotsData>({});
 	const [transition, setTransition] = useState(false);
 	const [created, setCreated] = useState(false)
 
   const onSubmit = () => {
 		setTransition(true)
 				try {
-				createEmptyTeacherAvailability().then(() => {
+					createEmptyTeacherAvailability(timeSlotsData).then(() => {
 						setTransition(false);
 						setCreated(true)
 					});

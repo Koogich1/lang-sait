@@ -127,7 +127,7 @@ const MainHeader = () => {
 			</div>
 			<div className='w-full mt-3 justify-between items-center flex lg:hidden'>
 				<div className='flex items-center'>
-					<img src="/logo.png" alt="" className='w-20 h-20' />
+					<Image width={1000} height={1000} src="/logo.png" alt="" className='w-20 h-20' />
 					<div className='lg:text-3xl text-2xl font-semibold lg:font-semibold text-[#61439d]'>
 						Acyberg
 					</div>
@@ -140,7 +140,7 @@ const MainHeader = () => {
 							</a>
 							:
 							<div>
-								<img className='w-12 h-12 rounded-full' src={user.image ?? ''} alt="" />
+								<Image width={1000} height={1000} className='w-12 h-12 rounded-full' src={user.image ?? ''} alt="" />
 							</div>
 						}
 						

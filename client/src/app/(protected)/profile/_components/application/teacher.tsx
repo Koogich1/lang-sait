@@ -3,24 +3,25 @@
 import { Skeleton } from "@/components/ui/skeleton"
 import { getUserById } from "@/data/user"
 import { User } from "@prisma/client"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import getUserByTeacherId from "../actions/application/getUserByTeacherId"
 import Image from "next/image"
 
 const Teacher = ({teacherId} : {teacherId: string}) => {
 	const [user, setUser] = useState<User | null>(null)
 
-	const fetchInfoAboutTeacher = async() => {
-		const data = await getUserByTeacherId(teacherId)
-		console.log(data)
-		if(data){
-			setUser(data)
-		} 
-	}
+	const fetchInfoAboutTeacher = useCallback(
+		async() => {
+			const data = await getUserByTeacherId(teacherId)
+			console.log(data)
+			if(data){
+				setUser(data)
+			} 
+	}, [teacherId])
 
 	useEffect(() => {
 		fetchInfoAboutTeacher()
-	}, [])
+	}, [fetchInfoAboutTeacher])
 
 	if(!user){
 		return(

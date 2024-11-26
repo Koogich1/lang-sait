@@ -118,7 +118,7 @@ const SettingsPage = () => {
       bio: user?.teacherInfo.aboutMe || "",
 			prise: user?.teacherInfo.prise || 3
     });
-  }, [user]);
+  }, [user, form]);
 
   const onSubmit = (values: any) => {
 		startTransition(async () => {
@@ -167,7 +167,7 @@ const SettingsPage = () => {
 						<div className="w-[300px] max-h-[300px] flex flex-col justify-center items-center gap-1 p-2 pb-3 border border-gray-100 shadow-md rounded-sm ">
 							<h1 className="text-xl font-semibold text-[#835BD2]">Изображение профиля</h1>
 							<div className="w-[180px] h-[180px]">
-								{user?.userInfo.image && <img src={user.userInfo.image} alt="Profile Picture" className="w-full max-h- rounded-full" />}
+								{user?.userInfo.image && <Image width={1000} height={1000} src={user.userInfo.image} alt="Profile Picture" className="w-full max-h- rounded-full" />}
 							</div>
 							<Button 
 								className="text-sm font-semibold p-5 mt-3"
@@ -185,7 +185,7 @@ const SettingsPage = () => {
 								<div className="relative pb-11">
 									<div className="min-h-[213px] relative grid grid-cols-3 gap-1 items-center justify-center">
 										{user.teacherInfo.images.map((data) => (
-											<div className="border shadow-sm" onClick={() => {
+											<div key={data} className="border shadow-sm" onClick={() => {
 												setActiveImage(data)
 												setOpenImage(true)
 											}}>

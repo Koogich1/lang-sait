@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { io } from "socket.io-client";
 import useSocket from "../../hooks/useSocket";
@@ -16,8 +16,64 @@ const Room = () => {
   const peerVideoRef = useRef<HTMLVideoElement>(null);
   const socketRef = useRef<any>(null);
   const rtcConnectionRef = useRef<RTCPeerConnection | null>(null);
-  const id = useParams()
-  const { id: roomName } = id;
+  const { id: roomName } = useParams();
+
+  const onPeerLeave = useCallback(() => {
+    if (peerVideoRef.current) {
+      peerVideoRef.current.srcObject = null;
+    }
+  }, []);
+
+  const handleRoomCreated = useCallback(
+    async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      userVideoRef.current!.srcObject = stream;
+      socketRef.current.emit("ready", roomName);
+    }, [roomName]
+  );
+
+  const handleRoomJoined = useCallback(
+    async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      userVideoRef.current!.srcObject = stream;
+      socketRef.current.emit("ready", roomName);
+    }, [roomName]
+  );
+
+  const handleReceivedOffer = useCallback((offer: RTCSessionDescriptionInit) => {
+    rtcConnectionRef.current = new RTCPeerConnection(ICE_SERVERS);
+    rtcConnectionRef.current.onicecandidate = handleICECandidateEvent;
+    rtcConnectionRef.current.ontrack = handleTrackEvent;
+
+    rtcConnectionRef.current.setRemoteDescription(offer);
+    
+    const stream = userVideoRef.current?.srcObject as MediaStream; // Явное указание типа
+    if (stream) {
+      stream.getTracks().forEach((track: MediaStreamTrack) => { // Явное указание типа
+        rtcConnectionRef.current?.addTrack(track, stream);
+      });
+    }
+
+    rtcConnectionRef.current.createAnswer().then(answer => {
+      rtcConnectionRef.current!.setLocalDescription(answer);
+      socketRef.current.emit("answer", answer, roomName);
+    });
+  }, [roomName]); // Добавление roomName как зависимости
+
+  const handleAnswer = useCallback((answer: RTCSessionDescriptionInit) => {
+    rtcConnectionRef.current?.setRemoteDescription(answer);
+  }, []);
+
+  const handleICECandidateEvent = useCallback((event: RTCPeerConnectionIceEvent) => {
+    if (event.candidate) {
+      socketRef.current.emit("ice-candidate", event.candidate, roomName);
+    }
+  }, [roomName]);
+
+  const handlerNewIceCandidateMsg = useCallback((incoming: RTCIceCandidateInit) => {
+    const candidate = new RTCIceCandidate(incoming);
+    rtcConnectionRef.current?.addIceCandidate(candidate);
+  }, []);
 
   useEffect(() => {
     socketRef.current = io();
@@ -33,60 +89,7 @@ const Room = () => {
     return () => {
       socketRef.current.disconnect();
     };
-  }, [roomName]);
-
-  const onPeerLeave = () => {
-    if (peerVideoRef.current) {
-      peerVideoRef.current.srcObject = null;
-    }
-  };
-
-  const handleRoomCreated = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    userVideoRef.current!.srcObject = stream;
-    socketRef.current.emit("ready", roomName);
-  };
-
-  const handleRoomJoined = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    userVideoRef.current!.srcObject = stream;
-    socketRef.current.emit("ready", roomName);
-  };
-
-  const handleReceivedOffer = (offer: RTCSessionDescriptionInit) => {
-    rtcConnectionRef.current = new RTCPeerConnection(ICE_SERVERS);
-    rtcConnectionRef.current.onicecandidate = handleICECandidateEvent;
-    rtcConnectionRef.current.ontrack = handleTrackEvent;
-
-    rtcConnectionRef.current.setRemoteDescription(offer);
-    
-    const stream = userVideoRef.current?.srcObject as MediaStream; // Явное указание типа
-    if (stream) {
-      stream.getTracks().forEach((track: MediaStreamTrack) => { // Явное указание типа для track
-        rtcConnectionRef.current?.addTrack(track, stream);
-      });
-    }
-
-    rtcConnectionRef.current.createAnswer().then(answer => {
-      rtcConnectionRef.current!.setLocalDescription(answer);
-      socketRef.current.emit("answer", answer, roomName);
-    });
-  };
-
-  const handleAnswer = (answer: RTCSessionDescriptionInit) => {
-    rtcConnectionRef.current?.setRemoteDescription(answer);
-  };
-
-  const handleICECandidateEvent = (event: RTCPeerConnectionIceEvent) => {
-    if (event.candidate) {
-      socketRef.current.emit("ice-candidate", event.candidate, roomName);
-    }
-  };
-
-  const handlerNewIceCandidateMsg = (incoming: RTCIceCandidateInit) => {
-    const candidate = new RTCIceCandidate(incoming);
-    rtcConnectionRef.current?.addIceCandidate(candidate);
-  };
+  }, [roomName, handleRoomCreated, handleRoomJoined, handleReceivedOffer, handleAnswer, handlerNewIceCandidateMsg, onPeerLeave]);
 
   const handleTrackEvent = (event: RTCTrackEvent) => {
     if (peerVideoRef.current) {

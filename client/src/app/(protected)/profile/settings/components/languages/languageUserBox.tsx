@@ -166,7 +166,7 @@ const LanguageBox = () => {
 				className='w-full'>
           <div className="flex items-center justify-center w-full h-12 gap-3 bg-purple-100 border-2 border-[#835BD2] hover:bg-[#835BD2] text-[#835BD2] hover:text-white rounded-xl border-dashed hover:border-solid transition-all cursor-pointer">
             <div>
-							<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+							<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 						</div>
             <p className=''>Добавьте ваш первый язык!</p>
           </div>
@@ -192,7 +192,7 @@ const LanguageBox = () => {
                           setPrefers(null))
                       }
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/China.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/China.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Китайский</h1>
 										</div>
                     <div 
@@ -203,7 +203,7 @@ const LanguageBox = () => {
                           setPrefers(null))
                       }
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/Korean.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/Korean.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Корейский</h1>	
 										</div>
                     <div 
@@ -214,7 +214,7 @@ const LanguageBox = () => {
                           setPrefers(null))
                       }
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Английский</h1>
 										</div>
                     <div 
@@ -226,7 +226,7 @@ const LanguageBox = () => {
 
                       }
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/German.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/German.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Немецкий</h1>
 										</div>
                   </div>
@@ -242,7 +242,7 @@ const LanguageBox = () => {
                         className={`flex w-3/5 justify-center items-center gap-3 border py-1 shadow-md hover:shadow-none rounded-lg hover:scale-105 transition-all cursor-pointer ${language==="China" ? "bg-[#835BD2] hover:bg-[#724fb9] border-[#835BD2] hover:border-[#724fb9] text-white" : "border-gray-100 hover:bg-purple-100 hover:border-purple-100 text-gray-500"}`}
                         onClick={() => setLanguageChoose(!languageChoose)}
                         >
-                          <img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/China.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+                          <Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/China.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
                           <h1 className="font-semibold text-base">Китайский</h1>
                         </div>
                       </div>
@@ -272,7 +272,7 @@ const LanguageBox = () => {
                       className={`flex justify-center items-center gap-3 border py-1 shadow-md hover:shadow-none rounded-lg hover:scale-105 transition-all cursor-pointer ${language==="Korean" ? "bg-[#835BD2] hover:bg-[#724fb9] border-[#835BD2] hover:border-[#724fb9] text-white" : "border-gray-100 hover:bg-purple-100 hover:border-purple-100 text-gray-500"}`}
                       onClick={() => setLanguageChoose(!languageChoose)}
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/Korean.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/Korean.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Корейский</h1>	
 										</div>
                       <div>
@@ -301,7 +301,7 @@ const LanguageBox = () => {
                       className={`flex justify-center items-center gap-3 border py-1 shadow-md hover:shadow-none rounded-lg hover:scale-105 transition-all cursor-pointer ${language==="English" ? "bg-[#835BD2] hover:bg-[#724fb9] border-[#835BD2] hover:border-[#724fb9] text-white" : "border-gray-100 hover:bg-purple-100 hover:border-purple-100 text-gray-500"}`}
                       onClick={() =>  setLanguageChoose(!languageChoose)}
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Английский</h1>
 										</div>
                       <div>
@@ -330,7 +330,7 @@ const LanguageBox = () => {
                       className={`flex justify-center items-center gap-3 border py-1 shadow-md hover:shadow-none rounded-lg hover:scale-105 transition-all cursor-pointer ${language==="German" ? "bg-[#835BD2] hover:bg-[#724fb9] border-[#835BD2] hover:border-[#724fb9] text-white" : "border-gray-100 hover:bg-purple-100 hover:border-purple-100 text-gray-500"}`}
                       onClick={() =>  setLanguageChoose(!languageChoose)}
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/German.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/German.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Немецкий</h1>
 										</div>
                       <div>
@@ -380,7 +380,7 @@ const LanguageBox = () => {
                     setLanguageChoose(true)
                   }}
                 >
-                  <img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+                  <Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
                   Выбрать язык!
                 </Button>
               </div>
@@ -451,7 +451,7 @@ const LanguageBox = () => {
         }}>
           <div className="flex items-center justify-center w-full py-2 h-12 gap-3 bg-purple-100 border-2 border-[#835BD2] hover:bg-[#835BD2] text-[#835BD2] hover:text-white rounded-xl border-dashed hover:border-solid transition-all cursor-pointer">
             <div>
-							<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+							<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 						</div>
             	<p className='font-medium'>Изучаете несколько? Добавляйте!</p>
           </div>
@@ -477,7 +477,7 @@ const LanguageBox = () => {
                           setPrefers(null))
                       }
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/China.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/China.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Китайский</h1>
 										</div>
                     <div 
@@ -488,7 +488,7 @@ const LanguageBox = () => {
                           setPrefers(null))
                       }
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/Korean.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/Korean.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Корейский</h1>	
 										</div>
                     <div 
@@ -499,7 +499,7 @@ const LanguageBox = () => {
                           setPrefers(null))
                       }
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Английский</h1>
 										</div>
                     <div 
@@ -511,7 +511,7 @@ const LanguageBox = () => {
 
                       }
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/German.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/German.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Немецкий</h1>
 										</div>
                   </div>
@@ -527,7 +527,7 @@ const LanguageBox = () => {
                         className={`flex w-3/5 justify-center items-center gap-3 border py-1 shadow-md hover:shadow-none rounded-lg hover:scale-105 transition-all cursor-pointer ${language==="China" ? "bg-[#835BD2] hover:bg-[#724fb9] border-[#835BD2] hover:border-[#724fb9] text-white" : "border-gray-100 hover:bg-purple-100 hover:border-purple-100 text-gray-500"}`}
                         onClick={() => setLanguageChoose(!languageChoose)}
                         >
-                          <img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/China.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+                          <Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/China.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
                           <h1 className="font-semibold text-base">Китайский</h1>
                         </div>
                       </div>
@@ -557,7 +557,7 @@ const LanguageBox = () => {
                       className={`flex justify-center items-center gap-3 border py-1 shadow-md hover:shadow-none rounded-lg hover:scale-105 transition-all cursor-pointer ${language==="Korean" ? "bg-[#835BD2] hover:bg-[#724fb9] border-[#835BD2] hover:border-[#724fb9] text-white" : "border-gray-100 hover:bg-purple-100 hover:border-purple-100 text-gray-500"}`}
                       onClick={() => setLanguageChoose(!languageChoose)}
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/Korean.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/Korean.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Корейский</h1>	
 										</div>
                       <div>
@@ -586,7 +586,7 @@ const LanguageBox = () => {
                       className={`flex justify-center items-center gap-3 border py-1 shadow-md hover:shadow-none rounded-lg hover:scale-105 transition-all cursor-pointer ${language==="English" ? "bg-[#835BD2] hover:bg-[#724fb9] border-[#835BD2] hover:border-[#724fb9] text-white" : "border-gray-100 hover:bg-purple-100 hover:border-purple-100 text-gray-500"}`}
                       onClick={() =>  setLanguageChoose(!languageChoose)}
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Английский</h1>
 										</div>
                       <div>
@@ -615,7 +615,7 @@ const LanguageBox = () => {
                       className={`flex justify-center items-center gap-3 border py-1 shadow-md hover:shadow-none rounded-lg hover:scale-105 transition-all cursor-pointer ${language==="German" ? "bg-[#835BD2] hover:bg-[#724fb9] border-[#835BD2] hover:border-[#724fb9] text-white" : "border-gray-100 hover:bg-purple-100 hover:border-purple-100 text-gray-500"}`}
                       onClick={() =>  setLanguageChoose(!languageChoose)}
                     >
-											<img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/German.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+											<Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/German.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
 											<h1 className="font-semibold text-base">Немецкий</h1>
 										</div>
                       <div>
@@ -665,7 +665,7 @@ const LanguageBox = () => {
                     setLanguageChoose(true)
                   }}
                 >
-                  <img src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
+                  <Image width={1000} height={1000} src={`https://storage.yandexcloud.net/langschoolacynberg/images/flags/English.png`} alt="flag" className='w-9 h-7 object-cover rounded-sm' />
                   Выбрать язык!
                 </Button>
               </div>

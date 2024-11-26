@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import findLessonsByRasdel from "@/app/(main_page)/createCourses/watching/actions/findLessonsByRasdel";
 import { Lessons } from "@prisma/client";
 import { gsap } from "gsap"; // Импортируем GSAP
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa";
 import AddLesson from "@/app/(main_page)/createCourses/watching/components/modal/adding/addLesson";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 
 type Props = {
 	rasdelId: string;
@@ -20,13 +21,13 @@ const LessonsBox = ({ rasdelId }: Props) => {
 	const [open, setOpen] = useState(false)
 	const {CustomSet} = useParams()
 
-	const findLessons = async () => {
+	const findLessons = useCallback(async () => {
 		const lessonsData = await findLessonsByRasdel(rasdelId);
 		if (lessonsData) {
 			setLessons(lessonsData);
 		}
 		setLoading(false);
-	};
+	}, [rasdelId])
 
 	useEffect(() => {
 		findLessons();
@@ -65,7 +66,7 @@ const LessonsBox = ({ rasdelId }: Props) => {
 							className="flex gap-1 justify-between items-center border-t border-gray-100 p-1 opacity-0"
 						>
 							<div className="flex gap-1 items-center">
-								<img src={data.photoUrl} alt="" className="w-12 h-12 object-cover" />
+								<Image width={1000} height={1000} src={data.photoUrl} alt="" className="w-12 h-12 object-cover" />
 								<h1>{data.name}</h1>
 							</div>
 							<Button className='bg-blue-400 text-white p-0 z-50 flex items-center justify-center rounded-full mr-3 h-8 w-8 hover:bg-blue-500 transition-all cursor-pointer'

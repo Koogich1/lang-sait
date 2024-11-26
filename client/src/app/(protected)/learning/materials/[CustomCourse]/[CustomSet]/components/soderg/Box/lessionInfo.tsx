@@ -2,21 +2,21 @@
 
 import findCourseByRasdelId from "@/app/(main_page)/createCourses/watching/actions/findMaterials/findCourseByRasdelId"
 import { courseData } from "@prisma/client"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 const LessonInfo = ({rasdelId} : {rasdelId: string}) => {
 	const[course, setCourse] = useState<courseData>()
 
-	const fetchCourse = async() => {
+	const fetchCourse = useCallback(async() => {
 		const fetched = await findCourseByRasdelId(rasdelId)
 		if(fetched){
 			setCourse(fetched)
 		}
-	}
+	}, [rasdelId])
 
 	useEffect(() => {
 		fetchCourse()
-	},[])
+	},[fetchCourse])
 
 	const languageTranslations: any = {
     China: "Китайский",

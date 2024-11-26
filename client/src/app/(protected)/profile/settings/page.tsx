@@ -27,6 +27,7 @@ import { User } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import ChangePhoto from "./components/modal/changePhoto";
 import LanguageBox from "./components/languages/languageUserBox";
+import Image from "next/image";
 
 
 const SettingsPage = () => {
@@ -72,7 +73,7 @@ const SettingsPage = () => {
       age: user?.age || 0, // Убедитесь, что age это число
       isTwoFactorEnabled: user?.isTwoFactorEnabled || false,
     });
-  }, [user]);
+  }, [user, form]);
 
   const onSubmit = (values: any) => {
 		// Преобразуем age из строки в число
@@ -111,7 +112,7 @@ const SettingsPage = () => {
 					<div className="w-[250px] flex flex-col justify-center items-center gap-3 p-2 pb-3 border border-gray-200 rounded-sm ">
 						<h1 className="text-lg font-semibold text-[#835BD2]">Изображение профиля</h1>
 						<div className="w-[150px] h-[150px]">
-							{user.image && <img src={user.image} alt="Profile Picture" className="w-full h-full rounded-full" />}
+							{user.image && <Image width={1000} height={1000} src={user.image} alt="Profile Picture" className="w-full h-full rounded-full" />}
 						</div>
 						<Button 
 							className="text-sm font-semibold p-5 mt-3"

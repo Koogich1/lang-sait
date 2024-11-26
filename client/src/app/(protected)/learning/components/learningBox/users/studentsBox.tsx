@@ -26,7 +26,9 @@ const StudentsBox = ({user, teacher}: Props) => {
 				{teacher?.studentsList && teacher.studentsList.length > 0 ? 
 					<div className='mt-5 w-full grid md:grid-cols-2 lg:grid-cols-3'>
 						{teacher.studentsList.map((data) => (
-							<UserBlock userId={data}/>
+							<div key={data} className='w-full'>
+								<UserBlock userId={data}/>
+							</div>
 						))}
 					</div>
 				: 

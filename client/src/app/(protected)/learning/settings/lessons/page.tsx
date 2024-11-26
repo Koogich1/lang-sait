@@ -7,8 +7,19 @@ import { currentUser } from "@/lib/auth"
 import { getUserByEmail } from "@/data/user"
 import weekCreateLogic from "@/components/datePick/weekCreateLogic"
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { DayOfWeek } from "@prisma/client"
 
-const myWeek = () => {
+interface SlotData {
+  id: string;
+  teacherId: string;
+  date: Date;
+  dayOfWeek: DayOfWeek;
+  timeSlots: string[];
+}
+
+const MyWeek = () => {
+	const[freeDates, setFreeDates] = useState<"Вы не учитель!" | SlotData[] | null>(null)
 
 	const callWeekCreateLogic = async () => {
 		try {
@@ -21,17 +32,10 @@ const myWeek = () => {
 	return (
 		<div>
 			<div className="flex mt-10 w-full gap-5">
-				<CurrentWeek />
-			</div>
-			<div>
-			</div>
-			<Button onClick={callWeekCreateLogic}>
-				Ура Ура Ура
-			</Button>
-			<div>
+				<CurrentWeek freeDates={freeDates}/>
 			</div>
 		</div>
 	)
 }
 
-export default myWeek
+export default MyWeek

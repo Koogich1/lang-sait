@@ -29,6 +29,7 @@ import updatePhotoVariants from "../../actions/updatePhotoVariants";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { ClipLoader } from "react-spinners";
+import Image from "next/image";
 
 const FormSchema = z.object({
   question: z.string().max(350, {
@@ -245,7 +246,7 @@ const UpdateBigTextModal = ({test, updateVisov} : {test: Test, updateVisov: () =
 								<div className="grid grid-cols-3 gap-5 justify-center">
 									{test.options.map((data, index) => (
 										<div key={index} className="bg-blue-300 rounded-lg cursor-pointer" onClick={() => handleImageClick(data)}>
-											<img src={data.text} alt="" className="w-full hover:opacity-30 transition-all h-full object-cover rounded-lg"/>
+											<Image width={1000} height={1000} src={data.text} alt="" className="w-full hover:opacity-30 transition-all h-full object-cover rounded-lg"/>
 										</div>
 									))}
 								</div>
@@ -254,7 +255,7 @@ const UpdateBigTextModal = ({test, updateVisov} : {test: Test, updateVisov: () =
 								<div className="grid grid-cols-1 gap-5 justify-center w-2/5">
 									{test.options.map((data, index) => (
 										<div key={index} className="cursor-pointer bg-blue-300 rounded-lg" onClick={() => handleImageClick(data)}>
-											<img src={data.text} alt="" className="full hover:opacity-30 transition-all h-full object-cover rounded-lg"/>
+											<Image src={data.text} alt="" className="full hover:opacity-30 transition-all h-full object-cover rounded-lg"/>
 										</div>
 									))}
 								</div>
@@ -302,7 +303,7 @@ const UpdateBigTextModal = ({test, updateVisov} : {test: Test, updateVisov: () =
                 <DialogTitle className="text-xl font-semibold text-gray-400">Изменить изображение</DialogTitle>
               </DialogHeader>
               <div className="my-3 flex items-center justify-center flex-col gap-3">
-                <img src={imagePreview || ""} alt="" className="w-1/2 object-cover rounded-lg" />
+                <Image width={1000} height={1000} src={imagePreview || ""} alt="" className="w-1/2 object-cover rounded-lg" />
                <div>
                 <Input
                     type="file"

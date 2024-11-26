@@ -60,7 +60,7 @@ const UpdateLessonModal = ({openModal, setOpenModal, visov, lesson}: Props) => {
 	useEffect(() => {
 		lesson.imageSrc ? 
 		setImagePreview(lesson.imageSrc) : ''
-	}, [])
+	}, [lesson.imageSrc])
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const file = data.photoImage

@@ -33,6 +33,7 @@ import updateCourse from "../actions/updateCourse";
 import fetchLessonById from "../actions/fetchLessonById";
 import updateLesson from "../actions/updateLesson";
 import { PuffLoader } from "react-spinners";
+import Image from "next/image";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).optional(),
@@ -83,7 +84,7 @@ const UpdateLessonModal = ({ updateData, lessonId }: Props) => {
 
     fetchRasdel();
     handleUser();
-  }, [lessonId]); // Обратите внимание на зависимости
+  }, [lessonId, form]); // Обратите внимание на зависимости
 
   const handleFileRead = async (file: File) => {
     return new Promise<string>((resolve, reject) => {
@@ -184,7 +185,9 @@ const UpdateLessonModal = ({ updateData, lessonId }: Props) => {
                 <FormItem className="grid grid-cols-2 justify-center items-center space-y-0 gap-3 ml-0">
                   <div className="w-[125px] h-[190px] rounded-xl bg-blue-200">
                     {imagePreview && (
-                      <img
+                      <Image
+                        width={1000}
+                        height={1000}
                         src={imagePreview}
                         alt="Preview"
                         className="w-full h-full object-cover rounded-xl"

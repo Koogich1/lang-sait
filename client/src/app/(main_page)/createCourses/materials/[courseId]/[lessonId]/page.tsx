@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { LittleRasdel, QuestionType, Option, Answer, Materials, courseData, User, TextBlock, CorrectAnswer } from "@prisma/client"
 import fetchTestFromDb from '../../../components/actions/fetchTestFromDb'
 import { IoClose, IoMenuOutline } from "react-icons/io5";
@@ -100,31 +100,36 @@ const Page = () => {
 	const [loading, setLoading] = useState(false);
 	const [isSwitchOn, setIsSwitchOn] = useState(true);
 
-  const fetchMaterials = async (rasdelId: string) => {
+	const form = useForm<z.infer<typeof FormSchema>>({
+		resolver: zodResolver(FormSchema),
+		defaultValues: {
+			username: "", // Начальное значение остается пустым
+		},
+	})
 
-    const data = await getMaterailFromDb({
-      currentLessonId: lessonId as string,
-      currentLittleRasdelId: rasdelId,
-    });
-    if (data) {
-      setMaterials(data);
-    }
-  };
-
-
-	const fetchTest = async (rasdelId: string) => {
-		const data = await fetchTestFromDb({ lessonId: lessonId as string, littleRasdelId: rasdelId })
+  const fetchMaterials = useCallback(async (rasdelId: string) => {
+		const data = await getMaterailFromDb({
+			currentLessonId: lessonId as string,
+			currentLittleRasdelId: rasdelId,
+		});
 		if (data) {
-			setTests(data)
+			setMaterials(data);
 		}
-	}
+	}, [lessonId]);
 
-	const fetchRasdels = async () => {
-		const data = await getLittleRasdels(lessonId as string)
+	const fetchTest = useCallback(async (rasdelId: string) => {
+		const data = await fetchTestFromDb({ lessonId: lessonId as string, littleRasdelId: rasdelId });
 		if (data) {
-			setRasdels(data)
+			setTests(data);
 		}
-	}
+	}, [lessonId]);
+
+	const fetchRasdels = useCallback(async () => {
+		const data = await getLittleRasdels(lessonId as string);
+		if (data) {
+			setRasdels(data);
+		}
+	}, [lessonId]);
 
 	const setRasdel = () => {
 		if (rasdels && rasdels.length > 0) {
@@ -139,37 +144,34 @@ const Page = () => {
 
 	useEffect(() => {
 		const loadRasdels = async () => {
-			const courseData = await getCourseById(courseId as string)
-			const userData = await currentUser()
-			if(userData){
-				setUser(userData)
+			const courseData = await getCourseById(courseId as string);
+			const userData = await currentUser();
+			if (userData) {
+				setUser(userData);
 			}
-			if(courseData){
-				setCourse(courseData)
+			if (courseData) {
+				setCourse(courseData);
 			}
 			await fetchRasdels(); // Ждем, пока данные загружены
-		}
-		fetchMaterials(currRasdel?.id ? currRasdel.id : "")
+			// Вызываем fetchMaterials существующего раздела
+			if (currRasdel?.id) {
+				fetchMaterials(currRasdel.id);
+			}
+		};
 		loadRasdels(); // Вызываем функцию загрузки данных
-	}, [lessonId])
+	}, [lessonId, courseId, currRasdel, fetchMaterials, fetchRasdels]); // Добавляем недостающие зависимости	
 
 	useEffect(() => {
-		setLoading(true)
+		setLoading(true);
 		if (currRasdel) {
 			form.setValue("username", currRasdel.name);
-		} else if (rasdels && rasdels.length > 0) {  // Если currRasdel не установлен
-			setCurretRasdel(rasdels[0]); // Установить первый раздел
-			fetchTest(rasdels[0].id); // Получить тесты для первого раздела
+		} else if (rasdels && rasdels.length > 0) {  
+			setCurretRasdel(rasdels[0]); 
+			fetchTest(rasdels[0].id); 
 		}
-		setLoading(false)
-	}, [currRasdel, rasdels]); // Добавить rasdels как зависимостьl
+		setLoading(false);
+	}, [currRasdel, rasdels, fetchTest, form]); // Добавляем недостающие зависимости	
 
-	const form = useForm<z.infer<typeof FormSchema>>({
-		resolver: zodResolver(FormSchema),
-		defaultValues: {
-			username: "", // Начальное значение остается пустым
-		},
-	})
 
 	const updateVisov = () => {
 		fetchTest(currRasdel?.id ? currRasdel?.id : "")

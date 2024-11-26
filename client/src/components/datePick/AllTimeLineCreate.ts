@@ -14,6 +14,7 @@ enum DayOfWeek {
   SUNDAY = "SUNDAY"
 }
 
+
 type TimeSlot = [string, string];
 type TimeSlotsData = {
   [key: string]: TimeSlot[];

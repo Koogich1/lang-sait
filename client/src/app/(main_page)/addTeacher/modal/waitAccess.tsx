@@ -29,11 +29,10 @@ const WaitAccess = ({ setOpenModal, openModal, access, visov}: Props) => {
 
   useEffect(() => {
     if (accessRef.current) {
-      // Начало анимации при изменении access
       gsap.fromTo(accessRef.current, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5 });
     }
-		visov()
-  }, [access]);
+    visov();
+  }, [access, visov]);
 
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>

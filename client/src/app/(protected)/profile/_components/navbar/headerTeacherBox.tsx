@@ -3,6 +3,7 @@
 import { UserSubscriptions } from "@prisma/client"
 import { useEffect, useState } from "react"
 import GetTeacherById from "../../_components/actions/getTeacherByid"
+import Image from "next/image"
 
 type Props = {
 	subs: UserSubscriptions,
@@ -31,7 +32,7 @@ const HeaderTeacherBox = ({subs}: Props) => {
 			}
 		}
 		fetchTeacher()
-	},[])
+	},[subs.teacherId])
 
 	const Surname = teacher?.user.surname ? teacher.user.surname.charAt(0).toUpperCase() : "";
 	
@@ -42,7 +43,7 @@ const HeaderTeacherBox = ({subs}: Props) => {
 					<h1 className="flex gap-1"><span>{teacher?.user.name}</span><span>{Surname}.</span></h1>
 					<h1 className="font-normal">Кол-во уроков: {teacher?.user.lessons}</h1>
 				</div>
-				<img src={`${teacher?.user.image}`} alt="" className="rounded-lg w-[45px] h-[45px] object-cover"/>
+				<Image width={1000} height={1000} src={`${teacher?.user.image}`} alt="" className="rounded-lg w-[45px] h-[45px] object-cover"/>
 			</div>
 	)
 	

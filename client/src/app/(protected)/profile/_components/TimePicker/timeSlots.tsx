@@ -2,7 +2,7 @@
 
 import getweeksFronDb from './getweeksFronDb';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DayOfWeek } from '@prisma/client';
 import { ClipLoader } from 'react-spinners';
 
@@ -58,14 +58,14 @@ const TimeSlots = ({choosenDate}: Props) => {
     fetchDates();
   }, []);
 
-  const findChosenSlot = () => {
+  const findChosenSlot = useCallback(() => {
     const chosenDate = new Date(choosenDate);
 
     if (freeDates === "Вы не учитель!" || !chosenDate) {
       return;
     }
 
-		if(freeDates === null){
+		if(freeDates === null) {
 			return;
 		}
 
@@ -80,11 +80,11 @@ const TimeSlots = ({choosenDate}: Props) => {
     });
 
     setChosenSlot(selectedSlot || null);
-  };
+  }, [choosenDate, freeDates]);
 
   useEffect(() => {
     findChosenSlot();
-  }, [choosenDate, freeDates]);
+  }, [choosenDate, freeDates, findChosenSlot]);
 
   if(!freeDates){
     return (

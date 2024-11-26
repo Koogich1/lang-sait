@@ -222,7 +222,7 @@ const TeachersPage = () => {
             {filteredTeachers.map((teacher, id) => (
               <div key={id} className='[230px] h-[240px] rounded-lg bg-white flex p-2 w-full relative text-gray-600'>
                 <div className='w-[220px] h-[225px] rounded-sm bg-cover overflow-hidden mr-4'>
-                  <img className="w-[220px] h-[225px] object-cover" 
+                  <Image width={1000} height={1000} className="w-[220px] h-[225px] object-cover" 
                     src={teacher.userInfo.image ? teacher.userInfo.image : 'Ava'} 
                     alt="" 
                   />

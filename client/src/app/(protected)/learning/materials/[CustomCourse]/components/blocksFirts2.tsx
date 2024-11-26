@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import findFirstTwoItems from '../../actions/findMaterials/find2FirstMaterial';
 import { courseData, Lessons, rasdelId } from '@prisma/client';
 import { HashLoader } from 'react-spinners';
@@ -16,18 +16,18 @@ const BlocksFirts2 = ({ blockId }: Props) => {
 	const [inner, setInner] = useState<Item[]>([]);
 	const [loading, setLoading] = useState<boolean>(true); // состояние загрузки
 
-	const fetchInfo = async () => {
+	const fetchInfo = useCallback(async () => {
 		setLoading(true); // Начинаем загрузку
 		const data = await findFirstTwoItems(blockId);
 		if (data) {
 			setInner(data);
 		}
 		setLoading(false); // Завершаем загрузку
-	}
+	}, [blockId])
 
 	useEffect(() => {
 		fetchInfo();
-	}, []);
+	}, [fetchInfo]);
 
 	return (
 		<div className='opacity-60'>

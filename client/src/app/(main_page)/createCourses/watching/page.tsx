@@ -10,6 +10,7 @@ import findedLessons from './actions/findLessons';
 import { ClipLoader, HashLoader } from 'react-spinners';
 import { FaPlus } from "react-icons/fa6";
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Page = () => {
   const[open, setOpen] = useState(false)
@@ -65,7 +66,7 @@ const Page = () => {
                 <h1 className='text-5xl text-white'>{data.name.charAt(0).toUpperCase()}</h1>
               </div>
             ) : (
-              <img src={data.imageSrc ? data.imageSrc : ""} alt={data.name} className='w-full h-4/5 object-cover' />
+              <Image width={1000} height={1000} src={data.imageSrc ? data.imageSrc : ""} alt={data.name} className='w-full h-4/5 object-cover' />
             )}
             <div className='absolute text-sm bottom-0 p-3 bg-white w-full h-1/5 flex items-center justify-center text-gray-400'>
               {data.name}

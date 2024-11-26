@@ -99,7 +99,7 @@ const MaterialBox = ({ materials, onMaterialSelect, selectedMaterial, isMaterial
                         <li className='flex items-center justify-center cursor-pointer' key={data.id} onClick={() => onMaterialSelect(data.id)}>
                             <div>
                                 <div className='w-[175px] h-[275px] rounded-lg overflow-hidden relative flex justify-center hover:scale-105 hover:shadow-lg transition-all duration-300'>
-                                    <img src={data.photoUrl} alt="" className='w-full h-4/5 object-cover' />
+                                    <Image width={1000} height={1000} src={data.photoUrl} alt="" className='w-full h-4/5 object-cover' />
                                     <div className='absolute text-sm bottom-0 p-3 bg-white w-full h-1/5'>
                                         {data.name}
                                     </div>

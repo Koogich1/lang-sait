@@ -4,6 +4,7 @@ import UpdateTestModal from "@/app/(main_page)/createCourses/components/modal/up
 import { Answer, CorrectAnswer, Option, QuestionType, TextBlock } from "@prisma/client";
 import UpdateConnectModal from "../../../../../components/modal/connectModal/updateConnectModal"
 import UpdateConnectModalPhoto from "@/app/(main_page)/createCourses/components/modal/connectModal/updateConnectPhotoModal";
+import Image from "next/image";
 
 type Test = {
   id: string;
@@ -50,7 +51,7 @@ const ConnectPhotoVariants: React.FC<AudioChooseProps> = ({ test, userId, course
 						{/* Контейнер с вариантами */}
 							<div className='flex flex-col gap-1 text-xs items-center justify-center text-green-500 font-medium w-[30%]'>
 							{test.answers.map((data) => (
-								<img src={data.text} key={data.id} className="w-[6rem] h-[6rem] object-cover rounded-lg shadow-sm" />
+								<Image width={1000} alt="text" height={1000} src={data.text} key={data.id} className="w-[6rem] h-[6rem] object-cover rounded-lg shadow-sm" />
 							))}
 						</div>
 						</div>

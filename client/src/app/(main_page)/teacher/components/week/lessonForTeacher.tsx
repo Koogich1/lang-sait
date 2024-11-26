@@ -58,7 +58,7 @@ const LessonForTeacher = ({ Teacher, user, userSubs, booking }: Props) => {
     if (booking && booking.length > 0) {
       controls.start({ opacity: 1 }); // Показать первый урок
     }
-  }, [booking]);
+  }, [booking, controls]);
 
   if (!user || !booking) {
     return null;

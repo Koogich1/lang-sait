@@ -2,7 +2,7 @@
 
 import { courseData, customCourse, CustomCourseSet, CustomRasdelBox, Lessons, User } from '@prisma/client'
 import { useParams, useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import getAllCourses from '../../components/actions/getAllCourses'
 import Link from 'next/link';
 import findCourselessons from '../actions/findCourselessons'
@@ -29,29 +29,30 @@ const Page = () => {
 
 	const router = useRouter()
 
-	const fetchRasdels = async() => {
+	
+	const fetchRasdels = useCallback(async () => {
 		const rasdelsinf = await findRasdelByCourseId(CustomCourse as string)
-		if(rasdelsinf && rasdelsinf.length > 0){
+		if (rasdelsinf && rasdelsinf.length > 0) {
 			setRasdels(rasdelsinf)
 		}
-	}
+	}, [CustomCourse]); // Зависимость: CustomCourse
 
-	const fetchCOurseInfo = async() => {
+	const fetchCourseInfo = useCallback(async () => {
 		const courseInf = await getCourseInfo(CustomCourse as string)
-		if(courseInf){
+		if (courseInf) {
 			setCourse(courseInf)
 		}
 		const userInf = await currentUser()
-		if(userInf){
+		if (userInf) {
 			setUser(userInf)
 		}
-	}
+	}, [CustomCourse]); // Зависимость: CustomCourse
 
 	useEffect(() => {
-		fetchCOurseInfo()
+		fetchCourseInfo()
 		fetchRasdels()
 		setLoading(false)
-	},[]) 
+	},[fetchCourseInfo, fetchRasdels]) 
 
 	if(loading){
 		return <div className='w-full min-h-[60vh] bg-white rounded-2xl mt-5 shadow-lg flex items-center justify-center'><HashLoader color="#835BD2" /></div>; // Индикатор загрузки

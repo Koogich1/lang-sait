@@ -2,7 +2,7 @@
 
 import { currentUser } from "@/lib/auth"
 import { Application, User } from "@prisma/client"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import getAllAplication from "../../actions/getAllAplication"
 import UserInfo from "./components/userInfo"
 import { TbSend } from "react-icons/tb";
@@ -62,41 +62,47 @@ const Applications = ({ user }: { user: User }) => {
   const [currAclication, setCurrAplication] = useState<Application[]>([]);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const fetchApplications = async () => {
+  const fetchApplications = useCallback(async() => {
     const data = await getAllAplication(user.teacherId);
     if (data) {
       setApplications(data);
       filterApplication("all", data);
     }
-  };
+  }, [user.teacherId]);
 
   useEffect(() => {
     fetchApplications();
-  }, [user.teacherId]);
+  }, [user.teacherId, fetchApplications]);
 
-  const filterApplication = (type: string, applicationsData: Application[]) => {
+  const filterApplication = useCallback((type: string, applicationsData: Application[]) => {
     setIsTransitioning(true);
     setTimeout(() => {
       let filteredApplications;
 
-      if (type === "all") {
-        filteredApplications = applicationsData.filter(data => !data.isArchive);
-      } else if (type === "adding") {
-        filteredApplications = applicationsData.filter(data => data.format === "addTeacher" && !data.isArchive);
-      } else if (type === "accept") {
-        filteredApplications = applicationsData.filter(data => data.format === "dayFix" && !data.isArchive);
-      } else if (type === "none") {
-        filteredApplications = applicationsData.filter(data => data.id === "1" && !data.isArchive);
-      } else if (type === "archive") {
-        filteredApplications = applicationsData.filter(data => data.isArchive);
-      } else {
-				filteredApplications = applications
-			}
+      switch (type) {
+        case "all":
+          filteredApplications = applicationsData.filter(data => !data.isArchive);
+          break;
+        case "adding":
+          filteredApplications = applicationsData.filter(data => data.format === "addTeacher" && !data.isArchive);
+          break;
+        case "accept":
+          filteredApplications = applicationsData.filter(data => data.format === "dayFix" && !data.isArchive);
+          break;
+        case "none":
+          filteredApplications = applicationsData.filter(data => data.id === "1" && !data.isArchive);
+          break;
+        case "archive":
+          filteredApplications = applicationsData.filter(data => data.isArchive);
+          break;
+        default:
+          filteredApplications = applicationsData; // отвечает за fallback
+      }
 
       setCurrAplication(filteredApplications);
       setIsTransitioning(false);
-    }, 300); // Match this timeout to transition duration
-  };
+    }, 300);
+  }, []); // 
 
 	return (
 		<>

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { courseData, Lessons, rasdelId } from "@prisma/client";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { IoSettingsSharp } from "react-icons/io5";
 import RasdelCourse from "./rasdelCourse";
 import findLessons from "@/app/(main_page)/createCourses/watching/actions/findMaterials/findLessons";
@@ -31,17 +31,16 @@ const LessonBox = () => {
   const [course, setCourse] = useState<Lessons>();
 	const [customSetId, setCustomSetId] = useState<string>()
  
-	const fetchRasdels = async() => {
-		const fetchRasdels = await findLessons(CustomSet as string)
-		if(fetchRasdels){
-			setLessons(fetchRasdels)
+	const fetchRasdels = useCallback(async() => {
+		const fetchedRasdels = await findLessons(CustomSet as string);
+		if (fetchedRasdels) {
+			setLessons(fetchedRasdels);
 		}
-	}
+	}, [CustomSet]);  // Добавляем CustomSet в зависимости
 
 	useEffect(() => {
-		fetchRasdels()
-		
-	}, [])
+		fetchRasdels();
+	}, [fetchRasdels]);
 	
 	return (
 		<div>
@@ -49,7 +48,7 @@ const LessonBox = () => {
 				{lessons?.map((data) => (
 					<div key={data.id} className="border-y border-gray-100 p-1 py-3 my-2 px-3">
 						{data.lessons.map((lesson) => (
-							<div className="flex gap-3 justify-between">
+							<div className="flex gap-3 justify-between" key={lesson.id}>
 								<div className="flex gap-2">
 									<Image src={lesson.photoUrl} alt="logo" width={125} height={125} className="w-[125px] shadow- border border-gray-200 rounded-lg h-[125px] object-cover"/>
 									<div className="flex flex-col justify-between">

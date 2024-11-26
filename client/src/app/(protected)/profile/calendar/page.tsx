@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import Header from "../_components/header"
 import { currentUser } from "@/lib/auth"
 import { ExtendedUser } from "@/next-auth"
@@ -12,15 +12,17 @@ const SettingsPage = () => {
 	const	[user, setUser] = useState<User | null>(null)
 	const	[userSubs, setUserSubs] = useState<UserSubscriptions[] | null>([])
 
-	const handleData = async() => {
-		const subsData = await getAllSubscription()
-		if(subsData){
-			setUserSubs(subsData)
-		if(userSubs == null){
-			return
-		}
-		}
-	}
+	const handleData = useCallback(
+		async() => {
+			const subsData = await getAllSubscription()
+			if(subsData){
+				setUserSubs(subsData)
+			if(userSubs == null){
+				return
+				}
+			}
+		}, [userSubs]
+	)
 
 	const updateData = () => {
 		handleData()
@@ -35,7 +37,7 @@ const SettingsPage = () => {
 		}
 		fetchUser()
 		handleData()
-	},[])
+	},[handleData])
 
 	if(!user){
 		return

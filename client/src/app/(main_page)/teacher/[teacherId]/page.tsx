@@ -104,7 +104,7 @@ const TeacherPage = () => {
 			}
 			fetchAdded()
 		}
-	}, [])
+	}, [currUser, teacherId, user])
 
 	const handlePageChange = (page: PageNames) => {
 		setIsTransitioning(true);

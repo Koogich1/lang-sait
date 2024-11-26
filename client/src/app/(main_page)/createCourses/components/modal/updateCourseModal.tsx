@@ -32,6 +32,7 @@ import fetchCourseById from "../actions/fetchCourseById";
 import updateCourse from "../actions/updateCourse";
 import { PuffLoader } from "react-spinners";
 import { cornersOfRectangle } from "@dnd-kit/core/dist/utilities/algorithms/helpers";
+import Image from "next/image";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).optional(),
@@ -82,7 +83,7 @@ const UpdateCourseModal = ({ updateData, courseId }: Props) => {
 
     fetchRasdel();
     handleUser();
-  }, [courseId]); // Обратите внимание на зависимости
+  }, [courseId, form]); // Добавлено 'form' в зависимости
 
   if(loading){
     return(
@@ -132,7 +133,9 @@ const UpdateCourseModal = ({ updateData, courseId }: Props) => {
                 <FormItem className="grid grid-cols-2 justify-center items-center space-y-0 gap-3 ml-0">
                   <div className="w-[125px] h-[190px] rounded-xl bg-blue-200">
                     {imagePreview && (
-                      <img
+                      <Image
+                        width={1000}
+                        height={1000}
                         src={imagePreview}
                         alt="Preview"
                         className="w-full h-full object-cover rounded-xl"

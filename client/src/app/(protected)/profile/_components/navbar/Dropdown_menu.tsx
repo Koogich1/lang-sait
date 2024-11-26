@@ -21,6 +21,7 @@ import GetUser from '../actions/getUser';
 import { Button } from '@/components/ui/button';
 
 import { Skeleton } from "@/components/ui/skeleton"
+import Image from 'next/image';
 
 type allInf = {
 	user: {
@@ -67,7 +68,9 @@ export default function DropDownMenu({user}: Props) {
 				<DropdownMenuTrigger className='border-none rounded-full'>
 					{user.image.length > 0 ? 
 						<div className='relative flex items-center justify-center w-[4rem] h-[4rem] rounded-full'>
-							<img
+							<Image
+								width={1000}
+								height={1000}
 								className="object-cover p-0 m-0 w-[4rem] h-[4rem] rounded-full bg-white"
 								src={user.image} 
 								alt=""

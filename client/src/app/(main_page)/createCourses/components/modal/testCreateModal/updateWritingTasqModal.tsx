@@ -113,7 +113,7 @@ const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: 
 	
 	useEffect(() => {
 		setSelectedTextBlockId(test.id)
-	}, [])
+	}, [test.id])
 
 	const quillModules = {
     toolbar: [

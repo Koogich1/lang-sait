@@ -3,6 +3,7 @@
 import { UserSubscriptions } from "@prisma/client"
 import { useEffect, useState } from "react"
 import GetTeacherById from "./actions/getTeacherByid" 
+import Image from "next/image"
 
 type Props = {
 	subs: UserSubscriptions,
@@ -38,11 +39,13 @@ const TeacherBox = ({subs}: Props) => {
 		const fetchTeacher = async() => {
 			const TeacherInf = await GetTeacherById(subs.teacherId)
 			if(TeacherInf){
-				setTeacher(TeacherInf)
+			{	
+			//	setTeacher(TeacherInf)
+			}
 			}
 		}
 		fetchTeacher()
-	},[])
+	},[subs.teacherId])
 
 	const Surname = teacher?.user.surname ? teacher.user.surname.charAt(0).toUpperCase() : "";
 	
@@ -66,7 +69,7 @@ const TeacherBox = ({subs}: Props) => {
 					<h1 className="flex gap-1"><span>{teacher?.user.name}</span><span>{Surname}.</span></h1>
 					<h1 className="font-normal">{translateLanguage(teacher?.user.language)}</h1>
 				</div>
-				<img src={`${teacher?.user.image}`} alt="" className="rounded-full w-[45px] h-[45px] object-cover"/>
+				<Image width={1000} height={1000} src={`${teacher?.user.image}`} alt="" className="rounded-full w-[45px] h-[45px] object-cover"/>
 			</div>
 	)
 	
