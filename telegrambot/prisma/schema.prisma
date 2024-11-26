@@ -1,0 +1,428 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://langschool_owner:QSr2YNs6Adzi@ep-noisy-limit-a256jzax-pooler.eu-central-1.aws.neon.tech/langschool?sslmode=require"
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  TEACHER
+  MODERATOR
+}
+
+model UserSubscriptions {
+  id                    String @id @default(cuid())
+  userId                String
+  teacherId             String 
+  LessonsPayd           Int     @default(0)
+  user                  User    @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id                    String                 @id @default(cuid())
+  name                  String?
+  surname               String?
+  email                 String?                @unique
+  telegramId            String?
+  emailVerified         DateTime?
+  favourites            String[]               @default([])
+  image                 String?
+  password              String?
+  role                  UserRole               @default(USER)
+  accunts               Account[]
+  isTwoFactorEnabled    Boolean                @default(false)
+  TeacherS              String[]               @default([])
+  twoFactorConfirmation twoFactorConfirmation?
+  teacherId             String?
+  userSubscriptions     UserSubscriptions[]
+  teacher               Teacher?               @relation(fields: [teacherId], references: [id])
+  studentBookings       StudentBooking[]
+  favouritesTeachers    String                 @default("")
+  allUserImage          String[]
+
+  sentMessages          DirectMessage[] @relation("SenderMessages")
+  receivedMessages      DirectMessage[] @relation("ReceiverMessages")
+}
+
+
+model DirectMessage {
+  id            Int       @id @default(autoincrement())
+  senderId      String
+  sender        User      @relation("SenderMessages", fields: [senderId], references: [id])  
+  receivedId    String
+  receiver      User      @relation("ReceiverMessages", fields: [receivedId], references: [id])
+  content       String
+  createdAt     DateTime  @default(now())
+}
+
+model customCourse {
+  id            String          @id @default(cuid())
+  name          String
+  aboutCourse   String?
+  userId          String           @default("")
+  imageSrc      String?         @default("")
+  customRasdelBox CustomRasdelBox[] @relation("CustomRasdelBox")
+  createdAt     DateTime          @default(now())
+}
+
+model CustomRasdelBox {
+  id                String          @id @default(cuid())
+  name              String
+  customCourseId    String
+  order             Int                 @default(0)
+  CustomCourses     CustomCourseSet[] @relation("RasdelCourses") // Здесь устанавливаем отношение
+  CustomRasdelBox   customCourse  @relation("CustomRasdelBox", fields: [customCourseId], references: [id])
+}
+
+model CustomCourseSet {
+  id              String           @id @default(cuid())
+  customRasdelId  String           @default("")
+  description     String           @default("")
+  courses         courseData[]     @relation("CustomSetCourses") 
+  lessons         Lessons[]        @relation("CustomSetLessons")
+  littleRasdel    LittleRasdel[]   @relation("CustomSetLittleRasdel")
+  tests           Test[]           @relation("CustomSetTests")
+  materials       Materials[]      @relation("CustomSetMaterials")
+  rasdels         rasdelId[]      @relation("CustomSetRasdels")
+  createdAt       DateTime         @default(now())
+  position        Int              @default(0)
+  
+  CustomRasdelBox CustomRasdelBox  @relation("RasdelCourses", fields: [customRasdelId], references: [id])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  userId    String
+  user2Id   String
+  head      String
+  message   String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+}
+
+enum NotificationType {
+  SYSTEM
+  BOOKING
+  // Другие типы уведомлений
+}
+
+model courseData {
+  id          String      @id @default(cuid())
+  userId      String      @default("")
+  name        String      @default("")
+  aboutCourse String      @default("")
+  language    String      @default("")
+  rasdels     rasdelId[]
+  photoUrl    String      @default("")
+  createdAt   DateTime @default(now())
+  customCourseSets   CustomCourseSet[] @relation("CustomSetCourses")
+}
+
+model rasdelId {
+  id              String   @id @default(cuid())
+  photoUrl        String   @default("")
+  coureId         String   @default("")
+  course          courseData @relation(fields: [coureId], references: [id])
+  userId          String   @default("")
+  name            String   @default("")
+  position        Int        @default(1)
+  aboutRasdel     String   @default("")
+  lessons         Lessons[]
+  customCourseSets   CustomCourseSet[] @relation("CustomSetRasdels")
+}
+
+model Lessons {
+  id                String      @id @default(cuid())
+  photoUrl          String      @default("")
+  rasdelId          String      @default("")
+  position       Int        @default(1)
+  rasdel            rasdelId    @relation(fields: [rasdelId], references: [id])
+  name              String      @default("")
+  aboutLesson       String      @default("")
+  littleRasdelId    String      @default("")
+  littleRasdels     LittleRasdel[]  @relation("LessonLittleRasdels")
+  tests             Test[]          @relation("LessonTests")
+  materials      Materials[]     @relation("LessonsMaterials")
+  customCourseSets   CustomCourseSet[] @relation("CustomSetLessons")
+}
+
+model LittleRasdel {
+  id             String     @id @default(cuid())
+  name           String     @default("")
+  position       Int        @default(1)
+  lessonId       String     @default("")
+  lesson         Lessons    @relation("LessonLittleRasdels", fields: [lessonId], references: [id])
+  tests          Test[]     @relation("LittleRasdelTests")
+  materials      Materials[]     @relation("littleRasdelMaterials")
+  customCourseSets   CustomCourseSet[] @relation("CustomSetLittleRasdel")
+}
+
+model Materials {
+  id             String          @id @default(cuid())
+  imageSrc       String?
+  content        String?
+  lessonId       String
+  littleRasdelId String
+  position       Int             @default(1)
+  lesson         Lessons         @relation("LessonsMaterials", fields: [lessonId], references: [id])
+  littleRasdel   LittleRasdel    @relation("littleRasdelMaterials", fields: [littleRasdelId], references: [id])
+    customCourseSets   CustomCourseSet[] @relation("CustomSetMaterials")
+}
+
+model Test {
+  id             String          @id @default(cuid())
+  audioHeader    String?         @default("")
+  textBlocks     TextBlock[]     @relation("TextBlockTest")
+  lessonId       String
+  littleRasdelId String
+  position       Int             @default(1)
+  lesson         Lessons         @relation("LessonTests", fields: [lessonId], references: [id])
+  littleRasdel   LittleRasdel    @relation("LittleRasdelTests", fields: [littleRasdelId], references: [id])
+  question       String          @default("")
+  questionType   QuestionType
+  options        Option[]        @relation("TestOptions")
+  answers        Answer[]        @relation("TestAnswers")
+  correctAnswers  CorrectAnswer[] @relation("TestCorrectAnswers")
+  customCourseSets   CustomCourseSet[] @relation("CustomSetTests")
+}
+
+model TextBlock {
+  id            String        @id @default(cuid())
+  testId        String
+  test          Test          @relation("TextBlockTest", fields: [testId], references: [id])
+  text          String
+  position      Int           @default(1)
+}
+
+model Option {
+  id        String   @id @default(cuid())
+  testId    String
+  test      Test     @relation("TestOptions", fields: [testId], references: [id])
+  text      String   @default("")
+  isCorrect Boolean  @default(false) // Указывает, правильный ли вариант ответа
+  order     Int?
+  OptionMiniOrder   Int?
+  correctAnswers CorrectAnswer[] @relation("OptionCorrectAnswers")
+}
+
+model Answer {
+  id       String   @id @default(cuid())
+  testId   String
+  test     Test     @relation("TestAnswers", fields: [testId], references: [id])
+  text     String   @default("")
+  order    Int?    // Для проверки порядка ответов (если применимо)
+  correctAnswers CorrectAnswer[] @relation("AnswerCorrectAnswers") 
+}
+
+model CorrectAnswer {
+  id        String   @id @default(cuid())
+  testId    String
+  optionId  String
+  answerId  String
+  test      Test     @relation("TestCorrectAnswers", fields: [testId], references: [id])
+  option    Option   @relation("OptionCorrectAnswers", fields: [optionId], references: [id])
+  answer    Answer   @relation("AnswerCorrectAnswers", fields: [answerId], references: [id])
+}
+
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  AUDIOCHOOSE
+  ORDERING
+  FILL_IN_THE_BLANK
+  TRUE_OR_FALSE
+  CONNECT_LETTERS
+  BIG_TEXT_OR_STATIYA
+  TEXT_PO_PORYADKY
+  ONLY_TEXT
+  WRITING_TASK
+  FILL_WORDS_IN_THE_BLANK_DROPDOWN
+  VIDEO
+  CONNECT_VATIANTS
+  CONNECT_PHOTO_VARIANTS
+  PDF
+  RECORD_AUDIO
+  FILL_WORDS_IN_THE_TEXT_MENU
+  WORDS_TO_LEARN
+}
+
+enum StatusApplication {
+  accepted
+  rejected
+  waiting
+}
+
+enum FormatApplication {
+  addTeacher
+  dayFix
+}
+
+model Application{
+  id                 String                @id @default(cuid())
+  userId             String
+  teacherId          String
+  format             FormatApplication
+  status             StatusApplication     @default(waiting)
+  date               DateTime              @default(now())
+}
+
+  model Teacher {
+    id                 String                @id @default(cuid())
+    userId             String                @default("")
+    videoSrc           String                @default("")
+    languages          Language[]            @relation("TeacherLanguages") // Укажите имя отношения
+    
+    students           User[]
+    aboutMe            String                @default("Я учитель")
+    availabilities     TeacherAvailability[]
+    scheduleDays       TeacherScheduleDay[]
+    lessonPrise        Int                   @default(899)
+  }
+
+  enum languageVariants {
+    China
+    Korean
+    English
+    German
+  }
+
+  enum languagePrefers {
+    kids
+    teens
+    adults
+    noMetter
+  }
+
+  model Language {
+    id                 String                @id @default(cuid())
+    language           languageVariants
+    level              String
+    prefers            languagePrefers
+    teachers           Teacher[]             @relation("TeacherLanguages") // Обратное отношение
+  }
+
+model TeacherScheduleDay {
+  id                   String           @id @default(cuid())
+  teacherId            String
+  date                 DateTime
+  dayOfWeek            DayOfWeek
+  timeSlots            String[]
+  teacher              Teacher          @relation(fields: [teacherId], references: [id])
+  studentBookings      StudentBooking[]
+  studentBookingStatus status           @default(free)
+}
+
+model TeacherArhivedScheruleDay {
+  id                   String           @id @default(cuid())
+  teacherId            String
+  date                 DateTime
+  timeSlots            String[]
+  timeSlotsWorked      String[]
+}
+
+enum status {
+  free // <30 cлотов занято
+  fewSlots //Когда слотов меньше 30%
+  booked // Заняты все слоты
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+model TeacherAvailability {
+  id        String    @id @default(cuid())
+  teacherId String
+  teacher   Teacher   @relation(fields: [teacherId], references: [id])
+  day       DayOfWeek
+  timeSlots String[]
+}
+
+model StudentBooking {
+  id                   String             @id @default(cuid())
+  studentId            String
+  teacherScheduleDayId String
+  timeSlot             String
+  student              User               @relation(fields: [studentId], references: [id])
+  teacherScheduleDay   TeacherScheduleDay @relation(fields: [teacherScheduleDayId], references: [id])
+  status               bookedEtaps        @default(free)
+}
+
+enum bookedEtaps {
+  free
+  waitingAccess
+  booked
+}
+
+model Course {
+  id          String @id @default(cuid())
+  name        String
+  description String
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model VerificationToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model twoFactorToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model twoFactorConfirmation {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+}
