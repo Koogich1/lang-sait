@@ -62,7 +62,6 @@
     "@tiptap/starter-kit": "^2.5.8",
     "@types/lodash": "^4.17.6",
     "@types/react-beautiful-dnd": "^13.1.8",
-    "amqplib": "^0.10.4",
     "antd": "^5.17.4",
     "aws-sdk": "^2.1654.0",
     "axios": "^1.7.2",
