@@ -1,14 +1,18 @@
-import React from 'react'
+"use client"
+
+import { useParams } from 'next/navigation'
 import LeftPart from '../components/leftPart'
 import RightPart from '../components/rightPart'
 
-const page = ({params} : {params: {friendId:string}}) => {
+const Page = () => {
+	const { friendId } = useParams()
+
 	return (
 		<div className='w-full flex gap-2 px-4'>
 			<LeftPart />
-			<RightPart friendId={params.friendId} />
+			<RightPart friendId={friendId as string} />
 		</div>
 	)
 }
 
-export default page
+export default Page
