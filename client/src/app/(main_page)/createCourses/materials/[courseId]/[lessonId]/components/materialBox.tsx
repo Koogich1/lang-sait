@@ -284,7 +284,7 @@ const SortableItem: React.FC<{ id: string; content: string | null; imageSrc: str
           dangerouslySetInnerHTML={{ __html: content }} />
        </div>
       ) : (
-        <Image width={1000} height={1000} className="max-w-[150px]" src={imageSrc ? imageSrc : ""} alt="" />
+        <Image width={1000} height={1000} className="w-full" src={imageSrc ? imageSrc : ""} alt="" />
       )}
     </div>
   );
