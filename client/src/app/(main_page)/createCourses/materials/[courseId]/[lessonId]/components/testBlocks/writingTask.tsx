@@ -18,6 +18,8 @@ type Test = {
   correctAnswers?: CorrectAnswer[];
 };
 
+
+
 interface AudioChooseProps {
   test: Test;
   userId: string; // Pass user ID for permission checks
@@ -40,13 +42,13 @@ const WritingTask: React.FC<AudioChooseProps> = ({ test, userId, courseUserId, u
       <div className='relative'>
 				<ul>
 					{test.textBlocks.map((data) => (
-						<>
+						<div key={data.id}>
 							<li 
 								className='py-2 border-t prose prose-p:m-0 prose-h1:m-0 prose-h2:m-0 prose-h3:m-0 prose-h4:m-0 prose-h5:m-0 prose-h6:m-0 prose-span:m-0 prose-li:m-0 prose-ul:m-0 prose-p:w-full prose-h1:w-full prose-h2:w-full prose-h3:w-full prose-h4:w-full prose-h5:w-full prose-h6:w-full prose-span:m-0 prose-li:w-full prose-ul:w-full w-full max-w-none leading-5"' 
 								key={data.id}
 								dangerouslySetInnerHTML={data.text ? { __html: data.text} : undefined}
 							/>
-						</>
+						</div>
 					))}
 				</ul>
 			</div>

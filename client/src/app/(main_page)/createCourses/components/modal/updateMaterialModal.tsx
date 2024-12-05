@@ -1,10 +1,6 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css'; // Import Quill styles
-import createMaterial from '@/app/(main_page)/createCourses/components/actions/materials/createMaterial';
-import getMaterailFromDb from '@/app/(main_page)/createCourses/components/actions/materials/getMaterailFromDb';
 
 import {
   Dialog,
@@ -21,7 +17,9 @@ import updateMaterial from '../actions/materials/updateMaterial';
 import { FaRegTrashCan } from "react-icons/fa6";
 import deleteMaterial from '../actions/materials/deleteMaterial';
 
-const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
+import "trix/dist/trix";
+import "trix/dist/trix.css";
+import { TrixEditor } from "react-trix";
 
 type UpdateMaterialModalProps = {
   materialInfo: Materials;
@@ -29,40 +27,15 @@ type UpdateMaterialModalProps = {
   update: () => void;
 };
 
+let mergeTags = [{trigger: "@",
+  tags: [
+    {name: "Dominic St-Pierre", tag: "@dominic"},
+    {name: "John Doe", tag: "@john"}
+  ]}]
+
 const UpdateMaterialModal = ({ materialInfo, visov, update}: UpdateMaterialModalProps) => {
-	const [content, setContent] = useState(materialInfo.content);
+	const [editorState, setEditorState] = useState("");
 	const [open, setOpen] = useState(false)
-
-	const quillModules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link', 'image'],
-      [{ align: [] }],
-      [{ color: [] }],
-      ['clean'],
-    ],
-  };
-
-	const quillFormats = [
-    'header',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'list',
-    'bullet',
-    'link',
-    'image',
-    'align',
-    'color',
-  ];
-
-	const handleEditorChange = (newContent: any) => {
-    setContent(newContent);
-  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -71,7 +44,7 @@ const UpdateMaterialModal = ({ materialInfo, visov, update}: UpdateMaterialModal
           <FiEdit className="w-full h-full text-3xl text-blue-600 p-[0.125rem]" />
         </div>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className='max-w-[760px]'>
         <div 
           className='absolute right-0 w-8 m-5 h-8 rounded-lg bg-red-300 flex items-center justify-center text-2xl border-2 border-red-500 hover:bg-red-500 hover:text-white text-red-600 cursor-pointer transition-all'
           onClick={() => {
@@ -86,17 +59,22 @@ const UpdateMaterialModal = ({ materialInfo, visov, update}: UpdateMaterialModal
         <DialogHeader>
           <DialogTitle>Измененик контрентного блока</DialogTitle>
         </DialogHeader>
-				<QuillEditor
-					value={content}
-					onChange={handleEditorChange}
-					modules={quillModules}
-					formats={quillFormats}
-					className="w-full h-full mt-5 pb-[5.8rem] bg-white rounded-xl"
- 				/>
-				<div className='flex gap-3'>
+				<TrixEditor
+          className="w-full border border-gray-100 text-gray-500"
+          autoFocus={true}
+          placeholder=""
+          value={materialInfo.content ? materialInfo.content : ""}
+          uploadURL="https://domain.com/imgupload/receiving/post"
+          uploadData={{"key1": "value", "key2": "value"}}
+          fileParamName="blob"
+          mergeTags={mergeTags}
+          onChange={setEditorState}
+          onEditorReady={() => {}}
+          />
+				<div className='flex gap-3 mt-20'>
 					<Button className='w-1/2 text-base' variant={"violetSelect"}
 						onClick={() => {
-							updateMaterial({materialId: materialInfo.id, materialLessonId: materialInfo.lessonId, materialRasdelId: materialInfo.littleRasdelId, content: content ? content : materialInfo.content ? materialInfo.content : "" })
+							updateMaterial({materialId: materialInfo.id, materialLessonId: materialInfo.lessonId, materialRasdelId: materialInfo.littleRasdelId, content: editorState ? editorState : materialInfo.content ? materialInfo.content : "" })
 							visov()
               update()
 							setOpen(false)

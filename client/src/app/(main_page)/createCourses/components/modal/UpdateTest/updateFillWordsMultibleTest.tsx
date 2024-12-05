@@ -18,7 +18,7 @@ import { FaTrashCan } from "react-icons/fa6";
 import { Button } from "@/components/ui/button"
 import { currentUser } from "@/lib/auth";
 import dynamic from "next/dynamic";
-import 'react-quill/dist/quill.snow.css'; 
+
 import updateBigText from "../../actions/test/updateBigText";
 import deleteSimpleTest from "../../actions/test/deleteTest";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -158,9 +158,9 @@ const UpdateFillWordsMultibleText = ({test, updateVisov} : {test: Test, updateVi
 				<DialogContent className="text-gray-500 max-w-[900px]">
 					<DialogHeader className="text-xl font-semibold text-gray-600">
 						<DialogTitle className="text-2xl text-gray-500 flex justify-between pb-2">
-							<h2>
+							<span>
 								Изменить текст
-							</h2>
+							</span>
 							<div 
 								className="w-10 h-10 bg-red-300 border-2 border-red-500 rounded-lg flex items-center justify-center hover:bg-red-500 cursor-pointer transition-all text-red-500 hover:text-white"
 								onClick={() => {

@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
 import createMaterial from '@/app/(main_page)/createCourses/components/actions/materials/createMaterial';
 import { courseData, Materials, User } from '@prisma/client';
 import UpdateMaterialModal from '@/app/(main_page)/createCourses/components/modal/updateMaterialModal';
@@ -28,7 +26,9 @@ import { ClipLoader } from 'react-spinners';
 import UpdateMaterialImage from '@/app/(main_page)/createCourses/components/modal/updateMaterailImage';
 import Image from 'next/image';
 
-const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
+import "trix/dist/trix";
+import "trix/dist/trix.css";
+import { TrixEditor } from "react-trix";
 
 type Props = {
   currRasdel: { id: string; lessonId: string; name: string } | null;
@@ -36,20 +36,30 @@ type Props = {
   visov: () => void,
 };
 
+let mergeTags = [{trigger: "@",
+  tags: [
+    {name: "Dominic St-Pierre", tag: "@dominic"},
+    {name: "John Doe", tag: "@john"}
+  ]}]
+
 const MaterialBox: React.FC<Props> = ({ currRasdel, materials, visov }) => {
-  const [content, setContent] = useState('');
+  const [editorState, setEditorState] = useState<string>("");  
   const [user, setUser] = useState<User | null>(null);
   const { courseId } = useParams();
   const [course, setCourse] = useState<courseData | null>(null);
   const [items, setItems] = useState<any[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [selectedMaterial, setSelectedMaterial] = useState<Materials | null>(null); 
+  const [selectedMaterial, setSelectedMaterial] = useState<Materials | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor)
   );
+
+  function handleEditorChange(value:any, event:any) {
+    console.log('here is the current model value:', value);
+  }
 
   const handleDragStart = (event: any) => {
     const { active } = event;
@@ -108,11 +118,7 @@ const MaterialBox: React.FC<Props> = ({ currRasdel, materials, visov }) => {
       if (data) setUser(data);
     };
     fetch();
-  }, [courseId]);
-
-  const handleEditorChange = (newContent: any) => {
-    setContent(newContent);
-  };
+  }, [courseId]);  
 
   const handleCreateMaterial = async () => {
     if (!currRasdel) {
@@ -122,14 +128,17 @@ const MaterialBox: React.FC<Props> = ({ currRasdel, materials, visov }) => {
 
     const { id: currentLittleRasdelId, lessonId: currentLessonId } = currRasdel;
 
-    await createMaterial({
-      currentLittleRasdelId,
-      currentLessonId,
-      content,
-    });
+    if(editorState.length > 0){
+      await createMaterial({
+        currentLittleRasdelId,
+        currentLessonId,
+        content: editorState, // Использование локального состояния editorState
+      });
+    }
 
-    console.log('Успешно создан');
+    console.log(editorState);
   };
+
 
   if (!user) {
     return(
@@ -177,29 +186,34 @@ const MaterialBox: React.FC<Props> = ({ currRasdel, materials, visov }) => {
                 />
               ))}
             </div>
-            {user.id === course?.userId && (
-              <>
-                <div className="w-full rounded-lg text-lg font-normal text-gray-600">
-                  <QuillEditor
-                    value={content}
-                    onChange={handleEditorChange}
-                    className="w-full h-full mt-5 bg-white rounded-xl"
+            <h1 className='text-lg font-medium text-blue-400 py-2'>Введите текст или изображения, которые хотите добавить!</h1>
+            {user.id === course?.userId && typeof window !== 'undefined' && (
+                <div className='w-full'>
+                  <TrixEditor
+                    className="w-full border border-gray-100 text-gray-500"
+                    autoFocus={true}
+                    placeholder=""
+                    value=""
+                    uploadURL="https://domain.com/imgupload/receiving/post"
+                    uploadData={{"key1": "value", "key2": "value"}}
+                    fileParamName="blob"
+                    mergeTags={mergeTags}
+                    onChange={setEditorState}
+                    onEditorReady={() => {}}
                   />
+                  <div className='flex gap-3 w-full'>
+                    <button 
+                      onClick={() => {
+                        handleCreateMaterial();
+                        visov();
+                      }} 
+                      className="mt-5 p-2 bg-blue-500 text-white rounded w-1/2">
+                      Добавить фрагмент
+                    </button>
+                    <AddImageMaterial currRasdel={currRasdel} visov={visov} />
+                  </div>
                 </div>
-                <div className='flex gap-3 w-full'>
-                  <button 
-                    onClick={() => {
-                      handleCreateMaterial();
-                      visov();
-                      setContent('');
-                    }} 
-                    className="mt-5 p-2 bg-blue-500 text-white rounded w-1/2">
-                    Добавить фрагмент
-                  </button>
-                  <AddImageMaterial currRasdel={currRasdel} visov={visov} />
-                </div>
-              </>
-            )}
+              )}
           </div>
         </main>
       </SortableContext>

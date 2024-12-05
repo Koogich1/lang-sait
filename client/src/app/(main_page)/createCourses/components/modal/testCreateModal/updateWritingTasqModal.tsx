@@ -19,7 +19,6 @@ import { FaTrashCan } from "react-icons/fa6";
 import { Button } from "@/components/ui/button"
 import { currentUser } from "@/lib/auth";
 import dynamic from "next/dynamic";
-import 'react-quill/dist/quill.snow.css'; 
 import updateBigText from "../../actions/test/updateBigText";
 import deleteSimpleTest from "../../actions/test/deleteTest";
 import {
@@ -31,6 +30,10 @@ import updateQuestion from "../../actions/test/bigTestUpdates/updateQuestion";
 import updateBlock from "../../actions/test/bigTestUpdates/updateBlock";
 import createBlock from "../../actions/test/bigTestUpdates/createBlock";
 import deleteBlock from "../../actions/test/bigTestUpdates/deleteBlock";
+
+import "trix/dist/trix";
+import "trix/dist/trix.css";
+import { TrixEditor } from "react-trix";
 
 const FormSchema = z.object({
   question: z.string().max(350, {
@@ -70,9 +73,11 @@ type Test = {
 	audioName?: string | null;
 };
 
-
-const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
-
+let mergeTags = [{trigger: "@",
+  tags: [
+    {name: "Dominic St-Pierre", tag: "@dominic"},
+    {name: "John Doe", tag: "@john"}
+  ]}]
 
 const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: () => void}) => {
 
@@ -115,33 +120,6 @@ const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: 
 		setSelectedTextBlockId(test.id)
 	}, [test.id])
 
-	const quillModules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link', 'image'],
-      [{ align: [] }],
-      [{ color: [] }],
-      ['clean'],
-    ],
-  };
-
-  const quillFormats = [
-    'header',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'list',
-    'bullet',
-    'link',
-    'image',
-    'align',
-    'color',
-  ];
-
 	const handleClickTextBlock = (id: string, text: string) => {
     setSelectedTextBlockId(id); // Устанавливаем ID выбранного текстового блока
     setContent(text); // Меняем содержимое редактора
@@ -156,9 +134,9 @@ const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: 
 				<DialogContent className="text-gray-500 max-w-[900px]">
 					<DialogHeader className="text-xl font-semibold text-gray-600">
 						<DialogTitle className="text-2xl text-gray-400 flex justify-between">
-							<h2>
+							<span>
 								Окно редактирования
-							</h2>
+							</span>
 							<div 
 								className="w-10 h-10 bg-red-300 border-2 border-red-500 rounded-lg flex items-center justify-center hover:bg-red-500 cursor-pointer transition-all text-red-500 hover:text-white"
 								onClick={() => {
@@ -216,13 +194,18 @@ const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: 
 						</div>
 					</div>
 					<div className="relative">
-						<QuillEditor
-							value={content}
-							onChange={handleEditorChange}
-							modules={quillModules}
-							formats={quillFormats}
-							className="w-full h-full mt-1 bg-white rounded-xl pb-[3rem]"
-						/>
+							<TrixEditor
+                className="w-full border border-gray-100 text-gray-500"
+                autoFocus={true}
+                placeholder=""
+                value={content}
+                uploadURL="https://domain.com/imgupload/receiving/post"
+                uploadData={{"key1": "value", "key2": "value"}}
+                fileParamName="blob"
+                mergeTags={mergeTags}
+                onChange={setContent}
+                onEditorReady={() => {}}
+              />
 						<div>
 							{questionOrBlock === "block" ? 
 							<div 
