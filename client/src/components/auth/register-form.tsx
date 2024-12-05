@@ -23,6 +23,8 @@ import ReCAPTCHA from "react-google-recaptcha";
 import gsap from "gsap";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { firstTimeLogin } from "@/actions/firstTimeLogin";
 
 const RegisterForm = () => {
     const [error, setError] = useState<string | undefined>('');
@@ -30,6 +32,9 @@ const RegisterForm = () => {
     const [isPending, startTransition] = useTransition();
     const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
     const router = useRouter()
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get("callbackUrl");
+    const [registerForm, setRegisterForm] = useState(true)
 
     const form = useForm<z.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),
@@ -57,8 +62,12 @@ const RegisterForm = () => {
                 .then((data: any) => {
                     setError(data.error);
                     setSuccess(data.success);
+                    if (data.success) {
+                        router.push('/profile/user');
+                    }
                 });
         });
+        setRegisterForm(false)
     };
 
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
@@ -68,26 +77,27 @@ const RegisterForm = () => {
 
     useEffect(() => {
         const timeline = gsap.timeline();
-
-        // Скрываем элементы перед их появлением
+        
+        // Скрываем кубы перед их появлением
         boxRefs.forEach(boxRef => {
-            gsap.set(boxRef.current, { opacity: 0, y: 20 }); // Начальная позиция ниже
+            gsap.set(boxRef.current, { opacity: 0 });
         });
 
         boxRefs.forEach((boxRef, index) => {
-            timeline.to(boxRef.current, {
-                opacity: 1,
-                y: 0, // Возвращаем на исходное место
-                duration: 0.5,
-                delay: index * 0.1, // Задержка для последовательного появления
-                ease: "power2.out",
+            timeline.to(boxRef.current, { 
+                opacity: 1, 
+                duration: .5, 
+                delay: index * 0.0001, // Задержка для последовательного появления
+                ease: "power2.in" 
             });
         });
-    }, [boxRefs]); // Пустой массив зависимостей для анимации один раз при монтировании
+    }, []);
+
 
     return (
-        <CardWrapperReg
-            headerLabel='Создание учетной записи'
+        <>
+            <CardWrapperReg
+            headerLabel={registerForm ? `Создание учетной записи` : "Вход в учетную запись"}
             backButtonLabel='Уже есть аккаунт'
             backButtonHref='/auth/login'
             showSocial
@@ -146,7 +156,7 @@ const RegisterForm = () => {
                                                 disabled={isPending}
                                                 {...field}
                                                 placeholder="LangSchool@mail.ru"
-																								className="placeholder:text-gray-300"
+												className="border-[#c9b0fa] placeholder:text-gray-300 text-[#835BD2] focus:border-[#835BD2] focus:ring-2 focus:ring-[#c9b0fa] transition duration-300 ease-in-out"
                                                 type="email"
                                             />
                                         </FormControl>
@@ -204,6 +214,7 @@ const RegisterForm = () => {
                 </Form>
             </div>
         </CardWrapperReg>
+        </>
     );
 }
 

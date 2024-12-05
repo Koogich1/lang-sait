@@ -134,19 +134,19 @@ const TeachersPage = () => {
         theme="light"
       />
       <div className='flex justify-between max-w-[1440px] px-[5%] mt-10 relative w-full'>
-        <div className='bg-white rounded-lg shadow-lg relative w-full overflow-hidden'>
-          <div className='pointer-events-auto bg-white mr-3 p-2 w-full border-b border-gray-200 py-5'>
-            <h1 className='text-3xl font-light text-[#835BD2]'>Выберите язык</h1>
+        <div className='bg-white min-h-[70vh] rounded-lg shadow-lg relative w-full overflow-hidden'>
+          <div className='pointer-events-auto bg-white mr-3 w-full border-b border-gray-100 py-5 mx-3'>
+            <h1 className='text-3xl text-[#835BD2]'>Выберите язык</h1>
             <div className='gap-3 items-center pt-2 hidden md:flex'>
             <Button
-                            onClick={() => {
-                                setSelectedLanguage("все")
-                            }}
-                            className={`flex gap-1 border-2 border-blue-500 font-medium hover:bg-blue-100 ${selectedLanguage === "все" ? "bg-blue-500 text-white" : "bg-white text-blue-500"}`}
-                            >
-                            <MdLanguage className='w-4 h-4'/>
-                            Все
-                            </Button>
+              onClick={() => {
+                setSelectedLanguage("все")
+              }}
+              className={`flex gap-1 border-2 border-blue-500 font-medium hover:bg-blue-100 ${selectedLanguage === "все" ? "bg-blue-500 text-white" : "bg-white text-blue-500"}`}
+            >
+              <MdLanguage className='w-4 h-4'/>
+              Все
+            </Button>
                             <Button
                             onClick={() => {
                                 setSelectedLanguage("English")
@@ -218,23 +218,23 @@ const TeachersPage = () => {
               </Form>
             </div>
           </div>
-          <div className='w-full grid lg:grid-cols-2 gap-5 mt-5'>
+          <div className='w-full grid lg:grid-cols-3 gap-5 mt-5 px-3'>
             {filteredTeachers.map((teacher, id) => (
-              <div key={id} className='[230px] h-[240px] rounded-lg bg-white flex p-2 w-full relative text-gray-600'>
-                <div className='w-[220px] h-[225px] rounded-sm bg-cover overflow-hidden mr-4'>
+              <div key={id} className='h-[136px] w-full rounded-lg border border-gray-100 shadow-md bg-white flex p-2 relative text-gray-600'>
+                <div className='w-[120px] h-[120px] rounded-sm bg-cover overflow-hidden mr-4'>
                   <Image width={1000} height={1000} className="w-[220px] h-[225px] object-cover" 
                     src={teacher.userInfo.image ? teacher.userInfo.image : 'Ava'} 
                     alt="" 
                   />
                 </div>
                 <div className='flex flex-col w-1/2 relative justify-between'>
-                  <div className='flex gap-1 font-semibold text-[1.4rem] text-[#835BD2]'>
+                  <div className='flex gap-1 font-semibold text-lg text-[#835BD2]'>
                     <h1>{teacher.userInfo.name}</h1>
                     <h1>{teacher.userInfo.surname}</h1>
                   </div>
-                  <div className='flex items-center gap-2 pt-1'>
+                  <div className='flex items-center gap-2'>
                     <div className='w-3 h-[3px] bg-[#835BD2] rounded-sm'></div>
-                    <div className='text-base font-medium flex gap-1 text-[#835BD2]'>
+                    <div className='text-xs font-medium flex gap-1 text-[#835BD2]'>
                       {teacher.teacherInfo.languages.map((lang, id) => (
                         <div key={id}>
                           {FormatedLang(lang.language)}
@@ -244,21 +244,23 @@ const TeachersPage = () => {
                   </div>
                   <div className='flex items-center gap-2'>
                     <div className='w-3 h-[3px] bg-[#835BD2] rounded-sm'></div>
-                    <p className='text-base font-medium text-[#835BD2]'>Уровень - {teacher.teacherInfo.languages.map(lang => lang.level).join(', ')}</p> 
+                    <p className='text-xs font-medium text-[#835BD2]'>Уровень - {teacher.teacherInfo.languages.map(lang => lang.level).join(', ')}</p> 
                   </div>
-                  <p className='h-[120px] overflow-hidden leading-5 pt-1 text-gray-400'>
-                    {truncateText(teacher.teacherInfo.aboutMe, 110)}
+                  <p className='overflow-hidden leading-3 text-xs pt-1 text-gray-400'>
+                    {truncateText(teacher.teacherInfo.aboutMe, 54)}
                   </p>
-                  <div className='mb-1 flex gap-1 justify-start'>
+                  <div className='flex gap-1 justify-start items-start'>
                     <Link href={`/teacher/${teacher.teacherId}`} className="z-50">
-                      <Button variant={"violetSelect"} className='bg-blue-400 hover:bg-blue-500'>Подробнее</Button>
+                      <Button variant={"violetSelect"} className='bg-blue-400 h-5 hover:bg-blue-500 text-xs'>Подробнее</Button>
                     </Link>
                     <TeacherProfile teacher={teacher} user={user} favouritesT={favouritesT}/>
                   </div>
                 </div>
                 <div className='absolute top-0 right-0 m-2 mr-3'>
-                  <Button variant="calendar" size="sm" onClick={() => updateFavourityes(teacher.teacherId)} 
-                    className='bg-white hover:bg-white p-0 m-0 border-none hover:border-none hover text-purple-300 hover:text-purple-600'
+                  <Button 
+                    variant="calendar" 
+                    onClick={() => updateFavourityes(teacher.teacherId)} 
+                    className='bg-white hover:bg-white p-0 m-0 py-0 h-5 border-none hover:border-none hover text-purple-300 hover:text-purple-600'
                   >
                     {favouritesT?.includes(teacher.teacherId) ? (
                       <FaBookmark className='text-xl text-purple-600'/>

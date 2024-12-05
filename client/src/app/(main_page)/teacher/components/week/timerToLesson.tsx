@@ -46,8 +46,10 @@ const TimerToLesson = ({ booking }: Props) => {
 
     return (
         <div className='h-[170px] py-4 justify-between flex flex-col'>
-            <h3 className='text-xl font-semibold text-[#835BD2] text-center'>Время до ближайшего урока:</h3>
-            <Countdown date={lessonDate} renderer={renderer} className=''/>
+            <h3 className='text-xl font-semibold text-[#835BD2] text-center'>Время до ближайшего урокa:</h3>
+            {
+                <Countdown date={lessonDate} renderer={renderer} className=''/>
+            }
         </div>
     );
 }

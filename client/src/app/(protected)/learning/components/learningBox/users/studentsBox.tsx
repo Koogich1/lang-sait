@@ -11,10 +11,11 @@ import UserBlock from './components/userBlock';
 
 type Props = {
 	user: User;
-	teacher: Teacher | null
+	teacher: Teacher | null,
+	setChoosen: any,
 }
 
-const StudentsBox = ({user, teacher}: Props) => {
+const StudentsBox = ({user, teacher, setChoosen}: Props) => {
 	const[open, setOpen] = useState<boolean>(false)
 
 	return (
@@ -27,7 +28,7 @@ const StudentsBox = ({user, teacher}: Props) => {
 					<div className='mt-5 w-full grid md:grid-cols-2 lg:grid-cols-3'>
 						{teacher.studentsList.map((data) => (
 							<div key={data} className='w-full'>
-								<UserBlock userId={data}/>
+								<UserBlock userId={data} setChoosen={setChoosen}/>
 							</div>
 						))}
 					</div>

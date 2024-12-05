@@ -10,7 +10,7 @@ export const sendTwoFactorTokenEmail = async (
 		from: "mail@acyberg.com",
 		to: email,
 		subject: "Код подтверждения",
-		html: `<p>${token} — ваш код для авторизации на hh.ru.</p>`
+		html: `<p>${token} — ваш код для авторизации на Acyberg.com</p>`
 	})
 }
 	const domain = process.env.NEXT_PUBLIC_APP_URL

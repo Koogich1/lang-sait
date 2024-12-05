@@ -1,14 +1,10 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
 import dayToArchive from './actions/schreduleDay/dayToArchive';
 
 const TimerTeacher = () => {
-  const [showDialog, setShowDialog] = useState(false);
-  const [lastArchivedTime, setLastArchivedTime] = useState<number | null>(null);
+  const [lastArchivedHour, setLastArchivedHour] = useState<number | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -16,23 +12,19 @@ const TimerTeacher = () => {
       const currentHour = currentDate.getHours();
       const currentMinute = currentDate.getMinutes();
 
-      // Проверяем, наступил ли новый час и функция еще не была вызвана в этом часу
+      // Проверяем, если текущая минута - 1 и час изменился
+      if (currentMinute === 1 && currentHour !== lastArchivedHour) {
+        dayToArchive(); // Вызов функции архивации
+        setLastArchivedHour(currentHour); // Обновляем последний обработанный час
+      }
+    }, 60 * 1000); // Проверяем каждую минуту
 
-        setShowDialog(true);
-        dayToArchive(); // Ваша функция для обновления данных
-        setLastArchivedTime(currentHour);
-    }, 60 * 60 * 1000); // Проверяем каждую минуту
-
-    return () => clearInterval(interval);
-  }, [lastArchivedTime]);
+    return () => clearInterval(interval); // Очищаем интервал при размонтировании компонента
+  }, [lastArchivedHour]);
 
   return (
     <>
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
-          Дата обновлена
-        </DialogContent>
-      </Dialog>
+      {/* Содержимое компонента (если нужно) */}
     </>
   );
 };

@@ -53,6 +53,8 @@ import { PuffLoader } from "react-spinners";
 import fetchCourseById from "../actions/fetchCourseById";
 import { useCallback } from "react"; // Импортируйте useCallback
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
+import RaspolozhitLessonBox from "../../materials/[courseId]/components/raspolozhitLessonBox";
 
 const FormSchema = z.object({
   photoImage: z.instanceof(File).refine(
@@ -72,16 +74,20 @@ const FormSchema = z.object({
 type Props = {
 	updateData: () => void,
 	rasdelId: string,
+  user: User,
+  course: courseData,
+  rasdelName: string,
 }
 
-const CreateNewLesson = ({updateData, rasdelId}: Props) => {
+type ActiveWindow = "Redact" | "Raspolozhit" | "Opisanie"
+
+const CreateNewLesson = ({updateData, rasdelId, user, course, rasdelName}: Props) => {
   const {courseId} = useParams()
   const [open, setOpen] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null)
   const [lessons, setLessons] = useState<Lessons[] | null>(null)
   const [loading, setLoading] = useState(false)
-  const [course, setCourse] = useState<courseData | null>(null)
+  const [active, setActive] = useState<ActiveWindow>("Redact")
 
 const fetcher = useCallback(async () => {
 	const Fetchlessons = await fetchlessons({ rasdId: rasdelId });
@@ -91,17 +97,6 @@ const fetcher = useCallback(async () => {
 }, [rasdelId]); // Добавляем зависимость rasdelId
 
   useEffect(() => {
-    const handleUser = async () => {
-      const course = await fetchCourseById(courseId as string);
-      const userinf = await currentUser();
-      if (userinf) {
-        setUser(userinf);
-      }
-      if (course) {
-        setCourse(course);
-      }
-    };
-    handleUser();
     fetcher();
   }, [courseId, fetcher]);  // Добавляем courseId и fetcher
 
@@ -113,8 +108,14 @@ const fetcher = useCallback(async () => {
     },
   });
 
-  if(!user){
-    return
+  if(!lessons){
+    return(
+      <div className="flex flex-col gap-2 py-3">
+        <Skeleton className="h-10 w-full"/>
+        <Skeleton className="h-10 w-full"/>
+        <Skeleton className="h-10 w-full"/>
+      </div>
+    )
   }
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -167,59 +168,86 @@ const fetcher = useCallback(async () => {
 
   return (
     <div>
-      <ul>
-      {lessons?.map((data, id) => (
-         <li key={id} className="h-10 w-full flex items-center border-t border-gray-100 justify-between">
-            <div className="flex items-center gap-3">
-              <Image width={1000} height={1000} src={data.photoUrl} alt="" className="w-8 h-8 rounded-lg object-cover"/>
-              <h1 className="font-medium">
-                {data.name}
-              </h1>
-            </div>
-            <div className="flex gap-1 items-center">
-            {user.id === course?.userId &&
-            <>
-              <UpdateLessonModal lessonId={data.id} updateData={fetcher} />
-              <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <div className='h-7 w-7 rounded-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 transition-all cursor-pointer'>
-                      <FaEllipsisH />
-                    </div>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className='text-gray-500 font-medium'>
-                    <DropdownMenuItem className='hover:bg-gray-100 flex justify-between'
-                      onClick={async () => {
-                        try {
-                          setLoading(true);
-                          await deleteLessons(data.id);
-                          await fetcher(); // Wait for the data to be refreshed
-                        } catch (e) {
-                          console.log(e);
-                        } finally {
-                          setLoading(false); // Make sure to set loading to false here after the process
-                        }
-                      }}
-                    >
-                      <FaRegTrashCan/>
-                      Удалить
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-            </>
-            }
-              <Link href={`/createCourses/materials/${courseId}/${data.id}`}>
-                <Button className="p-0 h-7 px-2 rounded-xl bg-transparent hover:bg-blue-400 text-blue-400 hover:text-white border border-blue-400">
-                  Открыть
-                </Button>
-              </Link>
-            </div>
-          </li>
-        ))}
+      <ul className="gap-2">
+        <div className="w-full flex gap-2 items-start border-b mb-2">
+          <div 
+            className={`py-[0.125rem] px-2 transition-all rounded-t cursor-pointer ${active === "Redact" ? "bg-blue-400 text-white" : "bg-gray-100 text-gray-400 hover:bg-blue-100 hover:text-blue-400"}`}
+            onClick={() => {setActive("Redact")}}
+          >
+            Редактирование
+          </div>
+          <div 
+            className={`py-[0.125rem] px-2 transition-all rounded-t cursor-pointer ${active === "Raspolozhit" ? "bg-blue-400 text-white" : "bg-gray-100 text-gray-400 hover:bg-blue-100 hover:text-blue-400"}`}
+            onClick={() => {setActive("Raspolozhit")}}
+          >
+            Расположение
+          </div>
+          <div 
+            className={`py-[0.125rem] px-2 transition-all rounded-t cursor-pointer ${active === "Opisanie" ? "bg-blue-400 text-white" : "bg-gray-100 text-gray-400 hover:bg-blue-100 hover:text-blue-400"}`}
+            onClick={() => {setActive("Opisanie")}}
+          >
+            Описание
+          </div>
+        </div>
+        {active === "Redact" &&
+        lessons?.map((data, index) => (
+          <li key={index} className="h-10 w-full flex items-center relative border-b shadow-sm border-gray-100 justify-between">
+             <div className="flex items-center gap-3">
+               <div className="text-gray-400 font-light text-xs bg-white flex items-center justify-center">
+                 <div className="w-4 h-4 bg-blue-400 text-white flex items-center justify-center font-semibold rounded-sm">
+                   {index + 1}
+                 </div>
+               </div>
+               <Image width={1000} height={1000} src={data.photoUrl} alt="" className="w-8 h-8 rounded-lg object-cover"/>
+               <h1 className="font-medium">
+                 {data.name}
+               </h1>
+             </div>
+             <div className="flex gap-1 items-center">
+             {user.id === course?.userId &&
+             <>
+               <UpdateLessonModal lessonId={data.id} updateData={fetcher} />
+               <DropdownMenu>
+                   <DropdownMenuTrigger asChild>
+                     <div className='h-7 w-7 rounded-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 transition-all cursor-pointer'>
+                       <FaEllipsisH />
+                     </div>
+                   </DropdownMenuTrigger>
+                   <DropdownMenuContent className='text-gray-500 font-medium'>
+                     <DropdownMenuItem className='hover:bg-gray-100 flex justify-between'
+                       onClick={async () => {
+                         try {
+                           setLoading(true);
+                           await deleteLessons(data.id);
+                           await fetcher(); // Wait for the data to be refreshed
+                         } catch (e) {
+                           console.log(e);
+                         } finally {
+                           setLoading(false); // Make sure to set loading to false here after the process
+                         }
+                       }}
+                     >
+                       <FaRegTrashCan/>
+                       Удалить
+                     </DropdownMenuItem>
+                   </DropdownMenuContent>
+                 </DropdownMenu>
+             </>
+             }
+               <Link href={`/createCourses/materials/${courseId}/${data.id}`}>
+                 <Button className="p-0 h-7 px-2 rounded-xl bg-transparent hover:bg-blue-400 text-blue-400 hover:text-white border border-blue-400">
+                   Открыть
+                 </Button>
+               </Link>
+             </div>
+           </li>
+         ))
+         }
       </ul>
-      {course?.userId === user.id &&
+      {course?.userId === user.id && active === "Redact" &&
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger className="flex w-full py-2">
-            <div 
+          <div 
               className="flex items-center gap-3 border-b w-full border-gray-50 py-2 text-gray-400 hover:text-blue-400 transition-all"
               onClick={() => {setOpen(true)}}
             >
@@ -354,6 +382,17 @@ const fetcher = useCallback(async () => {
             </Form>
           </DialogContent>
         </Dialog>
+      }
+      {active === "Raspolozhit" && 
+      <div>
+        <RaspolozhitLessonBox lessons={lessons} fetchLesson={fetcher} />
+      </div>
+      }
+      {
+        active === "Opisanie" &&
+        <div className="pb-5 pt-2">
+          {rasdelName}
+        </div>
       }
     </div>
   );

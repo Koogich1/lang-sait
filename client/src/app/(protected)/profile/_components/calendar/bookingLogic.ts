@@ -2,6 +2,7 @@
 
 import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { User } from '@prisma/client';
 import { use } from 'react';
 
 type Props = {
@@ -9,14 +10,10 @@ type Props = {
     timeSlot: string; // Ожидается формат "HH:mm"
     teacherId: string;
     day: Date
+    user: User;
 }
 
-const bookingLogic = async({ dayId, timeSlot, teacherId, day}: Props) => {
-    const user = await currentUser();
-    if (!user) {
-        return;
-    }
-
+const bookingLogic = async({ dayId, timeSlot, teacherId, day, user}: Props) => {
     try {
         // Получаем информацию о расписании по dayId
         const scheduleDay = await db.teacherScheduleDay.findUnique({
@@ -46,7 +43,7 @@ const bookingLogic = async({ dayId, timeSlot, teacherId, day}: Props) => {
         if(!day)return
 
         // Создаем запись о бронировании
-        await db.studentBooking.create({
+        const data = await db.studentBooking.create({
             data: {
                 studentId: user.id,
 				teacherId: teacherId,
@@ -56,6 +53,18 @@ const bookingLogic = async({ dayId, timeSlot, teacherId, day}: Props) => {
                 date: day,
             }
         });
+
+        await db.application.create({
+            data:{
+                senderId: user.id,
+                receiverId: teacherId,
+                bookingID: data.id,
+                onDate: day,
+                slotInfo: timeSlot,
+                format: "dayFix",
+                status: "waiting",
+            }
+        })
 
         // Проверяем подписку пользователя
         const userSubscription = await db.userSubscriptions.findFirst({

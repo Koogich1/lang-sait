@@ -26,6 +26,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import acceptDayCreateLesson from "./actions/acceptDayCreateLesson"
 
 type Props = {
 	user: User,
@@ -49,6 +50,20 @@ const formatDate = (dateString: string) => {
 	return `${day} ${month} в ${hours}:${minutes}`;
 };
 
+const formatDayFixDate = (dateString: string) => {
+  const date = new Date(dateString);
+
+  const months = [
+    "01", "02", "03", "04", "05", "06",
+    "07", "08", "09", "10", "11", "12"
+  ];
+
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+
+  return `${day}:${month}`
+}
+
 
 const languageTranslation: Record<string, string> = {
 	China: "Китайский",
@@ -63,7 +78,7 @@ const Applications = ({ user }: { user: User }) => {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const fetchApplications = useCallback(async() => {
-    const data = await getAllAplication(user.teacherId);
+    const data = await getAllAplication(user);
     if (data) {
       setApplications(data);
       filterApplication("all", data);
@@ -184,7 +199,21 @@ const Applications = ({ user }: { user: User }) => {
 														) : (
 																<HiCheck className="text-xl"/>
 														)}
-														<p>{data.format === "addTeacher" ? `Заявка на обучение, язык: ${languageTranslation[data.language ? data.language : ""]}` : "Подтверждение занятия"}</p>
+														<div>{data.format === "addTeacher" ? 
+															`Заявка на обучение, язык: ${languageTranslation[data.language ? data.language : ""]}` 
+																: 
+															<h1 className="flex items-center gap-1">
+																<span>Подтверждение занятия </span>
+																<span className="px-2 bg-blue-400 hover:bg-blue-500 transition-all text-white rounded-sm shadow-md">
+																	{formatDayFixDate(data.onDate ? data.onDate.toJSON() : "")}
+																</span>
+																<span>в</span>
+																<span className="px-2 bg-blue-400 hover:bg-blue-500 transition-all text-white rounded-sm shadow-md">
+																	{data.slotInfo}
+																</span>
+															</h1>
+															}
+														</div>
 												</div>
 												<UserInfo userId={data.senderId}/>
 												<Button className="h-7 left-0 w-[6rem] font-medium text-sm" variant={"violetSelect"}>Профиль</Button>
@@ -237,6 +266,11 @@ const Applications = ({ user }: { user: User }) => {
 																				if(data.format === "addTeacher"){
 																					addUser({user: user, toWho: data.senderId, language: data.language})
 																					toast(`Пользователь добавлен`)
+																				}
+																				if(data.format === "dayFix"){
+																					if(!data.bookingID || !data.onDate || !data.slotInfo)return
+																					acceptDayCreateLesson({user: user, toWho: data.senderId, bookingId: data.bookingID, date: data.onDate, slotTime: data.slotInfo})
+																					toast(`Запись на ${formatDayFixDate(data.onDate ? data.onDate.toJSON() : "")} добавлена, урок создан!`)
 																				}
 																				accept(data.id);
 																				fetchApplications();

@@ -1,14 +1,18 @@
 "use server"
 
 import { db } from "@/lib/db"
+import { User } from "@prisma/client"
 
-const getAllAplication = async(teacherId: string | null) => {
+const getAllAplication = async(teacherId : User) => {
 
 	if(!teacherId)return
 	try{
 		const data = await db.application.findMany({
 			where:{
-				receiverId: teacherId
+				OR: [
+					{ receiverId: teacherId.id },
+					{receiverId: teacherId.teacherId ? teacherId.teacherId : ""}
+				]
 			}
 		})
 		if(data){

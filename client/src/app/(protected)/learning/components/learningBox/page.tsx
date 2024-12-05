@@ -3,8 +3,8 @@
 import Users from './users/usersBox';
 import Groups from './groups/groupBox';
 import Applications from './applications/applications';
-import React, { useEffect, useState } from 'react';
-import { Teacher, User } from '@prisma/client';
+import React, { useCallback, useEffect, useState } from 'react';
+import { BookedLesson, Teacher, User } from '@prisma/client';
 import { currentUser } from '@/lib/auth';
 import { getUserById } from '@/data/user';
 import getTeacherById from '@/app/(main_page)/teacher/components/findTeacherByID';
@@ -15,6 +15,7 @@ const YourComponent = () => {
   const [user, setUser] = useState<User | null>(null);
   const [teacher, setTeacher] = useState<Teacher | null>(null)
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [lessons, setLesson] = useState<BookedLesson[] | null>(null)
 
   const handleMenuItemClick = (menuItem: any) => {
     setIsTransitioning(true);
@@ -24,7 +25,7 @@ const YourComponent = () => {
     }, 300); // Adjust this timeout to match your desired transition duration
   };
 
-  const findTeacher = async () => {
+  const findTeacher = useCallback(async () => {
     const data = await currentUser();
     if (data) {
       if(!data.teacherId)return
@@ -34,7 +35,7 @@ const YourComponent = () => {
       }
       setUser(data);
     }
-  };
+  }, [user])
 
   useEffect(() => {
     findTeacher();

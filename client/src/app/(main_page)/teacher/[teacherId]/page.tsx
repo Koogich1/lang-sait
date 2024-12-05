@@ -104,7 +104,7 @@ const TeacherPage = () => {
 			}
 			fetchAdded()
 		}
-	}, [currUser, teacherId, user])
+	}, [])
 
 	const handlePageChange = (page: PageNames) => {
 		setIsTransitioning(true);
@@ -170,18 +170,26 @@ const TeacherPage = () => {
 						<div className='flex flex-col gap-3'>
 							<div className='w-full flex gap-3'>
 								<div className="flex justify-center items-start w-full">
-									<UserBlock user={user} isTeacherAdded={isTeacherAdded}/>
+									{
+										<UserBlock user={user} isTeacherAdded={isTeacherAdded}/>
+									}
 								</div>
 									<div className='w-2/5 bg-white rounded-lg shadow-lg p-3 py-5 flex flex-col justify-between'>
-										<LanguagesBlock user={user}/>
+										{
+											<LanguagesBlock user={user}/>
+										}
 									</div>
 								</div>
 								<div className='flex gap-3'>
 									<div className='w-2/5 bg-white rounded-lg shadow-lg p-3 py-5 flex flex-col justify-between'>
-										<Images teacher={user} />
+										{
+											<Images teacher={user} />
+										}
 									</div>
 									<div className='w-3/5 bg-white rounded-lg shadow-lg p-3 py-5'>
-										<LessonPrise lessonPrise={user.teacherInfo.lessonPrise} />
+										{
+											<LessonPrise lessonPrise={user.teacherInfo.lessonPrise} />
+										}
 									</div>
 								</div>
 							</div>
@@ -191,21 +199,36 @@ const TeacherPage = () => {
 							<div className='flex flex-col gap-3'>
 								<div className='w-full flex gap-3'>
 									<div className='w-1/5 h-[170px] bg-white shadow-lg rounded-lg'>
+									{
 										<Employment userSubs={userSubs} teacher={user}/>
+									}
 									</div>
 									<div className='w-3/5 h-[170px] bg-white shadow-lg rounded-lg'>
+									{
 										<LessonForTeacher user={currUser} Teacher={user} userSubs={userSubs} booking={booking}/>
+									}
+										
 									</div>
 									<div className='w-1/5 h-[170px] bg-white shadow-lg rounded-lg'>
-										<TimerToLesson booking={booking}/>
+										{
+											<TimerToLesson booking={booking}/>
+										}
 									</div>
 								</div>
 								<div className='w-full flex gap-3'>
-									<div className='w-full bg-white shadow-lg rounded-lg'>
-										<WeekBlocks Teacher={user} userSubs={userSubs} user={currUser} isTeacherAdded={isTeacherAdded} visov={() => {
-											updateLessonsBuyed()
-											upadeteBooking()}}
-										/>
+									<div className='w-full bg-white shadow-lg rounded-lg min-h-[60vh]'>
+										{
+											<WeekBlocks 
+												Teacher={user} 
+												userSubs={userSubs} 
+												user={currUser} 
+												isTeacherAdded={isTeacherAdded} 
+												visov={() => {
+													updateLessonsBuyed() 
+													upadeteBooking()
+												}}
+												/>
+										}
 									</div>
 								</div>
 							</div>

@@ -23,7 +23,7 @@ const Katalog = () => {
 	}, [])
 
 	return (
-		<ul className='grid lg:grid-cols-4 md:grid-cols-3 gap-5 mt-5 sm:grid-cols-2 grid-cols-1 lggap-2 justify-center'>
+		<ul className='grid lg:grid-cols-6 md:grid-cols-3 gap-5 mt-5 sm:grid-cols-2 grid-cols-1 lggap-2 justify-center'>
 			{courses?.map((data, id) => (
 				<li className='flex items-center justify-center' key={id}>
 					<Link href={`/createCourses/materials/${data.id}`}>

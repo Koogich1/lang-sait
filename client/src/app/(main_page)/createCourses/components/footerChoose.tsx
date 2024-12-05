@@ -14,7 +14,7 @@ const FooterChoose = () => {
 		setPage(page)
 	}
 	return (
-		<div className='w-full max-w-[1440px] mx-auto fixed bottom-0 pr-[10%] 2xl:pr-[8.5%]'>
+		<div className='w-full max-w-[1440px] mx-auto fixed bottom-0 pr-[10%] 2xl:pr-[8.5%] z-50'>
 				<div
 				className='bottom-0 h-[63px] bg-white rounded-lg shadow-lg p-2 px-[5%] border border-gray-200 w-full'
 			>

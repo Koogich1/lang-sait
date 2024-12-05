@@ -11,46 +11,48 @@ import { getUserByEmail } from '@/data/user';
 import { generateVerificationToken } from '@/lib/tokens';
 
 import { sendVerificationEmail } from '@/lib/mail';
+import { firstTimeLogin } from './firstTimeLogin';
 
-export const register:any = async (values: z.infer<typeof RegisterSchema>) => {
-	const validatedFields = RegisterSchema.safeParse(values) 
+export const register: any = async (values: z.infer<typeof RegisterSchema>) => {
+  const validatedFields = RegisterSchema.safeParse(values); 
  
-	if(!validatedFields.success){
-		return {error: "Invalid fields!"};
-	}
+  if (!validatedFields.success) {
+    return { error: "Invalid fields!" };
+  }
 
-	const {
-		email,
-		password,
-		name,
-		surname
-	} = validatedFields.data;
+  const {
+    email,
+    password,
+    name,
+    surname
+  } = validatedFields.data;
 
-	const hasherdPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const existingUser = await getUserByEmail(email);
 
-	const existingUser = await getUserByEmail(email);
+  if (existingUser) {
+    return { error: "Email уже используется" };
+  }
 
-	if(existingUser){
-		return{ error: "Email уже исопльзуется"};
-	};
+  await db.user.create({
+    data: {
+      name,
+      surname,
+      email,
+      password: hashedPassword,
+      image: "https://storage.yandexcloud.net/langschoolacynberg/images/user.png",
+    }
+  });
 
-	await db.user.create({
-		data: {
-			name,
-			surname,
-			email,
-			password: hasherdPassword,
-			image: "https://storage.yandexcloud.net/langschoolacynberg/images/user.png",
-			teacherId: 'clzayrugw00006x6x9zsukbbe'
-		}
-	});
-
-	const verificationToken = await generateVerificationToken( email )
-
-	await sendVerificationEmail(
-		verificationToken.email,
-		verificationToken.token,
-	)
-
-	return { success: "Письмо подтверждения отправлено"};
+  try {
+    const loginResponse = await firstTimeLogin({
+      email,
+      password,
+      name,
+      surname,
+    });
+    return { success: "Регистрация успешна", loginResponse };
+  } catch (error) {
+    return { error: "Ошибка при входе: " + error };
+  }
 };

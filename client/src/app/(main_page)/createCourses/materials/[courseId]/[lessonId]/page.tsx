@@ -4,9 +4,8 @@ import { useParams } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
 import { LittleRasdel, QuestionType, Option, Answer, Materials, courseData, User, TextBlock, CorrectAnswer } from "@prisma/client"
 import fetchTestFromDb from '../../../components/actions/fetchTestFromDb'
-import { IoClose, IoMenuOutline } from "react-icons/io5";
-import { IoPencil } from "react-icons/io5";
-import { FaBook, FaPen } from "react-icons/fa6";
+import { IoClose, IoMenuOutline } from "react-icons/io5"
+import { FaPen } from "react-icons/fa6";
 
 import {
   DropdownMenu,
@@ -41,29 +40,9 @@ import getCourseById from '../../../components/actions/getCourseById'
 import { currentUser } from '@/lib/auth'
 import { FaHome } from 'react-icons/fa'
 import createHomeWorkRasdel from '../../../components/actions/homework/createHomeWorkRasdel'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
-import { ClipLoader } from 'react-spinners'
 import BackButton from '../../../components/backButton'
-import AudioChoose from './components/testBlocks/audioChoose'
-import RecordAudio from './components/testBlocks/recordAudio'
-import OnlyText from './components/testBlocks/onlyText'
-import MultibleChoose from './components/testBlocks/multibleChoose'
-import FillInTheBlank from './components/testBlocks/fillInTheBlank'
-import ConnectLetters from './components/testBlocks/connectLetters'
-import Ordering from './components/testBlocks/ordering'
-import TrueOrFalse from './components/testBlocks/true_or_false'
-import PDF from './components/testBlocks/pdf'
-import ConnectVariants from './components/testBlocks/connectVariants'
-import TextPoPOryadky from './components/testBlocks/textPoPoriyadky'
-import BigTextOrStatiya from './components/testBlocks/bigTextOrStatiya'
-import FillWordsInTheBlankDropDown from './components/testBlocks/fillWordsInTheBlankDropDown'
-import WritingTask from './components/testBlocks/writingTask'
-import Video from './components/testBlocks/video'
-import FillWordsInTheBlankTextMenu from './components/testBlocks/FillWordsInTheBlankTextMenu'
-import WordsToLearn from './components/testBlocks/words_to_learn'
-import { Switch } from '@/components/ui/switch'
-import PechatWordsInTheBlankDropDown from './components/testBlocks/pechatWordsInTheBlankDorpDown'
-import ConnectPhotoVariants from './components/testBlocks/connectPhotoVariants'
+import TestBox from './components/testBox'
+import RasstavitTextBox from './components/rasstavitTextBox'
 
 const FormSchema = z.object({
   username: z.string().max(30, {
@@ -99,6 +78,8 @@ const Page = () => {
 	const [user, setUser] = useState<User | null>(null)
 	const [loading, setLoading] = useState(false);
 	const [isSwitchOn, setIsSwitchOn] = useState(true);
+
+	const [variantMenu, setIsVariantMenu] = useState<"Wiev" | "Raspolozhit">("Wiev")
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -406,176 +387,32 @@ const Page = () => {
 							</ul>
 					</div>
 				{testOrMaterials === "test" ? 
-					<div className='flex flex-col items-center'>
-						{tests?.map((test, index) => (
-							<div key={test.id} className='border mt-5 flex flex-col justify-between rounded-xl p-3 pt-5 min-w-[330px] max-w-[700px] shadow-lg border-purple-50'>
-							{test.questionType === "AUDIOCHOOSE" && (
-								<AudioChoose
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")} 
-								/>
-							)}
-							{test.questionType === "RECORD_AUDIO" &&
-								<RecordAudio 
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")} 
-								/>
-							}
-							{test.questionType === "WORDS_TO_LEARN" &&
-								<WordsToLearn 
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")} 
-								/>
-							}
-							{test.questionType === "ONLY_TEXT"&& 
-								<OnlyText 
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")} 
-								/>
-							} 
-							{test.questionType === "MULTIPLE_CHOICE" && 
-								<MultibleChoose 
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")} 
-								/>
-							}
-							{test.questionType === "FILL_IN_THE_BLANK" && 
-								<FillInTheBlank
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")} 
-								/>
-							}
-							{test.questionType === "CONNECT_LETTERS" && 
-								<ConnectLetters
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
-							}
-							{test.questionType === "ORDERING" && 
-								<Ordering
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
-							}
-							{test.questionType === "TRUE_OR_FALSE" && 
-								<TrueOrFalse 
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
-							}
-							{test.questionType === "PDF" && 
-								<PDF 
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
-							}
-							{test.questionType === "CONNECT_VATIANTS" && 
-								<ConnectVariants 
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
-							}
-							{test.questionType === "CONNECT_PHOTO_VARIANTS" && 
-								<ConnectPhotoVariants 
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
-							}
-							{test.questionType === "TEXT_PO_PORYADKY" && 
-								<TextPoPOryadky
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
-							}
-							{test.questionType === "BIG_TEXT_OR_STATIYA" && 
-								<BigTextOrStatiya 
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
-							}
-							{test.questionType === "FILL_WORDS_IN_THE_BLANK_DROPDOWN" && 
-								<div className='relative'>
-									<div className='absolute left-[-100px] top-[-21px] h-20 w-20 bg-gray-100 shadow-lg rounded-lg border-gray-300 border-[2px] p-2 flex flex-col items-center justify-center'>
-										<h1 className='text-center text-gray-500 text-xs font-semibold pb-2'>Сменить тип</h1>
-										<Switch
-											checked={isSwitchOn}
-											onClick={() => setIsSwitchOn(prev => !prev)}
-										/>
-									</div>
-									{isSwitchOn ?
-									
-									<FillWordsInTheBlankDropDown
-										test={test} 
-										userId={user.id} 
-										courseUserId={course?.userId ? course?.userId : ""}
-										updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-									/> 
-									: 
-									<PechatWordsInTheBlankDropDown
-										test={test} 
-										userId={user.id} 
-										courseUserId={course?.userId ? course?.userId : ""}
-										updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-									/>}
-									
-								</div>
-							}
+						<div className='flex flex-col items-center w-full'>
+							{variantMenu === "Wiev" && <h1 className='text-lg mt-3 text-blue-400 font-medium'>Добавьте уроки и изменяйте их!</h1>}
+							{variantMenu === "Raspolozhit" && <h1 className='text-lg mt-3 text-blue-400 font-medium'>Меняйте их расположение!</h1>}
 
-							{test.questionType === "FILL_WORDS_IN_THE_TEXT_MENU" && 
-								<FillWordsInTheBlankTextMenu
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
-							}
-							{test.questionType === "WRITING_TASK" && (
-								<WritingTask 
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
-							)}		
-							{test.questionType === "VIDEO" && 
-								<Video 
-									test={test} 
-									userId={user.id} 
-									courseUserId={course?.userId ? course?.userId : ""}
-									updateVisov={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")}
-								/>
-							}		
+							<div className='w-full gap-2 flex justify-center'>
+								<div className='w-full max-w-[650px] border-b border-gray-200 flex items-end justify-center gap-2 mt-3'>
+									<Button 
+										className={`h-8 px-5 font-medium ${variantMenu === "Wiev" ? "bg-blue-400 text-white" : "hover:bg-blue-100 hover:text-blue-400"}`} 
+										variant={"shadow2"}
+										onClick={() => {setIsVariantMenu("Wiev")}}
+									>
+										Просмотр
+									</Button>
+									<Button 
+										className={`h-8 px-5 font-medium ${variantMenu === "Raspolozhit" ? "bg-blue-400 text-white" : "hover:bg-blue-100 hover:text-blue-400"}`} 
+										variant={"shadow2"}
+										onClick={() => {setIsVariantMenu("Raspolozhit")}}
+									>
+										Расположение
+									</Button>
+								</div>
+							</div>
+							
+							{variantMenu === "Wiev" && <TestBox tests={tests} user={user} course={course} lessonId={lessonId as string} rasdelId={currRasdel ? currRasdel.id : ""} isSwithOn={isSwitchOn} setSwith={setIsSwitchOn} fetchTest={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")} />}
+							{variantMenu === "Raspolozhit" && <RasstavitTextBox  tests={tests} user={user} course={course} lessonId={lessonId as string} rasdelId={currRasdel ? currRasdel.id : ""} isSwithOn={isSwitchOn} setSwith={setIsSwitchOn} fetchTest={() => fetchTest(currRasdel?.id ? currRasdel?.id : "")} />}
 						</div>
-					))}
-					</div>
 					:
 						<MaterialBox currRasdel={currRasdel ? currRasdel : null} visov={() => fetchMaterials(currRasdel?.id ? currRasdel.id : "")} materials={materials}/>
 					}

@@ -49,7 +49,7 @@ const TeacherProfile = ({teacher, favouritesT,}: Props) => {
 					setOpen(true)
 				}}
 				variant={"violetSelect"}
-				className="font-medium bg-green-600 hover:bg-green-700"
+				className="font-medium bg-green-600 hover:bg-green-700 h-5 text-xs mt-1"
 			>
 				Прайс Лист
 			</Button>

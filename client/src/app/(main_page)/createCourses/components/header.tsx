@@ -16,12 +16,12 @@ import React from 'react'
 const Header = () => {
 	return (
 		<div className="flex justify-between items-center w-full mx-auto text-[#3E236C] mt-3">
-			<div className='text-3xl font-medium flex gap-5'>
-				<div className='w-10 h-10 ml-[0.9rem] bg-[#835BD2] rounded-full flex items-center justify-center'>
-					<Image src="/logo.png" alt='logo' width={100} height={100} className='absolute scale-120'/>
+			<div className='flex items-center'>
+					<Image src="/logo.png" alt="logo" width={200} height={200} className='w-20 h-20' />
+					<div className='lg:text-3xl text-2xl font-medium lg:font-semibold text-[#61439d]'>
+						Acyberg
+					</div>
 				</div>
-				<h1>Acyberg</h1>
-			</div>
 			<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<div className='w-[4rem] h-[4rem] rounded-full p-2 bg-white hover:bg-gray-100 cursor-pointer shadow-lg hover:shadow-none'>

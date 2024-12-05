@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <div className="relative w-full">
     <MainHeader />
-      <div className="flex justify-around items-center w-full max-w-[1440px] px-[5%] mx-auto text-[#3E236C] flex-col m-0">
+      <div className="flex z-50 justify-around items-center w-full max-w-[1440px] px-[5%] mx-auto text-[#3E236C] flex-col m-0">
         <StartBlock />
         <Courses />
         <CaruselBlock />

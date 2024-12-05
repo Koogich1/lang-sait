@@ -145,10 +145,11 @@ const ModalBooking = ({ day, hour, dayId, status, Teacher, lessons, updateDays, 
                                 className="font-medium mt-3"
                                 onClick={() => {
                                     bookingLogic({ 
-                                        dayId: dayId, 
+                                        dayId: dayId,
                                         timeSlot: hour, 
                                         teacherId: Teacher.id, 
-                                        day: day// Убедитесь, что 'day' - это валидная дата
+                                        day: day,// Убедитесь, что 'day' - это валидная дата
+                                        user: user,
                                     });
                                     updateDays();
                                     setOpen(false);

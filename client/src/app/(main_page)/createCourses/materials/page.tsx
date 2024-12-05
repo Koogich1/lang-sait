@@ -21,15 +21,15 @@ const Page = () => {
   };
 
 	return (
-    <div className='w-full p-6 bg-white text-gray-600 rounded-xl shadow-lg mt-3'>
-      <h1 className='text-2xl font-bold'>
+    <div className='w-full p-6 bg-white min-h-[75vh] text-gray-400 rounded-xl shadow-lg mt-3'>
+      <h1 className='text-2xl text-[#835BD2] font-medium'>
         Обучение
       </h1>
-      <ul className='flex text-lg font-semibold mt-4'>
+      <ul className='flex text-lg font-semibold mt-4 gap-2'>
         <li 
 					onClick={() => handleMenuItemClick('personal')}
 					className={`
-						${selectedMenuItem === "personal" ? "border-b-2 border-purple-600" : ""}
+						${selectedMenuItem === "personal" ? "border-b-2 border-[#835BD2] text-[#835BD2]" : ""}
 						pb-2 hover:bg-gray-100 transition p-2 px-5 cursor-pointer rounded-t-lg flex items-center gap-2
 					`}
 				>
@@ -48,7 +48,7 @@ const Page = () => {
         <li 
 					onClick={() => handleMenuItemClick('katalog')}
 					className={`
-						${selectedMenuItem === "katalog" ? "border-b-2 border-purple-600" : ""} 
+						${selectedMenuItem === "katalog" ? "border-b-2 border-[#835BD2] text-[#835BD2]" : ""} 
 						pb-2 hover:bg-gray-100 transition p-2 px-5 cursor-pointer rounded-t-lg
 					`}
 				>	

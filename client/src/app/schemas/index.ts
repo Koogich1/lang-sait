@@ -70,5 +70,6 @@ export const RegisterSchema = z.object({
 	}),
 	surname: z.string().min(1, {
 		message: "Введите Фамилию"
-	})
+	}),
+	code: z.optional(z.string()),
 })

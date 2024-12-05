@@ -18,6 +18,8 @@ model UserSubscriptions {
   id                    String @id @default(cuid())
   userId                String
   teacherId             String 
+  lessonsSuccess        Int     @default(0)
+  lessonsErors          Int     @default(0)
   LessonsPayd           Int     @default(0)
   user                  User    @relation(fields: [userId], references: [id])
 }
@@ -45,6 +47,7 @@ model User {
   studentBookings       StudentBooking[]
   favouritesTeachers    String                 @default("")
   allUserImage          String[]
+  bookedLesson          BookedLesson[]           @relation("userBooking")
 
   sentMessages          DirectMessage[] @relation("SenderMessages")
   receivedMessages      DirectMessage[] @relation("ReceiverMessages")
@@ -183,7 +186,7 @@ model Test {
   textBlocks     TextBlock[]     @relation("TextBlockTest")
   lessonId       String
   littleRasdelId String
-  position       Int             @default(1)
+  position       Int             @default(0)
   lesson         Lessons         @relation("LessonTests", fields: [lessonId], references: [id])
   littleRasdel   LittleRasdel    @relation("LittleRasdelTests", fields: [littleRasdelId], references: [id])
   question       String          @default("")
@@ -269,6 +272,9 @@ model Application{
   id                 String                @id @default(cuid())
   senderId           String
   receiverId         String
+  bookingID          String?
+  onDate             DateTime?
+  slotInfo           String?
   language           languageVariants?
   format             FormatApplication
   status             StatusApplication     @default(waiting)
@@ -284,10 +290,29 @@ model Application{
     languages          Language[]            @relation("TeacherLanguages") // Укажите имя отношения
     studentsList       String[]
     students           User[]
+
+    allLessonsOnSait   Int                   @default(0)
+    sumDonates         Int                   @default(0)
+
     aboutMe            String                @default("Я учитель")
     availabilities     TeacherAvailability[]
     scheduleDays       TeacherScheduleDay[]
     lessonPrise        Int                   @default(899)
+  }
+
+  model BookedLesson {
+    id                 String                @id @default(cuid())
+    teacherId          String
+    userId             String
+    Materials          String[]
+    startAt            DateTime
+    slotTime           String
+
+    isStarted          Boolean              @default(false)
+    isTeacherConnected Boolean              @default(false)
+    isUserConnected    Boolean              @default(false)
+
+    user               User                 @relation("userBooking", fields: [userId], references: [id])
   }
 
   enum languageVariants {
@@ -324,7 +349,7 @@ model TeacherScheduleDay {
   teacher              Teacher           @relation(fields: [teacherId], references: [id])
   studentBookings      StudentBooking[]   // Убрали onDelete: Cascade
   studentBookingStatus status            @default(free)
-}
+} 
 
 model StudentBooking {
   id                   String             @id @default(cuid())

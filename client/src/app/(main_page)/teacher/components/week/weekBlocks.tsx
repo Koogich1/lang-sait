@@ -91,8 +91,10 @@ const WeekBlocks = ({ Teacher, userSubs, user, isTeacherAdded, visov}: Props) =>
     }, [Teacher.teacherId]); // Добавляем зависимость
 
     const updateDays = () => {
+        setLoading(true)
         fetchDays();
         visov()
+        setLoading(false)
     }
 
     useEffect(() => {
@@ -170,7 +172,7 @@ const WeekBlocks = ({ Teacher, userSubs, user, isTeacherAdded, visov}: Props) =>
 
     if (loading) {
         return (
-            <div className="w-full min-h-[60vh] items-center justify-center">
+            <div className="w-full min-h-[60vh] bg-white shadow-lg rounded-lg items-center justify-center">
                 <ClipLoader color="#835BD2" size={100} />
             </div>
         )
@@ -229,26 +231,24 @@ const WeekBlocks = ({ Teacher, userSubs, user, isTeacherAdded, visov}: Props) =>
                             <ScrollArea className="w-full h-20 whitespace-nowrap flex items-center pt-3 mx-3">
                                 <div className="flex gap-3 items-center">
                                 {filterAvailableTimeSlots(day.timeSlots, day.date).map((hour, id) => (
-                            <Button 
-                                key={id} 
-                                className={`h-[55px] relative w-[110px] flex items-center cursor-pointer justify-center text-[#835BD2] font-base border border-[#835BD2] rounded-lg hover:bg-green-600 hover:border-green-600 hover:text-white transition-all ${getStatusColor(hour.status)}`}
-                                disabled={isSlotDisabled(hour.time, day.date)} // Удостоверьтесь, что здесь правильно работает логика
-                            >
-                                <h1>{hour.time}</h1>
-                                <ModalBooking 
-                                    day={day.date} 
-                                    hour={hour.time} 
-                                    dayId={day.id} 
-                                    status={hour.status} 
-                                    Teacher={Teacher} 
-                                    lessons={userSubs ? userSubs.LessonsPayd : 0} 
-                                    updateDays={updateDays}
-                                    user={user}
-                                    isTeacherAdded={isTeacherAdded}
-                                />
-                            </Button>
-                        ))} 
-                                </div>
+                                    <div
+                                        className={`h-[55px] relative w-[110px] flex items-center cursor-pointer justify-center text-[#835BD2] font-base border border-[#835BD2] rounded-lg hover:bg-green-600 hover:border-green-600 hover:text-white transition-all ${getStatusColor(hour.status)}`}
+                                    >
+                                        <h1>{hour.time}</h1>
+                                        <ModalBooking 
+                                        day={day.date} 
+                                        hour={hour.time} 
+                                        dayId={day.id} 
+                                        status={hour.status} 
+                                        Teacher={Teacher} 
+                                        lessons={userSubs ? userSubs.LessonsPayd : 0} 
+                                        updateDays={updateDays}
+                                        user={user}
+                                        isTeacherAdded={isTeacherAdded}
+                                        />
+                                        </div>
+                                    ))}
+                                </div> 
                                 <ScrollBar orientation="horizontal" />
                             </ScrollArea>
                         </div>

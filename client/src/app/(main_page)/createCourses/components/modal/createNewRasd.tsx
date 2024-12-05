@@ -135,7 +135,7 @@ const CreateNewRasp = ({updateData, course}: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="w-full my-3">
-				<div className="flex gap-3 w-full h-[10vh] border items-center justify-center rounded-lg hover:border-2 hover:border-blue-200 text-gray-400 hover:text-blue-400 hover:bg-blue-50 transition-all"
+				<div className="flex gap-3 w-full h-[8vh] border items-center justify-center rounded-lg hover:border-2 hover:border-blue-200 text-gray-400 hover:text-blue-400 hover:bg-blue-50 transition-all"
 					onClick={() => {setOpen(true)}}
 				>
 					<div className="h-8 w-8 bg-gray-400 hover:bg-blue-400 rounded-full flex items-center justify-center text-white transiti">
