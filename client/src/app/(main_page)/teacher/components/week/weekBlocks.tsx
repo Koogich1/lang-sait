@@ -232,6 +232,7 @@ const WeekBlocks = ({ Teacher, userSubs, user, isTeacherAdded, visov}: Props) =>
                                 <div className="flex gap-3 items-center">
                                 {filterAvailableTimeSlots(day.timeSlots, day.date).map((hour, id) => (
                                     <div
+                                        key={id}
                                         className={`h-[55px] relative w-[110px] flex items-center cursor-pointer justify-center text-[#835BD2] font-base border border-[#835BD2] rounded-lg hover:bg-green-600 hover:border-green-600 hover:text-white transition-all ${getStatusColor(hour.status)}`}
                                     >
                                         <h1>{hour.time}</h1>

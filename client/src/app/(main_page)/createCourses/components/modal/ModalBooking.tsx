@@ -109,7 +109,7 @@ const ModalBooking = ({ day, hour, dayId, status, teacherId, lessons, updateDays
                     variant='violetSelect'
                     className="font-medium mt-3"
                     onClick={() => {
-                        bookingLogic({ dayId: dayId, timeSlot: hour, teacherId: teacherId, day: day})
+                        //bookingLogic({ dayId: dayId, timeSlot: hour, teacherId: teacherId, day: day, user: })
                         const notify = () => toast(
                             <p className="flex flex-col">
                                 <span>Занятие {formatDate(day)} в {hour} успешно добавлено!</span>

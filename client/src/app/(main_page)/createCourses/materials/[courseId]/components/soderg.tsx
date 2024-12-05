@@ -54,7 +54,9 @@ const Soderg = ({ course, currUser, rasdel }: Props) => {
 			}
 			<Accordion type="multiple" className='grid lg:grid-cols-2 gap-3 mt-3 items-start'>
 				{rasd?.map((data, id) => (
-					<RasdelBox id={id} data={data} fetchRasd={fetchRasd} currUser={currUser} course={course}/>
+					<div key={id}>
+						<RasdelBox id={id} data={data} fetchRasd={fetchRasd} currUser={currUser} course={course}/>
+					</div>
 				))}
 			</Accordion>
 			{currUser.id === course.userId && <CreateNewRasp updateData={fetchRasd} course={course} />}

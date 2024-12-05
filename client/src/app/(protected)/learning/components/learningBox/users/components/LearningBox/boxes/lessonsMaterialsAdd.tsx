@@ -58,7 +58,7 @@ const LessonsMaterialsAdd = ({lesson}: Props) => {
 							lessonInfo.Materials && lessonInfo.Materials.length > 0 ? 
 							<div className="grid grid-cols-3 gap-5">
 								{lessonInfo.Materials.map((info) => (
-									<Link href={`/learning/materials/${info}`}>
+									<Link href={`/learning/materials/${info}`} key={info}>
 										<MaterialInfo data={info} />
 									</Link>
 								))}

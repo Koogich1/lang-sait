@@ -25,7 +25,9 @@ const LessonsInfo = ({lessonsBooked}: Props) => {
 				<h1 className="text-lg text-[#835BD2] font-medium">Уроки с учеником</h1>
 				<div className="grid lg:grid-cols-2 gap-2 mt-5 items-start">
 					{lessonsBooked?.map((data) => (
-						<LessonItem lesson={data} setChoosen={setChoosenItem}/>
+						<div key={data.id}>
+							<LessonItem lesson={data} setChoosen={setChoosenItem}/>
+						</div>
 					))}
 				</div>
 			</div>
