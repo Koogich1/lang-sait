@@ -11,7 +11,7 @@ const nextConfig = {
     ]
   },
   experimental:{
-    serverComponentsExternalPackages: ['sharp'],
+    serverExternalPackages: ['sharp'],
     serverActions: {
       bodySizeLimit: "5mb",
     }
