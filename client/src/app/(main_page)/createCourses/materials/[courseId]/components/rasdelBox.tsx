@@ -54,7 +54,7 @@ const RasdelBox = ({fetchRasd, id, currUser, data, course}: Props) => {
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild>
 										<div>
-											<div className='h-7 w-7 rounded-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 transition-all cursor-pointer'>
+											<div className='h-7 w-7 rounded-lg flex mt-1 items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-600 transition-all cursor-pointer'>
 												<FaEllipsisH />
 											</div>
 										</div>
@@ -86,9 +86,9 @@ const RasdelBox = ({fetchRasd, id, currUser, data, course}: Props) => {
 								<Image width={1000} height={1000} src={data.photoUrl} alt="" className='w-10 h-10 rounded-lg object-cover' />
 								<h1 className='text-base font-semibold'>{data.name}</h1>
 							</div>
-							<Button className="absolute text-white right-3 flex items-center justify-center p-0 h-7 w-7 bg-blue-400 hover:bg-blue-500 z-50" variant={"violetSelect"}>
+							<div className="absolute text-white right-3 flex rounded-sm items-center justify-center transition-all p-0 h-7 w-7 bg-blue-400 hover:bg-blue-500 z-50">
 								<IoChevronDown className={`text-xl transition-all rotate-${open ? "180" : "0"}`} />
-							</Button>
+							</div>
 						</AccordionTrigger>
 						<AccordionContent className='px-3 py-0'>
 							<CreateNewLesson rasdelId={data.id} updateData={() => { }} user={currUser} course={course} rasdelName={data.aboutRasdel}/>

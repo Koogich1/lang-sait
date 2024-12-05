@@ -145,7 +145,7 @@ const UpdateRasdelModal = ({ updateData, rasdelId }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className="w-7 h-7 bg-gray-200 rounded-lg mr-1 flex items-center justify-center hover:bg-gray-300 transition-all cursor-pointer">
+        <div className="w-7 h-7 bg-gray-200 rounded-lg mt-1 mr-1  flex items-center justify-center hover:bg-gray-300 transition-all cursor-pointer">
           <IoPencil />
         </div>
       </DialogTrigger>
