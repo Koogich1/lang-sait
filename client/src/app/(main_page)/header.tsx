@@ -16,10 +16,12 @@ import {
 } from "@/components/ui/sheet"
 import { IoClose } from 'react-icons/io5'
 import Image from 'next/image'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const MainHeader = () => {
 	const [user, setUser] = useState<User | null>(null)
 	const [open, setOpen] = useState(false)
+	const [loading, setLoading] = useState(true)
 	const [activeLink, setActiveLink] = useState("");
 
 	useEffect(() => {
@@ -27,9 +29,11 @@ const MainHeader = () => {
 			const userdata = await currentUser();
 			console.log(userdata);
 			if (!userdata) {
+				setLoading(false)
 				return;
 			}
 			setUser(userdata);
+			setLoading(false)
 		}
 		catchUser();
 	}, []);
@@ -54,7 +58,7 @@ const MainHeader = () => {
 		<div className="flex justify-around items-center w-full max-w-[1440px] px-[5%] mx-auto text-[#3E236C] flex-col m-0">
 			<div className='w-full mt-3 justify-between items-center hidden lg:flex'>
 				<div className='flex items-center'>
-					<Image src="/logo.png" alt="logo" width={200} height={200} className='w-20 h-20' />
+					<Image src={"/logo.png"} alt="logotype" width={200} height={200} className='w-20 h-20' />
 					<div className='lg:text-3xl text-2xl font-medium lg:font-semibold text-[#61439d]'>
 						Acyberg
 					</div>
@@ -112,17 +116,25 @@ const MainHeader = () => {
 					</Link>
 				</ul>
 				<div className='flex items-center justify-center'>
-					{user && user.role === "MODERATOR" ? 
-						<a href="/createCourses" className='text-base font-medium btn-style'>
-							Создать курсы
-						</a>
-					: 
-						user && <DropDownMenu user={user}/>
-					}
-					{!user && 
-						<a href="/auth/login" className='text-base font-medium px-4 py-2 mt-1 bg-[#835BD2] text-white rounded-md shadow-sm'>
-							Войти
-						</a>}
+					{loading ? (
+							<Skeleton className='w-12 h-12 rounded-full' />
+					) : (
+							!user ? (
+									<Link href="/auth/login">
+											<Button variant={"violetSelect"} className='text-base font-medium px-4 py-2 mt-1 bg-[#835BD2] text-white rounded-md shadow-sm'>
+													Войти
+											</Button>
+									</Link>
+							) : (
+								user && user.role === "MODERATOR" ? 
+									<a href="/createCourses" className='text-base font-medium btn-style'>
+										Создать курсы
+									</a>
+								: 
+									user && <DropDownMenu user={user}/>
+							)
+					)}
+					
 				</div>
 			</div>
 			<div className='w-full mt-3 justify-between items-center flex lg:hidden'>
@@ -133,18 +145,25 @@ const MainHeader = () => {
 					</div>
 				</div>
 				<Sheet open={open} onOpenChange={setOpen}>
-					<SheetTrigger className='w-12 h-12 z-50'>
-						{!user ? 
-							<a href="/auth/login" className='text-base font-medium px-4 py-2 mt-1 bg-[#835BD2] text-white rounded-md shadow-sm'>
-								Войти
-							</a>
-							:
-							<div>
-								<Image width={1000} height={1000} className='w-12 h-12 rounded-full' src={user.image ?? ''} alt="" />
-							</div>
-						}
-						
-					</SheetTrigger>
+				<SheetTrigger className='z-50'>
+					{loading ? (
+							<Skeleton className='w-12 h-12 rounded-full' />
+					) : (
+							!user ? (
+									<Link href="/auth/login">
+											<Button variant={"violetSelect"} className='text-base font-medium px-4 py-2 mt-1 bg-[#835BD2] text-white rounded-md shadow-sm'>
+													Войти
+											</Button>
+									</Link>
+							) : (
+									<div>
+											{user.image ? (
+													<Image width={1000} height={1000} className='w-12 h-12 rounded-full' src={user.image} alt="" />
+											) : <Skeleton className='w-12 h-12 rounded-full' />}
+									</div>
+							)
+					)}
+				</SheetTrigger>
 					<SheetContent className='md:w-1/3 w-[200px]'>
 						<SheetTitle className='text-xl font-semibold text-gray-500 w-full flex justify-between'>
 							<div 

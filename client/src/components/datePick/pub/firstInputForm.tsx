@@ -12,7 +12,17 @@ import {
 import { FaRegTrashCan } from "react-icons/fa6";
 import saveTeacherAvailability from "../AllTimeLineCreate";
 import { FaRegCalendarCheck } from "react-icons/fa";
-import weekCreateLogic from "../weekCreateLogic";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { ClipLoader } from "react-spinners";
+
 
 const hours = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
 
@@ -32,9 +42,12 @@ type TimeSlotsData = {
   vs: TimeSlot[];
 };
 
+type Props = {
+  visov: () => void
+}
 
 
-export const FirstTimeInputForm = () => {
+export const FirstTimeInputForm = ({visov}: Props) => {
   const [active, setActive] = useState<string>("pn");
   const [timeSlots, setTimeSlots] = useState<{ [key: string]: TimeSlot[] }>({
     pn: [],
@@ -59,6 +72,7 @@ export const FirstTimeInputForm = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [redact, setRedact] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   const addTimeSlot = (day: string, startTime: string, endTime: string) => {
     const newSlots:any = [];
@@ -182,6 +196,21 @@ export const FirstTimeInputForm = () => {
     await saveTeacherAvailability(formattedTimeSlots);
   };
 
+  if(loading){
+    return(
+      <Dialog open={loading}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Загрузка данных в базу данных...</DialogTitle>
+            <DialogDescription>
+              <ClipLoader />
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   return (
     <div className="flex flex-col justify-between">
       {wiew ? 
@@ -250,8 +279,11 @@ export const FirstTimeInputForm = () => {
               </Button>
               <Button 
                 onClick={() => {
+                  setLoading(true)
                   submit();
-                  weekCreateLogic()
+                  //weekCreateLogic()
+                  visov()
+                  setLoading(false)
                 }}
                 className="w-full"
                 variant={"violetSelect"}

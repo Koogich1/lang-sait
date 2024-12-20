@@ -10,23 +10,7 @@ import getAllSubscription from "@/actions/getAllSubscription"
 
 const SettingsPage = () => {
 	const	[user, setUser] = useState<User | null>(null)
-	const	[userSubs, setUserSubs] = useState<UserSubscriptions[] | null>([])
 
-	const handleData = useCallback(
-		async() => {
-			const subsData = await getAllSubscription()
-			if(subsData){
-				setUserSubs(subsData)
-			if(userSubs == null){
-				return
-				}
-			}
-		}, [userSubs]
-	)
-
-	const updateData = () => {
-		handleData()
-	}
 
 	useEffect(() => {
 		const fetchUser = async() => {
@@ -36,13 +20,9 @@ const SettingsPage = () => {
 			}
 		}
 		fetchUser()
-		handleData()
-	},[handleData])
+	},[])
 
 	if(!user){
-		return
-	}
-	if(!userSubs){
 		return
 	}
 
@@ -55,7 +35,11 @@ const SettingsPage = () => {
 				/>
 			</div>
 			<div className="w-full flex justify-start">
-				{user.role === "TEACHER" ? "I am a teacher" : <CalendarBox user={user} subs={userSubs} updateUserSubs={updateData}/>}
+				{user.role === "TEACHER" 
+				? 
+					"I am a teacher" 
+					: 
+					<CalendarBox user={user}/>}
 			</div>
 		</div>
 	)

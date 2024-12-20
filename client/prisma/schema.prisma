@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://gen_user:FG)ubFa2NS%269pL@93.93.207.164:5432/AsybergProd"
+  url      = "postgresql://langschool_owner:QSr2YNs6Adzi@ep-noisy-limit-a256jzax-pooler.eu-central-1.aws.neon.tech/langschool?sslmode=require"
 }
 
 enum UserRole {
@@ -20,40 +20,65 @@ model UserSubscriptions {
   teacherId             String 
   lessonsSuccess        Int     @default(0)
   lessonsErors          Int     @default(0)
+  language             languageVariants   @default(Korean)
+
   LessonsPayd           Int     @default(0)
   user                  User    @relation(fields: [userId], references: [id])
 }
 
 model User {
-  id                    String                 @id @default(cuid())
+  id                    String                   @id @default(cuid())
   name                  String?
   surname               String?
-  email                 String?                @unique
+  email                 String?                  @unique
   telegramId            String?
-  age                   Int                    @default(0)
+  age                   Int                      @default(0)
   emailVerified         DateTime?
-  favourites            String[]               @default([])
+  favourites            String[]                 @default([])
   image                 String?
-  preferLanguages       Language[]             @relation("UserLanguages")
+  preferLanguages       Language[]               @relation("UserLanguages")
   password              String?
-  role                  UserRole               @default(USER)
+  role                  UserRole                 @default(USER)
   accunts               Account[]
-  isTwoFactorEnabled    Boolean                @default(false)
-  TeacherS              String[]               @default([])
+  isTwoFactorEnabled    Boolean                  @default(false)
+  TeacherS              String[]                 @default([])
+  coins                 Int                      @default(0)
   twoFactorConfirmation twoFactorConfirmation?
   teacherId             String?
   userSubscriptions     UserSubscriptions[]
-  teacher               Teacher?               @relation(fields: [teacherId], references: [id])
+  teacher               Teacher?                 @relation(fields: [teacherId], references: [id])
   studentBookings       StudentBooking[]
-  favouritesTeachers    String                 @default("")
+  favouritesTeachers    String                   @default("")
   allUserImage          String[]
   bookedLesson          BookedLesson[]           @relation("userBooking")
 
-  sentMessages          DirectMessage[] @relation("SenderMessages")
-  receivedMessages      DirectMessage[] @relation("ReceiverMessages")
+  achievements  Achievement[]
+  
+  sentMessages          DirectMessage[]          @relation("SenderMessages")
+  receivedMessages      DirectMessage[]          @relation("ReceiverMessages")
   
 }
 
+enum AchivmentTypes {
+  mail_accept
+  avatar_update
+  age_update
+  language_add
+  telegramId_send
+  telegramBot_add
+  teacherAdded
+  lessonPayd
+  lessonPick
+}
+
+model Achievement {
+  id                    String            @id @default(cuid())
+  userId                String
+  isReverdReceived      Boolean           @default(false)
+  type                  AchivmentTypes
+  createdAt             DateTime          @default(now())
+  user                   User             @relation(fields: [userId], references: [id])
+}
 
 model DirectMessage {
   id            Int       @id @default(autoincrement())
@@ -290,6 +315,10 @@ model Application{
     languages          Language[]            @relation("TeacherLanguages") // Укажите имя отношения
     studentsList       String[]
     students           User[]
+    allLessons         Int                   @default(0)
+    stars              Int[]                 @default([5])
+
+    isAcceptToLearn    Boolean               @default(false)
 
     allLessonsOnSait   Int                   @default(0)
     sumDonates         Int                   @default(0)
@@ -300,6 +329,16 @@ model Application{
     lessonPrise        Int                   @default(899)
   }
 
+  enum StudentBookingType {
+    personal
+    group
+  }
+
+  enum BookedLanguage {
+    Korean
+    China
+  }
+
   model BookedLesson {
     id                 String                @id @default(cuid())
     teacherId          String
@@ -307,7 +346,9 @@ model Application{
     Materials          String[]
     startAt            DateTime
     slotTime           String
-
+    type               StudentBookingType   @default(personal)
+    language           languageVariants     @default(Korean)
+    
     isStarted          Boolean              @default(false)
     isTeacherConnected Boolean              @default(false)
     isUserConnected    Boolean              @default(false)
@@ -357,6 +398,7 @@ model StudentBooking {
   teacherId            String
   teacherScheduleDayId String
   date                 DateTime           @default(now())
+  language             languageVariants   @default(Korean)
   timeSlot             String
   student              User               @relation(fields: [studentId], references: [id])
   teacherScheduleDay   TeacherScheduleDay @relation(fields: [teacherScheduleDayId], references: [id], onDelete: Cascade) // Здесь указали

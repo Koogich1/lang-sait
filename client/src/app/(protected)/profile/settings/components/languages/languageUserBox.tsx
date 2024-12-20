@@ -128,9 +128,10 @@ const LanguageBox = () => {
 
 
   const onSubmit = async () => {
-    if (language && level && user?.teacherId) {
+    if (language && level && user) {
       const userId = user.id; // Убедитесь, что teacherId существует
-    
+      
+      console.log("создаю")
       await addUserLanguage({ language: language as languageVariants, level, userId });
       
       setOpen(false);

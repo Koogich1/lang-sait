@@ -10,8 +10,9 @@ import crypto from "crypto"
 import getUserByIdChat from "../actions/getUserById";
 import Image from "next/image";
 import initializeSocket from "@/lib/socket";
-import MoreMenu from "./moreMenu";
 import { callStore } from "@/lib/useStore";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 type Props = {
 	friendId?: string;
@@ -20,6 +21,9 @@ type Props = {
 const RightPart = ({friendId}: Props) => {
 	const[user, setUser] = useState<User | null>(null)
 	const[friend, setFriend] = useState<User | null>(null)
+	const [callActive, setCallActive] = useState(false)
+	const router = useRouter()
+
 
 	useEffect(() => {
 		const fetchUser = async() => {
@@ -33,7 +37,7 @@ const RightPart = ({friendId}: Props) => {
 			}
 		}
 		fetchUser()
-	},[friendId])
+	},[])
 
 	if(!friendId || !user){
 		return(
@@ -43,12 +47,20 @@ const RightPart = ({friendId}: Props) => {
 			</div>
 		)
 	}
+	
 
 	const socket = initializeSocket(user.id)
 
 	const combinedData = [user.id, friendId].sort().join("")
 	const hash = crypto.createHash("sha256").update(combinedData).digest("hex")
 	const uniqueKey = `chat:${hash}:message:update`
+
+	const initiateCall = () => {
+		const roomId = `${user.id}-${friendId}`; // Unique room ID for the call
+		//socket.emit("join", roomId, user.id);
+		setCallActive(true);
+		router.push(`/call/roomId/${roomId}`); // Open a new window for the call
+	};
 
 	return (
 		<div className="w-2/3 bg-white rounded-lg shadow-sm min-h-[60vh] flex items-center justify-center flex-col gap-3 relative">
@@ -57,10 +69,12 @@ const RightPart = ({friendId}: Props) => {
 					<Image src={friend?.image ?? "https://storage.yandexcloud.net/langschoolacynberg/images/user.png"} alt="logo" width={100} height={100} className="h-[3rem] w-[3rem] rounded-full" />
 					<span>{friend?.name}</span>
 					<span>{friend?.surname}</span>
-					<MoreMenu reciverId={friendId as string} currentUserId={user.id}/>
 				</div>
 			</div>
-			<ChatComponent friendId={friendId} currUser={user} uniqueKey={uniqueKey}/>
+			<Button onClick={initiateCall} className="my-2">Start Video Call</Button>  
+			<div>
+				<ChatComponent friendId={friendId} currUser={user} uniqueKey={uniqueKey}/>
+			</div>
 		</div>
 	)
 }

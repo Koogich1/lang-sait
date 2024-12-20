@@ -41,12 +41,10 @@ type Teacher = {
 };
 
 type Props = {
-    day: Date,
-    hour: string,
-    dayId: string,
-    status: bookedEtaps,
+    day: Date | undefined,
+    hour: string | undefined,
     Teacher: Teacher,
-    lessons: number,
+    lessons: number | undefined,
     updateDays: () => void,
     user: User | null,
     isTeacherAdded: boolean,
@@ -66,19 +64,23 @@ const addLeadingZero = (num: number) => {
     return num < 10 ? `0${num}` : num;
 };
 
-const ModalBooking = ({ day, hour, dayId, status, Teacher, lessons, updateDays, user, isTeacherAdded }: Props) => {
+const ModalBooking = ({ day, hour, Teacher, lessons, updateDays, user, isTeacherAdded }: Props) => {
     const [disable, setDisable] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
     const [open, setOpen] = useState(false);
     
     const logikDisable = () => {
-        if (status === "waitingAccess" || status === "booked" || lessons <= 0) {
+        if (status === "waitingAccess" || status === "booked" || lessons && lessons <= 0) {
             setDisable(true);
         } 
     }
 
     const onClick = () => {
         setOpen(true);
+    }
+
+    if(!day || !hour){
+        return
     }
 
     return (
@@ -117,7 +119,7 @@ const ModalBooking = ({ day, hour, dayId, status, Teacher, lessons, updateDays, 
                                 </DialogDescription>
                             </DialogHeader>
     
-                            {lessons <= 0 && 
+                            {lessons && lessons <= 0 && 
                                 <div className="flex justify-between items-center">
                                     <h1 className="font-medium text-gray-400">Доступное количество уроков: {lessons}</h1>
                                     <Link href={"/profile/lessonsBuy"}>
@@ -126,7 +128,7 @@ const ModalBooking = ({ day, hour, dayId, status, Teacher, lessons, updateDays, 
                                 </div>
                             }
     
-                            {lessons > 0 && (
+                            {lessons && lessons > 0 && (
                                 <div className="items-top flex space-x-2">
                                     <Checkbox id="terms1" checked={isChecked} onClick={() => setIsChecked(!isChecked)} />
                                     <div className="grid gap-1.5 leading-none items-center">
@@ -145,7 +147,6 @@ const ModalBooking = ({ day, hour, dayId, status, Teacher, lessons, updateDays, 
                                 className="font-medium mt-3"
                                 onClick={() => {
                                     bookingLogic({ 
-                                        dayId: dayId,
                                         timeSlot: hour, 
                                         teacherId: Teacher.id, 
                                         day: day,// Убедитесь, что 'day' - это валидная дата
@@ -156,7 +157,7 @@ const ModalBooking = ({ day, hour, dayId, status, Teacher, lessons, updateDays, 
                                 }}
                                 disabled={disable || !isChecked}
                             >
-                                {lessons <= 0 ? `Недостаточное количество уроков: ${lessons}` : "Подтвердить запись!"}
+                                {lessons && lessons <= 0 ? `Недостаточное количество уроков: ${lessons}` : "Подтвердить запись!"}
                             </Button>
                             </>)
                         }

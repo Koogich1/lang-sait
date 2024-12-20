@@ -3,23 +3,15 @@
 import CurrentWeek from "@/app/(protected)/profile/_components/TimePicker/current-week"; 
 import { ClipLoader } from "react-spinners";
 import { useEffect, useState } from "react";
-import { DayOfWeek } from "@prisma/client";
+import { DayOfWeek, TeacherAvailability } from "@prisma/client";
 import FirstTimeChoosePage from "./firstTime/page";
 import { Button } from "@/components/ui/button";
-import weekCreateLogic from "@/components/datePick/weekCreateLogic";
 import getweeksFronDb from "../../profile/_components/TimePicker/getweeksFronDb";
 
-interface SlotData {
-  id: string;
-  teacherId: string;
-  date: Date;
-  dayOfWeek: DayOfWeek;
-  timeSlots: string[];
-}
 
 const MyWeek = () => {
   const [loading, setLoading] = useState(true);
-  const [freeDates, setFreeDates] = useState<"Вы не учитель!" | SlotData[] | []>([]);
+  const [aviability, setAviability] = useState<TeacherAvailability[]>([]);
   const [notCreated, setNotCreated] = useState(false);
 
   const findAnything = async () => {
@@ -27,7 +19,7 @@ const MyWeek = () => {
       const data = await getweeksFronDb();
       if (data && data.length > 0) {
         setNotCreated(false);
-        setFreeDates(data);
+        setAviability(data);
       } else {
         setNotCreated(true);
       }
@@ -56,11 +48,11 @@ const MyWeek = () => {
     <div>
       {notCreated ? (
         <div>
-          <FirstTimeChoosePage />
+          <FirstTimeChoosePage visov={findAnything}/>
         </div>
       ) : (
         <div className="flex mt-5 w-full gap-5">
-          <CurrentWeek freeDates={freeDates} />
+          <CurrentWeek freeDates={aviability} />
         </div>
       )}
     </div>

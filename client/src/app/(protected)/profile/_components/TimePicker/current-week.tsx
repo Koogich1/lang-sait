@@ -2,119 +2,69 @@
 
 import TimeClock from './time-clock';
 import SwiperDatesBlock from './swiperDatesBlock';
-import getweeksFronDb from './getweeksFronDb';
-
 import { useEffect, useState } from 'react';
-import { DayOfWeek } from '@prisma/client';
-import { ClipLoader } from 'react-spinners';
-import { Button } from '@/components/ui/button';
+import { DayOfWeek, TeacherAvailability } from '@prisma/client';
 import TimeSlots from './timeSlots';
 
 type Props = {
-  freeDates: "Вы не учитель!" | SlotData[] | null,
+  freeDates: TeacherAvailability[] | null;
 }
 
-interface SlotData {
-  id: string;
-  teacherId: string;
-  date: Date;
-  dayOfWeek: DayOfWeek;
-  timeSlots: string[];
-}
+const CurrentWeek = ({ freeDates }: Props) => {
+  const targetDate = new Date();
+  const [choosenDate, setChoosenDate] = useState(targetDate);
 
-const daysOfWeekMap = {
-  MONDAY: 'пн',
-  TUESDAY: 'вт',
-  WEDNESDAY: 'ср',
-  THURSDAY: 'чт',
-  FRIDAY: 'пт',
-  SATURDAY: 'сб',
-  SUNDAY: 'вс',
-};
-
-const CurrentWeek = ({freeDates}: Props) => {
-  const targetDate = new Date()
-  const [choosenDate, setChoosenDate] = useState(targetDate)
-
-  if(!freeDates){
-    return
+  // Проверка, если freeDates не загружены
+  if (!freeDates) {
+    return <div>Loading...</div>;
   }
 
-  const formatDateString = (date: any) => {
-    const dateObj = new Date(date);
-    const day = dateObj.getDate().toString().padStart(2, '0');
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-    return `${day}.${month}`;
+  // Функция для создания массива дат
+  const createDateArray = (days: number) => {
+    const today = new Date();
+    return Array.from({ length: days }, (_, index) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() + index);
+      return date;
+    });
   };
 
-    if(typeof freeDates === 'string'){
-        return <div>{freeDates}</div>;
-    }
-
-    const week1 = freeDates.slice(0, 7);
-    console.log(week1)
-    const week2 = freeDates.slice(7, 14);
-    const week3 = freeDates.slice(14, 21);
-
-    const days = week1.map((slot, id) => {
-      const slotDate = new Date(slot.date);
-      const isTargetDate = slotDate.getFullYear() === targetDate.getFullYear()
-        && slotDate.getMonth() === targetDate.getMonth()
-        && slotDate.getDate() === targetDate.getDate();
+  // Создание массива из 21 дня
+  const dateArray = createDateArray(21);
   
-      return (
-        <Button
-          onClick={() => setChoosenDate(slot.date)}
-          key={id}
-          className={`w-[75px] h-[75px] bg-white border border-[#835BD2] rounded-lg flex items-center justify-center relative cursor-pointer transition-all
-          ${
-            isTargetDate ? 'bg-[#835BD2] text-white hover:bg-[#7552bc]' : 'hover:bg-gray-100'
-          }
-          ${
-            slotDate.toDateString() === choosenDate.toDateString() ? "bg-[#c8affe]": ""
-          }
-          `}
-        >
-          <p className={`font-semibold text-sm opacity-20 absolute left-2 top-0 ${isTargetDate ? "text-white opacity-80" : "text-black"}
-          `}>{daysOfWeekMap[slot.dayOfWeek] || slot.dayOfWeek}</p>
-          <h1 className={`text-[#835BD2] text-lg ${isTargetDate ? "text-white" : ""}`}>{formatDateString(slot.date)}</h1>
-        </Button>
-      );
-    });
-    const days2 = week2.map((slot, id) => {
-      const slotDate = new Date(slot.date);
+  // Массив для хранения слотов расписания по дням недели
+  const weekSchedule: string[][] = Array.from({ length: 21 }, () => []);
 
-      return(
-        <Button key={id} 
-          onClick={() => setChoosenDate(slot.date)}
-          className={`w-[75px] bg-white h-[75px] border border-[#835BD2] rounded-lg flex items-center justify-center relative cursor-pointer transition-all hover:bg-gray-100
-            ${
-              slotDate.toDateString() === choosenDate.toDateString() ? "bg-[#c8affe]": ""
-            }
-          `}
-        >
-         <p className='font-semibold text-black text-sm opacity-20 absolute left-2 top-0'>{daysOfWeekMap[slot.dayOfWeek] || slot.dayOfWeek}</p>
-         <h1 className='font-normal text-[#835BD2] text-lg'>{formatDateString(slot.date)}</h1>
-      </Button>
-      )
-    });
-    const days3 = week3.map((slot, id) => {
-      const slotDate = new Date(slot.date);
+  // Сопоставление значений enum с индексами, возвращаемыми getDay()
+  const dayOfWeekMapping: { [key in DayOfWeek]: number } = {
+    [DayOfWeek.MONDAY]: 1,
+    [DayOfWeek.TUESDAY]: 2,
+    [DayOfWeek.WEDNESDAY]: 3,
+    [DayOfWeek.THURSDAY]: 4,
+    [DayOfWeek.FRIDAY]: 5,
+    [DayOfWeek.SATURDAY]: 6,
+    [DayOfWeek.SUNDAY]: 0,
+  };
 
-      return(
-        <Button key={id} 
-          onClick={() => setChoosenDate(slot.date)}
-          className={`w-[75px] bg-white h-[75px] border border-[#835BD2] rounded-lg flex items-center justify-center relative cursor-pointer transition-all hover:bg-gray-100
-            ${
-              slotDate.toDateString() === choosenDate.toDateString() ? "bg-[#c8affe]": ""
-            }
-          `}
-        >
-         <p className='font-semibold text-black text-sm opacity-20 absolute left-2 top-0'>{daysOfWeekMap[slot.dayOfWeek] || slot.dayOfWeek}</p>
-         <h1 className='font-normal text-[#835BD2] text-lg'>{formatDateString(slot.date)}</h1>
-      </Button>
-      )
-    });
+  // Заполнение слотов для каждого дня
+  freeDates.forEach((availability: TeacherAvailability) => {
+    const dayIndex = dayOfWeekMapping[availability.day];
+    const slots: string[] = availability.timeSlots || [];
+
+    // Найдем правильный день, чтобы заполнить weekSchedule
+    const datePosition = dateArray.findIndex(date => date.getDay() === dayIndex);
+
+    if (datePosition !== -1) {
+      weekSchedule[datePosition] = slots; // Заполняем соответствующий день
+    }
+  });
+
+  // Форматируем дату для отображения
+  const formatDateString = (date: Date) => {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    return `${day}.${month}`;
+  };
 
   return (
     <div className='w-full'>
@@ -126,7 +76,7 @@ const CurrentWeek = ({freeDates}: Props) => {
               Длительность урока <span className='text-[#9170D3]'>1 час</span>
             </h1>
             <h1 className='text-center pt-3 opacity-60'>
-              Выберете день недели, чтобы изменить промежуток, 
+              Выберите день недели, чтобы изменить промежуток, 
               <br /> можете добавить или убрать часы,
               <span> </span>
               <span className='font-bold'>
@@ -134,17 +84,25 @@ const CurrentWeek = ({freeDates}: Props) => {
               </span>
             </h1>
           </div>
-          <SwiperDatesBlock 
-            week1={days}
-            week2={days2}
-            week3={days3}
-          />
+
+          {/* Отобразим расписание для каждого дня */}
+          {dateArray.map((date, index) => (
+            <div key={index}>
+              <div>{formatDateString(date)}:</div>
+              <div>
+                {weekSchedule[index].length > 0 
+                  ? weekSchedule[index].join(', ')  // Если есть слоты, отображаем их
+                  : 'Нет доступных слотов'}  // Если нет слотов, отображаем сообщение
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       <div className='bg-white mt-5 rounded-lg shadow-lg p-5'>
         <h1 className='text-2xl font-semibold text-gray-500'>Мое расписание:</h1>
         <TimeSlots 
-        choosenDate={choosenDate.toString()}
+          choosenDate={choosenDate.toString()}
+          //slots={weekSchedule}  // Передаем слоты в TimeSlots
         />
       </div>
     </div>

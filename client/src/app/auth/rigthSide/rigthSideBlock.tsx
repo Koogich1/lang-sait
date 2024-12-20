@@ -34,6 +34,11 @@ const RigthSideBlock = () => {
 		"/pensil.png",
 		"/fly.png",
 		"/palitra.png",
+		"/fly.png",
+		"/pensil.png",
+		"/brush.png",
+		"/fly.png",
+		"/palitra.png",
 	];
 
 	const imageSize = 100; // Задайте размер изображения

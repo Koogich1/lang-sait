@@ -44,25 +44,6 @@ const Header = ({header, user}: Props) => {
 				{header}
 			</h1>
 			<div className="flex items-center gap-3">
-				{user.role === "USER" ? 
-				<DropdownMenu >
-				<DropdownMenuTrigger>
-					<div className="bg-[#835BD2] text-sm text-white font-semibold p-[0.65rem] px-5 rounded-sm scale-105 hover:bg-[#6d4caf] transition-all">
-						Мои уроки</div>
-					</DropdownMenuTrigger>
-				<DropdownMenuContent className="ml-[-25px]">
-					<DropdownMenuLabel className="text-lg text-gray-600">Мои преподаватели</DropdownMenuLabel>
-					<DropdownMenuSeparator />
-						
-					<DropdownMenuSeparator />
-					<DropdownMenuItem className="w-full p-1 m-0">
-						<Link href={'/profile/lessonsBuy'} className="w-full"><Button className="w-full text-sm" variant='violetSelect'>В магазин</Button></Link>
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-			:
-			""
-			}
 					<DropdownMenu >
 						<DropdownMenuTrigger 
 						className="rounded-full" 

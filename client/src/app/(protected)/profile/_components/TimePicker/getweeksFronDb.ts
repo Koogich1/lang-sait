@@ -7,22 +7,14 @@ import { db } from "@/lib/db"
 const getweeksFronDb = async() => {
 	const user = await currentUser()
 
-	if(!user?.email){
+	if(!user || !user.teacherId){
 		return
 	}
-
-	const userByEmail = await getUserByEmail(user?.email)
-
-
-	const teacherId = userByEmail?.teacherId
 	
-	if(!teacherId){
-		return('Вы не учитель!')
-	}
 
-	const slotsMany = await db.teacherScheduleDay.findMany({
+	const slotsMany = await db.teacherAvailability.findMany({
 		where:{
-			teacherId: teacherId
+			teacherId: user.teacherId
 		}
 	})
 

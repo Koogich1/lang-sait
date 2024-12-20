@@ -1,6 +1,7 @@
 "use client"
 
 import { logout } from '@/actions/logout'
+import { Button } from '@/components/ui/button'
 
 const LogoutButton = () => {
 	
@@ -9,7 +10,7 @@ const LogoutButton = () => {
 	}
 
 	return (
-			<div onClick={onClick}>Выйти из аккаунта</div>
+			<Button variant={"violetSelect"} className='text-sm font-medium' onClick={onClick}>Выйти из аккаунта</Button>
 	)
 }
 

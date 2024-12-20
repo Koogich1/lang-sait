@@ -12,13 +12,13 @@ type Props ={
 }
 
 const addUserLanguage = async ({ language, level, userId }: Props) => {
-  const user = await currentUser();
-  if (user) {
+  
+  try{
     await db.language.create({
       data: {
         level: level,
         language: language,
-        userId: user.id,
+        userId: userId,
         user: {
           connect: {
             id: userId // Используйте переданный teacherId
@@ -26,6 +26,8 @@ const addUserLanguage = async ({ language, level, userId }: Props) => {
         }
       }
     });
+  } catch(e){
+    console.log(e)
   }
 };
 

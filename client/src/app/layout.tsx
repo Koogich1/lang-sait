@@ -3,8 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
-import TimerTeacher from "./timerUpdate/updateTeacherClock";
 import Head from "next/head";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,10 +23,8 @@ export default async function RootLayout({
 
   return (
     <SessionProvider session={session}>
-      
       <html>
         <body className={`${inter.className} bg-[#EFEEF3]`}>
-          <TimerTeacher />
           <div className="w-full h-[100vh] p-0 m-0">
           {children}
           </div>

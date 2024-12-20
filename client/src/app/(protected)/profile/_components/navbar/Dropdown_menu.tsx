@@ -22,6 +22,10 @@ import { Button } from '@/components/ui/button';
 
 import { Skeleton } from "@/components/ui/skeleton"
 import Image from 'next/image';
+import { IoMenu } from 'react-icons/io5';
+import { FaDollarSign, FaMessage, FaNewspaper, FaSubscript, FaUser, FaUsers } from 'react-icons/fa6';
+import { FaMoneyCheckAlt } from 'react-icons/fa';
+import { LucideCircleDollarSign } from 'lucide-react';
 
 type allInf = {
 	user: {
@@ -39,7 +43,7 @@ type allInf = {
 }
 
 type Props = {
-	user: User
+	user: User | null
 }
 
 export default function DropDownMenu({user}: Props) {
@@ -89,24 +93,50 @@ export default function DropDownMenu({user}: Props) {
 						</div>
 					}
 				</DropdownMenuTrigger>
-				<DropdownMenuContent className='text-gray-600'>
-					<DropdownMenuLabel className='text-xl text-gray-400'>
-						Меню
+				<DropdownMenuContent className='text-gray-600 right-0 mr-6 sm:mr-10 p-2 px-2 w-[260px]'>
+					<DropdownMenuLabel className='text-xl text-center w-full text-gray-600 flex items-center justify-center gap-3'>
+						<IoMenu className='scale-125 text-white bg-gray-600 rounded-sm p-[0.1rem]'/>
+						<span>Меню</span>
 					</DropdownMenuLabel>
-					<DropdownMenuSeparator />
-					<Link href={"/profile/user"}><DropdownMenuItem className='text-base font-medium hover:bg-gray-200'>Профиль</DropdownMenuItem></Link>
-					<Link href={"/news"}><DropdownMenuItem className='text-base font-medium hover:bg-gray-200'>Новости</DropdownMenuItem></Link>
-					<Link href={"/chats/conversations"}><DropdownMenuItem className='text-base font-medium hover:bg-gray-200'>Мессенджер</DropdownMenuItem></Link>
-					{user.role === "TEACHER" ? 
-						<Link href={"/learning"}><DropdownMenuItem className='text-base font-medium hover:bg-gray-200'>Мои курсы</DropdownMenuItem></Link>
-					: ""}
-					<Link href={"/teachers"}><DropdownMenuItem className='text-base font-medium hover:bg-gray-200'>Преподаватели</DropdownMenuItem></Link>
-					<Link href={"/payment"}><DropdownMenuItem className='text-base font-medium hover:bg-gray-200'>Подписка</DropdownMenuItem></Link>
-					<DropdownMenuSeparator />
-					<div className='text-base font-medium bg-[#835BD2] cursor-pointer hover:bg-[#6a4aaa] p-2 px-5 text-white rounded-lg items-center flex justify-center'><LogoutButton /></div>
-					<div className='flex flex-col'>
-						Тестовая кнопка &quot;создание учителя&quot;, <br /> в админ панель
-						<TeacherCreate />
+					<div className='w-full h-[1px] bg-gray-200'/>
+					<div className='flex flex-col mt-2 text-gray-400'>
+						<Link href={"/profile/user"}>
+							<DropdownMenuItem className='text-base font-medium hover:bg-blue-50 hover:text-blue-400 flex gap-2 items-center justify-center'>
+								<FaUser />
+								Профиль
+							</DropdownMenuItem>
+						</Link>
+						<Link href={"/news"}>
+							<DropdownMenuItem className='text-base font-medium hover:bg-blue-50 hover:text-blue-400 flex gap-2 items-center justify-center'>
+								<FaNewspaper />
+								Новости
+							</DropdownMenuItem>
+						</Link>
+						<Link href={"/chats/conversations"}>
+							<DropdownMenuItem className='text-base font-medium hover:bg-blue-50 hover:text-blue-400 flex gap-2 items-center justify-center'>
+								<FaMessage />
+								Мессенджер
+							</DropdownMenuItem>
+						</Link>
+						{user.role === "TEACHER" ? 
+						<Link href={"/learning"}>
+							<DropdownMenuItem className='text-base font-medium hover:bg-blue-50 hover:text-blue-400 flex gap-2 items-center justify-center'>
+								Мои курсы
+							</DropdownMenuItem>
+						</Link>
+						: ""}
+						<Link href={"/teachers"}>
+							<DropdownMenuItem className='text-base font-medium hover:bg-blue-50 hover:text-blue-400 gap-2 items-center justify-center'>
+								<FaUsers />
+								Преподаватели
+							</DropdownMenuItem>
+						</Link>
+						<Link href={"/profile/buyLessons"}>
+							<DropdownMenuItem className='text-base font-medium hover:bg-blue-50 hover:text-blue-400 flex gap-2 items-center justify-center'>
+								<FaDollarSign />
+								Подписка
+							</DropdownMenuItem>
+						</Link>
 					</div>
 				</DropdownMenuContent>
 			</DropdownMenu>

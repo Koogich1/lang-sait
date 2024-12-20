@@ -28,6 +28,7 @@ import { currentUser } from "@/lib/auth";
 import ChangePhoto from "./components/modal/changePhoto";
 import LanguageBox from "./components/languages/languageUserBox";
 import Image from "next/image";
+import LogoutButton from "../_components/interface/logout-button";
 
 
 const SettingsPage = () => {
@@ -261,6 +262,7 @@ const SettingsPage = () => {
 							>
 								Сохранить
 							</Button>
+							<LogoutButton />
 						</form>
 					</Form>
 				</div>

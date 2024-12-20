@@ -10,6 +10,7 @@ import findUserLanguages from "../../settings/components/languages/findUserLangu
 import { IoSettingsOutline } from "react-icons/io5"
 import Image from "next/image"
 import TeacherInfo from "./components/teacherInfo"
+import { ClipLoader, HashLoader } from "react-spinners"
 
 type Props = {
 	user: User
@@ -34,15 +35,15 @@ const UserInfo = ({user}: Props) => {
 	},[getUserLanguages])
 
 	return (
-		<div className="md:w-[330px] h-[475px] lg:h-[510px] lg:w-[360px] xl:w-[380] 2xl:w-[400px] bg-white p-6 rounded-3xl shadow-lg w-full mt-10 text-gray-500">
+		<div className="bg-white p-3 py-4 rounded-3xl shadow-lg w-full text-gray-500">
 			<div className="flex flex-col justify-center items-center w-full text-lg">
 				<div className="w-full">
 					<div className="flex justify-center">
-						<div className="lg:w-[12rem] lg:h-[12rem] w-[10rem] h-[10rem] rounded-full">
+						<div className="lg:w-[8rem] lg:h-[8rem] w-[8rem] h-[8rem] rounded-full">
 							{user.image ? 
 								<Image width={1000} height={1000} className="w-full h-full rounded-full object-cover" src={`${user.image}`} alt="" /> 
 								: 
-								<Skeleton className="w-full h-[12rem] rounded-full p-2 gap-3 flex items-center justify-center text-center text-gray-400 flex-col">
+								<Skeleton className="w-full h-[8rem] rounded-full p-2 gap-3 flex items-center justify-center text-center text-gray-400 flex-col">
 								 		<FaUser className="text-5xl"/>
 										<h1 className="text-sm">
 											Загрузите изображение, перейдите в раздел настройки.
@@ -51,21 +52,24 @@ const UserInfo = ({user}: Props) => {
 							}
 						</div>
 							</div>
-							<div className="flex w-full justify-center text-lg font-semibold pt-3 gap-1 lg:text-xl">
-								<a>{user.name}</a>
-								<a>{user?.surname}</a>
+							<div className="flex w-full justify-center text-lg font-semibold pt-3 gap-2 lg:text-xl items-center">
+								<FaUser className="w-6 h-6 p-1 text-white bg-gray-500 rounded-md"/>
+								<div className="flex gap-1">
+									<span>{user.name}</span>
+									<span>{user?.surname}</span>
+								</div>
 							</div>
-						</div>
-						<div className="pt-3 w-full text-base lg:text-lg">
-						<div className="font-semibold">
-							<div className="flex gap-3 items-center justify-between">
-								<p className="text-nowrap">
-									Изучаю языки:
-								</p>
-								<div className="flex gap-2">
-									{!languages || languages.length == 0 ?
+							<div className="w-full h-[1px] bg-gray-200 mt-2"/>
+							<div className="w-full flex gap-3 text-base items-center mt-3">
+								<p>Возраст:</p>
+								<p className="p-0 w-7 h-7 bg-blue-400 hover:bg-blue-500 flex items-center justify-center text-white rounded-sm transition-all cursor-pointer">{user.age}</p>
+							</div>
+							<div className="mt-3 w-full flex flex-col gap-1 text-base items-start">
+								<p>{languages.length > 1 ? "Языки:" : "Язык:"}</p>
+								<div className="grid grid-cols-3 gap-1">
+								{!languages || languages.length == 0 ?
 										<Link href={"/profile/settings"}>
-											<Button className="w-full h-8" variant={"violetSelect"}>
+											<Button className="w-full h-8 text-sm" variant={"violetSelect"}>
 												Добавьте языки
 											</Button>
 										</Link>
@@ -74,6 +78,7 @@ const UserInfo = ({user}: Props) => {
 											<div 
 												onClick={() => {setActiveLanguage(data)}}
 												key={data.id}
+												className=""
 											>
 												{data.language === "China" ? 
 													<div className={`bg-[#f20520] p-2 overflow-hidden hover:opacity-100 hover:scale-105 cursor-pointer transition-all relative max-h-[40px] w-full flex flex-col justify-between rounded-xl shadow-lg ${activeLanguage?.language === data.language ? "opacity-100" : "opacity-30"}`}>
@@ -113,24 +118,42 @@ const UserInfo = ({user}: Props) => {
 									}
 								</div>
 							</div>
-							<ul className="w-full pt-3">
-								<li className="flex justify-between items-center font-normal">
-									<p>- Уровень владения: </p>
-									<Button className="bg-[#699BD8] font-bold rounded-xl shadow-md hover:bg-[#527aab]">
-										{activeLanguage?.level.toUpperCase()}
-									</Button>
-								</li>
-							</ul>
-							<div>
-								<p className="font-normal">- Преподаватель:</p>
+							<div className="flex gap-2 items-center mt-3">
+								<p className="text-base">Уровень знаний:</p>
+								<Button className="p-0 h-8 px-3 bg-blue-400 hover:bg-blue-500" variant={"violetSelect"}>{activeLanguage?.level ? activeLanguage.level : <div><HashLoader size={12} className="text-white" color="#ffffff"/></div>}</Button>
 							</div>
-							<div className="mt-3">
-								{user.TeacherS.map((data, key) => (
-									<TeacherInfo key={key} teacherID={data} activeLanguage={activeLanguage ? activeLanguage : null}/>
-								))}
-							</div>
-							<div className="pt-1 flex items-center justify-between w-full lg:text-lg mt-3 gap-3">
 						</div>
+						<div className="w-full h-[1px] bg-gray-200 mt-4"/>
+						<div className="pt-3 w-full text-base lg:text-lg">
+						<div className="font-semibold">
+							{user.TeacherS.length > 0 ?
+							<div>
+								<div>
+									<p className="font-normal text-base">
+										{user.TeacherS.length === 1 && "Преподаватель:"} {user.TeacherS.length > 1 && "Преподаватели:"}
+									</p>
+								</div>
+								<div className="mt-1">
+									{user.TeacherS.map((data, index) => (
+										<div key={index}>
+											<TeacherInfo teacherID={data}/>
+										</div>
+									))}
+								</div>
+							</div>
+							:
+							<div>
+								<div className="font-normal text-base flex gap-2 items-center pb-3">
+									<p>Преподаватель...</p>
+									<ClipLoader size={20} color="#6b7280" className="text-gray-500"/>
+								</div>
+								<Link className="mt-3 w-full" href={"/teachers"}>
+									<Button className="w-full h-12 font-bold" variant={"violetSelect"}>
+										Найти преподавателя
+									</Button>
+								</Link>
+							</div>
+							}
 					</div>
 				</div>
 			</div>

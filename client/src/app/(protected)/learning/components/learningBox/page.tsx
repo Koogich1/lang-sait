@@ -45,7 +45,7 @@ const YourComponent = () => {
 
   return (
     <div className='w-full p-6 bg-white text-gray-600 rounded-xl shadow-lg mt-3'>
-      <h1 className='text-2xl font-bold'>Обучение</h1>
+      <h1 className='text-2xl font-semibold text-[#835BD2]'>Обучение</h1>
       <ul className='flex text-lg mt-4 gap-2 text-gray-400'>
         <li 
           onClick={() => handleMenuItemClick('users')}

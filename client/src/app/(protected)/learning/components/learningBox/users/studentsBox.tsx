@@ -25,10 +25,10 @@ const StudentsBox = ({user, teacher, setChoosen}: Props) => {
 		`}>
 			<div className='relative text-center flex flex-col items-center justify-center max-w-[1440px]'>
 				{teacher?.studentsList && teacher.studentsList.length > 0 ? 
-					<div className='mt-5 w-full grid md:grid-cols-2 lg:grid-cols-3'>
+					<div className='mt-5 w-full grid md:grid-cols-2'>
 						{teacher.studentsList.map((data) => (
 							<div key={data} className='w-full'>
-								<UserBlock userId={data} setChoosen={setChoosen}/>
+								<UserBlock userId={data} setChoosen={setChoosen} teacher={teacher}/>
 							</div>
 						))}
 					</div>

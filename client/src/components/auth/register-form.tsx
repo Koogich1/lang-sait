@@ -120,7 +120,7 @@ const RegisterForm = () => {
                                                 disabled={isPending}
                                                 {...field}
                                                 placeholder="Дмитрий"
-																								className="border-[#c9b0fa] placeholder:text-gray-300 text-[#835BD2] focus:border-[#835BD2] focus:ring-2 focus:ring-[#c9b0fa] transition duration-300 ease-in-out"
+												className="border-[#c9b0fa] placeholder:text-gray-300 text-[#835BD2] focus:border-[#835BD2] focus:ring-2 focus:ring-[#c9b0fa] transition duration-300 ease-in-out"
                                             />
                                         </FormControl>
                                         <FormMessage />

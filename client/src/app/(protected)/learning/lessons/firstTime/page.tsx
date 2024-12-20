@@ -8,7 +8,11 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { FirstTimeInputForm } from "@/components/datePick/pub/firstInputForm"
 
-const FirstTimeChoosePage = ( ) => {
+type Props = {
+	visov: () => void
+}
+
+const FirstTimeChoosePage = ({visov}: Props) => {
 	const [transition, setTransition] = useState(false);
 	const [created, setCreated] = useState(false)
 
@@ -69,7 +73,7 @@ const FirstTimeChoosePage = ( ) => {
 			{created ? 
 				<section className="w-full h-[70vh] flex items-center justify-center opacity-1 ml-6" id="created-section">
 					<div className="text-xl text-center opacity-1 rounded-xl px-2 relative py-2 flex flex-col items-center justify-between bg-white shadow-lg">
-						<FirstTimeInputForm />
+						<FirstTimeInputForm visov={visov}/>
 					</div>
 				</section>
 			:

@@ -5,7 +5,8 @@ import { getUserById } from "@/data/user";
 import { currentUser } from "@/lib/auth";
 import { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import IsEmailVerifiedModal from "./_components/modal/isEmailVarified";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;

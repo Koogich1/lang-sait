@@ -101,7 +101,7 @@ const Page = () => {
 		<>
 			<HeaderTeacher />
 			<div className="flex justify-center items-center w-full h-[75vh]">
-				<div className="bg-white w-[90%] sm:w-[4/5] md:w-2/3 min-h-[350px] max-w-[750px] rounded-xl shadow-lg p-5 flex justify-between">
+				<div className="bg-white z-50 w-[90%] sm:w-[4/5] md:w-2/3 min-h-[350px] max-w-[750px] rounded-xl shadow-lg p-5 flex justify-between">
 					<div className="flex flex-col items-center justify-center min-h-[310px] relative w-1/3 border border-gray-200 rounded-lg">
 						<Image
 							src={user?.userInfo.image ? user?.userInfo.image : ""}

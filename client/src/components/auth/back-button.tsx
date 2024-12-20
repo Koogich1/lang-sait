@@ -12,10 +12,10 @@ interface BackButtonProps {
 const BackButton = ({label, href} : BackButtonProps) => {
 	return (
 		<Link 
-				className="bg-[#fff] w-[90%] items-center flex justify-center rounded-b-lg"
+				className="bg-white w-[90%] items-center flex justify-center rounded-b-lg"
 				href={href}>
 			<Button
-				className="p-5 h-10 bg-transparent text-[#835BD2] hover:underline hover:bg-transparent mt-2 mb-2">
+				className="px-5 h-8 bg-[#835BD2] text-white hover:bg-[#7650c1] my-2">
 					{label}
 			</Button>
 		</Link>

@@ -56,9 +56,9 @@ const LessonItem = ({lesson, setChoosen}: Props) => {
 								<div className="text-base bg-blue-400 rounded-lg flex items-center justify-center text-white px-2">{lesson.Materials.length}</div>
 							</div>
 						</div>
-						<Button className="absolute text-white right-3 flex items-center justify-center p-0 h-6 w-6 bg-blue-400 hover:bg-blue-500 z-50" variant={"violetSelect"}>
+						<div className="absolute text-white right-3 flex items-center justify-center p-0 h-6 w-6 bg-blue-400 hover:bg-blue-500 z-50">
 							<IoChevronDown className={`text-xl transition-all rotate-${open ? "180" : "0"}`} />
-						</Button>
+						</div>
 					</AccordionTrigger>
 					<AccordionContent className="border-none px-3 py-3">
 						<h1 className="text-lg text-blue-500 font-medium">

@@ -17,8 +17,8 @@ const MovingImage = ({ src, alt, duration, yOffset, rotate } : {src: string, alt
             ref={imageRef}
             src={src}
             alt={alt}
-            width={30}
-            height={30}
+            width={100}
+            height={100}
             className={`w-12 h-8`}
             style={{ transform: `rotate(${rotate}deg)` }} // Применение поворота
         />

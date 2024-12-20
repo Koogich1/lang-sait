@@ -67,10 +67,12 @@ const Applications = ({ user }: Props) => {
   };
 
   const fetchApplication = useCallback(async () => {
+    console.log("Работаю")
     const data = await getUserAplication(user);
     if (data) {
       console.log(data)
       setApplications(data);
+      setFilteredApplication(data.filter((data) =>  data.senderId === user.id && !data.isArchive))
     }
   }, [user.id])
 
@@ -103,7 +105,7 @@ const Applications = ({ user }: Props) => {
       <div className="flex flex-col gap-3 rounded-lg m-1">
         <div className="flex gap-1 pb-1 justify-between">
           <Button
-            className={`px-2 h-8 flex gap-2 w-[55%] shadow-none font-medium relative`}
+            className={`px-2 h-8 flex gap-2 w-[50%] shadow-none font-medium relative`}
             variant="violetSelect"
             onClick={() => {
               filterAplication("sended");
@@ -116,11 +118,11 @@ const Applications = ({ user }: Props) => {
               </div>
             </div>
            : ""}
-            <FaArrowRight className="" />
-            <p>Отправленные</p>
+            <FaArrowRight className="hidden md:block lg:hidden xl:block" />
+            <p className="">Отправленные</p>
           </Button>
           <Button
-            className={`px-2 h-8 m-0 flex gap-1 w-[45%] justify-between relative`}
+            className={`px-2 h-8 m-0 flex gap-1 w-1/2 justify-center md:justify-between relative`}
             variant="shadow2"
             onClick={() => {
               filterAplication("receiver");
@@ -133,8 +135,8 @@ const Applications = ({ user }: Props) => {
               </div>
             </div>
            : ""}
-            <FaCheck />
-            <p>Полученные</p>
+            <FaCheck color="#6b7280" className="hidden md:block lg:hidden xl:block"/>
+            <p className="">Полученные</p>
           </Button>
           <Button 
             className={`h-10 gap-1 flex items-center justify-center p-0 transition-all absolute bottom-0 right-0 m-1 border-2 border-gray-300 overflow-hidden ${isHover ? "px-2 w-[100px]" : "w-10"}`} variant="shadow2"

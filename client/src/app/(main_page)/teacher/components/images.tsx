@@ -3,6 +3,7 @@
 import ImageWatch from "@/app/(protected)/learning/settings/components/modal/imageWatch";
 import Image from "next/image";
 import { useState } from "react";
+import { AiOutlinePicture } from "react-icons/ai";
 
 type Teacher = {
   id: string;
@@ -34,20 +35,26 @@ const Images = ({teacher} : Props) => {
 	const[openImage, setOpenImage] = useState<boolean>(false)
 
 	return (
-		<>
-			<div className="w-full text-center font-medium text-[#835BD2] text-2xl pb-2">Галерея</div>
-			<div className="grid grid-cols-3 gap-1 mt-3">
+		<div className="flex flex-col gap-3">
+			<div className="flex flex-col">
+				<div className="w-full text-center font-medium text-gray-500 text-xl pb-2 flex gap-2 items-center justify-center">
+					<AiOutlinePicture className='text-white bg-gray-500 rounded-md h-6 w-6 p-[0.170rem]'/>
+					Галерея
+				</div>
+				<div className="w-full h-[1px] bg-gray-200" />
+			</div>
+			<div className="grid grid-cols-3 gap-1">
 				{teacher.teacherInfo.images.map((data, key) => (
-					<div className="border shadow-sm object-cover rounded-md overflow-hidden bg-black" key={key} onClick={() => {
+					<div className="border shadow-sm object-cover rounded-md overflow-hidden" key={key} onClick={() => {
 						setActiveImage(data)
 						setOpenImage(true)
 					}}>
-						<Image src={data} alt="galary" width={100} height={100} className="w-full hover:opacity-60 h-[100px] md:h-[120px] lg:h-[150px] object-cover cursor-pointer transition-all"/>
+						<Image src={data} alt="galary" width={80} height={80} className="hover:opacity-60 h-[80px] w-full object-cover cursor-pointer transition-all"/>
 					</div>
 				))}
 				<ImageWatch openModal={openImage} setOpenModal={setOpenImage} activeImage={activeImage} images={teacher.teacherInfo.images} teacherId={teacher.teacherId}/>
 			</div>
-		</>
+		</div>
 		
 	)
 }

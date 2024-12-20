@@ -1,13 +1,13 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import 'react-toastify/dist/ReactToastify.css';
 import GetTeacher from "./actions/getTeacher";
 import { Teacher } from "./actions/typeUser"
 import getAllSubscription from "@/actions/getAllSubscription";
-import { User, UserRole, UserSubscriptions } from "@prisma/client";
+import { Language, User, UserRole, UserSubscriptions } from "@prisma/client";
 
 import {
   DropdownMenu,
@@ -24,6 +24,9 @@ import { ClipLoader } from "react-spinners";
 import ApplicationBox from "./application/applicationBox";
 import Subscriptions from "./subscriptions/subscriptions";
 import UserInfo from "./userInfo/userInfo";
+import findUserLanguages from "../settings/components/languages/findUserLanguages";
+import Image from "next/image";
+import HomeWorkBox from "./homeWork/homeWorkBox";
 
 type allInf = {
 	user: {
@@ -56,19 +59,21 @@ const CardProfile = ({user}: Props) => {
 	}
 
 	return (
-		<div className="flex">
-			<div className='flex relative'>
-				<UserInfo user={user}/>
-			</div>
-			<div className="ml-5 md:w-[300px] h-[405px] lg:h-[420px] lg:w-[320px] xl:w-[340px] 2xl:w-[360px] bg-white p-6 rounded-3xl shadow-lg w-full mt-10 text-gray-600">
-				<ApplicationBox user={user}/>
-			</div>
-			<div className="ml-5 mt-10 flex flex-col gap-5">
-				<div className="md:w-[280px] h-[192px] lg:h-[200px] lg:w-[300px] xl:w-[320px] 2xl:w-[340px] bg-white p-6 rounded-3xl shadow-lg w-full text-gray-600">
-					<Subscriptions user={user} />
+		<div className="flex flex-col gap-3 mt-5">
+			<div className="flex w-full flex-col sm:flex-row gap-3 items-start">
+				<div className='flex md:w-1/2 relative w-full lg:w-1/3 min-w-[260px]'>
+					<UserInfo user={user}/>
 				</div>
-				<div className="md:w-[280px] h-[193px] lg:h-[200px] lg:w-[300px] xl:w-[320px] 2xl:w-[340px] bg-white p-6 rounded-3xl shadow-lg w-full text-gray-600">
-					ffff
+				<div className="w-full md:w-1/2 lg:w-1/3 lg:min-w-[310px] xl:min-w-[360px] bg-white py-4 px-3 rounded-3xl shadow-lg text-gray-600">
+					<ApplicationBox user={user}/>
+				</div>
+				<div className="hidden lg:block w-full md:w-1/2 lg:w-1/3 bg-white py-4 px-3 rounded-3xl shadow-lg text-gray-600">
+					<HomeWorkBox user={user} />
+				</div>
+			</div>
+			<div className="flex w-full flex-col sm:flex-row gap-3 items-start">
+				<div className="lg:hidden w-full bg-white py-4 px-3 rounded-3xl shadow-lg text-gray-600">
+					<HomeWorkBox user={user} />
 				</div>
 			</div>
 		</div>

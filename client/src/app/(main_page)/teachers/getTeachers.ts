@@ -4,15 +4,18 @@ import { db } from "@/lib/db";
 
 const getAllTeachers = async () => {
 	const allTeachers = await db.teacher.findMany({
+		where: {
+			isAcceptToLearn: true, // Добавлено условие для фильтрации учителей, которые могут обучать
+		},
 		include: {
 			languages: {  // Include the related languages
 				select: {
 					language: true,
 					level: true,
-					prefers: true
+					prefers: true,
 				}
-			}
-		}
+			},
+		},
 	});
 
 	const teachersData = await Promise.all(

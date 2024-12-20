@@ -57,7 +57,10 @@ const getTeacherById = async (teacherId: string) => {
             images: teacher.images,
             aboutMe: teacher.aboutMe,
             languages: languages,
-            lessonPrise: teacher.lessonPrise
+            lessonPrise: teacher.lessonPrise,
+            studentList: teacher.studentsList,
+            allLessons: teacher.allLessons,
+            stars: teacher.stars
         },
     };
 };

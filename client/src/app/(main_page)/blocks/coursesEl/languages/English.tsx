@@ -5,10 +5,10 @@ import React from 'react'
 
 const English = () => {
 	return (
-		<div className='relative max-w-[700px]'>
+		<div className='relative max-w-[700px] opacity-60'>
 			<Image src={"/bus.png"} width={500} height={500} alt="dragonBg" className="absolute right-[-50px] z-10 w-[45%] bottom-[-20px]"/>
 			<Image src={"/hat.png"} width={500} height={500} alt="dragonBg" className="absolute left-[-25px] z-50 w-[80px] top-[-10px] rotate-[340deg]"/>
-			<div className="bg-[#4865d8] max-w-[700px] p-4 mt-5 overflow-hidden relative min-h-[210px] flex flex-col justify-between rounded-xl shadow-lg">
+			<div className="bg-[#4865d8] max-w-[700px] p-4 mt-5 gap-3 overflow-hidden relative min-h-[210px] flex flex-col justify-between rounded-xl shadow-lg">
 					<h1 className="text-white text-3xl z-50" style={{fontFamily: "Corean"}}>
 						АНГЛИЙСКИЙ ЯЗЫК
 					</h1>

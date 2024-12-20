@@ -121,8 +121,8 @@ export const LoginForm = () => {
                                 control={form.control}
                                 name="code"
                                 render={({ field }) => (
-                                    <FormItem className="transition-all">
-                                        <FormLabel className="">Введите код, который был отправлен на вашу почту!</FormLabel>
+                                    <FormItem className="transition-all flex items-center justify-center flex-col">
+                                        <FormLabel className="text-center leading-5 pb-2 font-light text-base">Введите <span className="font-semibold">код</span>, который был <span className="font-semibold">отправлен на вашу почту!</span></FormLabel>
                                         <FormControl>
                                             <Input
                                                 {...field}

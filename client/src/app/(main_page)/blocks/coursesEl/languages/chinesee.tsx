@@ -5,13 +5,13 @@ import React from 'react'
 
 const Chinesee = () => {
 	return (
-		<div className="bg-[#f20520] max-w-[700px] p-4 mt-5 overflow-hidden relative min-h-[210px] flex flex-col justify-between rounded-xl shadow-lg">
+		<div className="bg-[#f20520] max-w-[700px] p-4 mt-5 gap-3 overflow-hidden relative min-h-[210px] flex flex-col justify-between rounded-xl shadow-lg">
 				<Image src={"/dragon.png"} width={500} height={500} alt="dragonBg" className="absolute left-0 top-[-50px] opacity-35 w-full z-0"/>
 				<h1 className="text-[#f7e627] text-3xl z-50" style={{fontFamily: "Belepotan"}}>
 					Китайский язык
 				</h1>
-				<div className="z-50 text-white" style={{fontFamily: "Belepotan"}}>
-					<p>- Уровень: Начальный HSK1 </p>
+				<div className="z-50 text-base text-white" style={{fontFamily: "Belepotan"}}>
+					<p>- Уровень: Начальный HSK1</p>
 					<p>- Сроки изучения: 6 месяцев </p>
 					<p>- нулевой и/или начальный уровнень</p>
 				</div>

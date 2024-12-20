@@ -31,6 +31,8 @@ import { MdLanguage } from "react-icons/md";
 import { Language, User } from '@prisma/client';
 import TeacherProfile from './components/teacherProfile';
 import { currentUser } from '@/lib/auth';
+import { Skeleton } from '@/components/ui/skeleton';
+import { RingLoader } from 'react-spinners';
 
 type Teacher = {
   id: string;
@@ -133,7 +135,7 @@ const TeachersPage = () => {
         pauseOnHover
         theme="light"
       />
-      <div className='flex justify-between max-w-[1440px] px-[5%] mt-10 relative w-full'>
+      <div className='flex justify-between max-w-[1440px] px-[5%] mt-10 relative w-full pb-20'>
         <div className='bg-white min-h-[70vh] rounded-lg shadow-lg relative w-full overflow-hidden'>
           <div className='pointer-events-auto bg-white mr-3 w-full border-b border-gray-100 py-5 mx-3'>
             <h1 className='text-3xl text-[#835BD2]'>Выберите язык</h1>
@@ -192,7 +194,27 @@ const TeachersPage = () => {
                     name="language"
                     render={({ field }) => (
                       <FormItem className='text-gray-600'>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={(value) => {
+                          switch(value) {
+                            case "все":
+                              setSelectedLanguage("все");
+                              break;
+                            case "English":
+                              setSelectedLanguage("English");
+                              break;
+                            case "Korean":
+                              setSelectedLanguage("Korean");
+                              break;
+                            case "China":
+                              setSelectedLanguage("China");
+                              break;
+                            case "German":
+                              setSelectedLanguage("German");
+                              break;
+                            default:
+                              break;
+                          }
+                        }}>
                           <FormControl>
                             <SelectTrigger className='max-w-[200px]'>
                               <SelectValue placeholder="Выберете язык" />
@@ -201,9 +223,19 @@ const TeachersPage = () => {
                           <SelectContent>
                             {['все', 'English', 'Korean', 'China', 'German'].map(lang => (
                               <SelectItem key={lang} value={lang}>
-                                <div className='flex items-center gap-3'>
-                                  <MdLanguage className='w-4 h-4 text-blue-500' />
-                                  <p>{FormatedLang(lang)}</p>
+                                <div className='flex items-center gap-3 '>
+                                  {lang === "все" && <MdLanguage className='w-4 h-4 text-blue-400'/>}
+                                  {lang === "English" && <Image src="/en.png" alt="en" width={20} height={20} className="w-6 h-4 shadow-md rounded-sm"/>}
+                                  {lang === "Korean" && <Image src="/korean.png" alt="en" width={20} height={20} className="w-6 h-4 shadow-md rounded-sm"/>}
+                                  {lang === "China" && <Image src="/ch.png" alt="en" width={20} height={20} className="w-6 h-4 shadow-md rounded-sm"/>}
+                                  {lang === "German" && <Image src="/gr.png" alt="en" width={20} height={20} className="w-6 h-4 shadow-md rounded-sm"/> }
+                                  <p className={`font-medium 
+                                    ${lang === "все" && "text-blue-400"}
+                                    ${lang === "English" && "text-blue-600"}
+                                    ${lang === "Korean" && "text-pink-500"}
+                                    ${lang === "China" && "text-red-500"}
+                                    ${lang === "German" && "text-orange-500"}
+                                  `}>{FormatedLang(lang)}</p>
                                 </div>
                               </SelectItem>
                             ))}
@@ -213,19 +245,23 @@ const TeachersPage = () => {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" variant='violetSelect' className='font-medium'>Подтвердить</Button>
                 </form>
               </Form>
             </div>
           </div>
-          <div className='w-full grid lg:grid-cols-3 gap-5 mt-5 px-3'>
-            {filteredTeachers.map((teacher, id) => (
-              <div key={id} className='h-[136px] w-full rounded-lg border border-gray-100 shadow-md bg-white flex p-2 relative text-gray-600'>
-                <div className='w-[120px] h-[120px] rounded-sm bg-cover overflow-hidden mr-4'>
-                  <Image width={1000} height={1000} className="w-[220px] h-[225px] object-cover" 
-                    src={teacher.userInfo.image ? teacher.userInfo.image : 'Ava'} 
-                    alt="" 
-                  />
+          <div className='w-full grid lg:grid-cols-2 xl:grid-cols-3 gap-5 mt-5 px-3'>
+            {filteredTeachers ? 
+            filteredTeachers.map((teacher, id) => (
+              <div key={id} className='h-[146px] w-full rounded-lg border border-gray-100 shadow-md bg-white flex p-2 relative text-gray-600'>
+                <div className='w-[100px] sm:w-[130px] h-[130px] rounded-sm bg-cover overflow-hidden sm:mr-4 mr-2'>
+                  {teacher.userInfo.image ? 
+                    <Image width={130} height={130} className="object-cover h-[130px]" 
+                      src={teacher.userInfo.image} 
+                      alt="" 
+                    />
+                    :
+                    <Skeleton className='w-[130px] h-[130px]' />
+                  }
                 </div>
                 <div className='flex flex-col w-1/2 relative justify-between'>
                   <div className='flex gap-1 font-semibold text-lg text-[#835BD2]'>
@@ -251,7 +287,7 @@ const TeachersPage = () => {
                   </p>
                   <div className='flex gap-1 justify-start items-start'>
                     <Link href={`/teacher/${teacher.teacherId}`} className="z-50">
-                      <Button variant={"violetSelect"} className='bg-blue-400 h-5 hover:bg-blue-500 text-xs'>Подробнее</Button>
+                      <Button variant={"violetSelect"} className='bg-blue-400 h-6 rounded-sm hover:bg-blue-500 text-xs'>Подробнее</Button>
                     </Link>
                     <TeacherProfile teacher={teacher} user={user} favouritesT={favouritesT}/>
                   </div>
@@ -270,7 +306,13 @@ const TeachersPage = () => {
                   </Button>
                 </div>
               </div>
-            ))}
+            ))
+           : 
+           <div className='w-full h-[470px] flex items-center justify-center flex-col gap-3'>
+              <div>Какая-то ошибка...</div>
+              <RingLoader className='text-gray-400'/>
+           </div>
+           }
           </div>
         </div>
       </div>

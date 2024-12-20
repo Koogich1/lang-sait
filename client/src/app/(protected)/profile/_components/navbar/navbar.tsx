@@ -19,6 +19,7 @@ from "react-icons/hi2";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import gsap from "gsap";
+import Image from "next/image";
 
 export const Navbar = () => {
 	const [activeLink, setActiveLink] = useState("");
@@ -73,7 +74,7 @@ export const Navbar = () => {
 		/>
 		<div 
 		id={"section"}
-		className={`lg:hidden opacity-0 lg:opacity-100 absolute bg-white p-7 min-w-[240px] h-full flex flex-col items-start justify-between shadow-lg rounded-r-3xl z-50 left-[-300px]`}>
+		className={`lg:hidden opacity-0 lg:opacity-100 absolute bg-white p-7 min-w-[240px] h-full flex flex-col items-start justify-between shadow-lg rounded-r-3xl z-[100] left-[-300px]`}>
 			<div className="flex justify-between w-full items-center">
 				<h1 className="font-semibold text-2xl pl-3 text-[#B069CA]">
 					Acyberg
@@ -201,9 +202,10 @@ export const Navbar = () => {
 		<div 
 		className={`hidden lg:fixed opacity-100 left-0 absolute bg-white p-7 min-w-[240px] h-full lg:flex flex-col items-start justify-between shadow-lg rounded-r-3xl z-50`}>
 			<div className="flex justify-between w-full items-center">
-				<h1 className="font-semibold text-2xl pl-3 text-[#B069CA]">
-					LangShool
-				</h1>
+				<Image width={1000} height={1000} src="/logo.png" alt="" className='w-20 h-20' />
+				<div className='lg:text-3xl text-2xl font-medium lg:font-semibold text-[#61439d]'>
+					Acyberg
+				</div>
 				<div 
 					className="lg:hidden flex items-center justify-center bg-red-400 p-1 rounded-lg"
 					onClick={handleCloseBurger}
