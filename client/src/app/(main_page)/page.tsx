@@ -7,7 +7,6 @@ import Footer from "./footer";
 import Programs from "./blocks/programs";
 import Teachers from "./blocks/teachers";
 import MainHeader from "./header";
-import TimerTeacher from "../timerUpdate/updateTeacherClock";
 import AsybergBlock from "./blocks/asybergBlock";
 import MovingImage from "@/components/images/movingImages";
 import Image from "next/image";

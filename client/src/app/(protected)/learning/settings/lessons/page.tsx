@@ -5,10 +5,10 @@ import CurrentWeek from "@/app/(protected)/profile/_components/TimePicker/curren
 import { db } from "@/lib/db"
 import { currentUser } from "@/lib/auth"
 import { getUserByEmail } from "@/data/user"
-import weekCreateLogic from "@/components/datePick/weekCreateLogic"
+//import weekCreateLogic from "@/components/datePick/weekCreateLogic"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-import { DayOfWeek } from "@prisma/client"
+import { DayOfWeek, TeacherAvailability } from "@prisma/client"
 
 interface SlotData {
   id: string;
@@ -19,20 +19,14 @@ interface SlotData {
 }
 
 const MyWeek = () => {
-	const[freeDates, setFreeDates] = useState<"Вы не учитель!" | SlotData[] | null>(null)
-
-	const callWeekCreateLogic = async () => {
-		try {
-			await weekCreateLogic();
-		} catch (error) {
-			console.error('Error in weekCreateLogic:', error);
-		}
-	};
+	const[freeDates, setFreeDates] = useState<TeacherAvailability[] | null>(null)
 
 	return (
 		<div>
 			<div className="flex mt-10 w-full gap-5">
-				<CurrentWeek freeDates={freeDates}/>
+				<CurrentWeek freeDates={
+					freeDates
+					}/>
 			</div>
 		</div>
 	)

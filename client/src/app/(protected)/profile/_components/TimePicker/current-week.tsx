@@ -91,8 +91,8 @@ const CurrentWeek = ({ freeDates }: Props) => {
               <div>{formatDateString(date)}:</div>
               <div>
                 {weekSchedule[index].length > 0 
-                  ? weekSchedule[index].join(', ')  // Если есть слоты, отображаем их
-                  : 'Нет доступных слотов'}  // Если нет слотов, отображаем сообщение
+                  ? weekSchedule[index].join(', ')
+                  : 'Нет доступных слотов'}
               </div>
             </div>
           ))}

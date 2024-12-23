@@ -53,7 +53,7 @@ const TeacherAllFreeDays = ({ teacherId, lessons, updateAll}: Props) => {
 			async () => {
 				const days = await getTeacherAviabillityByTeacherID(teacherId);
 					if (days) {
-							setDays(days);
+							//setDays(days);
 							setLoading(false);
 					}
 			}, [teacherId]

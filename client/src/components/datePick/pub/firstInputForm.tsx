@@ -42,12 +42,9 @@ type TimeSlotsData = {
   vs: TimeSlot[];
 };
 
-type Props = {
-  visov: () => void
-}
 
 
-export const FirstTimeInputForm = ({visov}: Props) => {
+export const FirstTimeInputForm = () => {
   const [active, setActive] = useState<string>("pn");
   const [timeSlots, setTimeSlots] = useState<{ [key: string]: TimeSlot[] }>({
     pn: [],
@@ -282,7 +279,6 @@ export const FirstTimeInputForm = ({visov}: Props) => {
                   setLoading(true)
                   submit();
                   //weekCreateLogic()
-                  visov()
                   setLoading(false)
                 }}
                 className="w-full"

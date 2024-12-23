@@ -40,34 +40,34 @@ const bookingLogic = async({ timeSlot, teacherId, day, user}: Props) => {
         });
 
         // Получаем информацию о расписании по dayId
-        const scheduleDay = await db.teacherScheduleDay.findUnique({
-            where: { date: day },
-            select: {
-                date: true, // Предположим, что у вас есть поле даты
-            }
-        });
+        //const scheduleDay = await db.teacherScheduleDay.findUnique({
+        //    where: { date: day },
+        //    select: {
+        //        date: true, // Предположим, что у вас есть поле даты
+        //    }
+        // });
 
-        if (!scheduleDay) {
+        //if (!scheduleDay) {
            // return { error: "Запись не найдена" };
-        }
+        // }
 
         // Получаем текущую дату и время
         const currentTime = new Date();
         
         // Создаем объект даты для запрашиваемого временного слота
         const [hours, minutes] = timeSlot.split(':').map(Number);
-        const bookingDateTime = new Date(scheduleDay.date);
-        bookingDateTime.setHours(hours, minutes); // Установка часов и минут
+        //const bookingDateTime = new Date(scheduleDay.date);
+        //bookingDateTime.setHours(hours, minutes); // Установка часов и минут
 
         // Сравниваем даты
-        if (bookingDateTime < currentTime) {
-            return { error: "Запись на уже прошедшее время невозможна." };
-        }
+        //if (bookingDateTime < currentTime) {
+        //    return { error: "Запись на уже прошедшее время невозможна." };
+        //}
 
         if(!day)return
 
         // Создаем запись о бронировании
-        const data = await db.studentBooking.create({
+        {/* const data = await db.studentBooking.create({
             data: {
                 studentId: user.id,
 				teacherId: teacherId,
@@ -90,6 +90,7 @@ const bookingLogic = async({ timeSlot, teacherId, day, user}: Props) => {
                 status: "waiting",
             }
         })
+            */}
 
         // Проверяем подписку пользователя
         

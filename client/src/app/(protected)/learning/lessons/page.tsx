@@ -48,7 +48,7 @@ const MyWeek = () => {
     <div>
       {notCreated ? (
         <div>
-          <FirstTimeChoosePage visov={findAnything}/>
+          <FirstTimeChoosePage />
         </div>
       ) : (
         <div className="flex mt-5 w-full gap-5">
