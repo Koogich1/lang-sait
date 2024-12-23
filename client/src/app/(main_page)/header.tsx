@@ -55,7 +55,7 @@ const MainHeader = () => {
 	};
 
 	return (
-		<div className="flex justify-around items-center w-full max-w-[1440px] px-[5%] mx-auto text-[#3E236C] flex-col m-0">
+		<div className="flex justify-around items-center w-full max-w-[1440px] px-[5%] mx-auto text-[#3E236C] flex-col m-0 z-[1000]">
 			<div className='w-full mt-3 justify-between items-center hidden lg:flex'>
 				<div className='flex items-center'>
 					<Image src={"/logo.png"} alt="logotype" width={200} height={200} className='w-20 h-20' />
