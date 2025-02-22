@@ -54,9 +54,10 @@ type Props = {
 
 const TestBox = ({tests, user, course, lessonId, rasdelId, isSwithOn, setSwith, fetchTest} : Props) => {
 	return (
-		<div>
+		<div className='grid md:grid-cols-2 xl:grid-cols-3 w-full justify-between'>
 						{tests?.map((test, index) => (
-							<div key={test.id} className='border mt-5 flex flex-col justify-between rounded-xl p-3 pt-5 min-w-[330px] max-w-[700px] shadow-lg border-purple-50'>
+							<div key={test.id} className='border mt-5 relative flex flex-col justify-between rounded-xl p-3 pt-5 min-w-[330px] max-w-[700px] shadow-lg border-purple-50'>
+								<div className='absolute top-0 left-0 m-[0.125rem] text-xs px-1 rounded-sm bg-blue-300 text-blue-500'>{index + 1}</div>
 							{test.questionType === "AUDIOCHOOSE" && (
 								<AudioChoose
 									test={test} 

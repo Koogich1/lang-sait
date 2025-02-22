@@ -15,7 +15,7 @@ const createWritingTasq = async({lessonId, littleRasdelId} : {littleRasdelId: st
 
 	await db.test.create({
 		data:{
-			question: "<h2>Напишите текстовое задание</h2>",
+			question: "<div><!--block-->Напишите текстовое задание</div>",
 			questionType: "WRITING_TASK",
 			position: position+1,
 			littleRasdelId: littleRasdelId,
@@ -23,11 +23,11 @@ const createWritingTasq = async({lessonId, littleRasdelId} : {littleRasdelId: st
 			textBlocks:{
 				create:[
 					{
-						text: "<p>Текстовый блок 1<p>",
+						text: "<div><!--block-->Текстовый блок 1</div>",
 						position: 1
 					},
 					{
-						text: "<p>Текстовый блок 2<p>",
+						text: "<div><!--block-->Текстовый блок 2</div>",
 						position: 2
 					}
 				]

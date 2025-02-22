@@ -10,8 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        violetSelect:
-          "bg-[#835BD2] font-semibold shadow-sm text-destructive-foreground hover:bg-purple-700 shadow-lg text-base text-white",
+        violetSelect: "bg-[#835BD2] font-semibold shadow-sm text-destructive-foreground hover:bg-purple-700 shadow-lg text-base text-white",
         cube: "bg-white border-purple-600 border-2 text-purple-600 font-bold shadow-md rounded-[3px] hover:bg-[#fff] cursor-pointer",
         info: "bg-white border-purple-600 border-[1px] rounded-full text-purple-700",
         shadow: "hover:bg-[#EFEEF3] bg-white text-lg flex justify-between",

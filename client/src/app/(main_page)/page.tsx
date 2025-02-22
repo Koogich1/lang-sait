@@ -120,10 +120,10 @@ export default function Home() {
     <div className="relative w-full">
     <MainHeader />
     {positionedImages.map((item, index) => (
-                    <div
-                        key={index}
-                        className='z-10'
-                        style={{
+      <div
+        key={index}
+        className='z-10'
+        style={{
                             position: "absolute",
                             left: `${item.position.left}px`,
                             top: `${item.position.top}px`,

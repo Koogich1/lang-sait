@@ -81,26 +81,12 @@ let mergeTags = [{trigger: "@",
 
 const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: () => void}) => {
 
-	const [user, setUser] = useState<User | null>(null)
 	const [content, setContent] = useState(test.question);
+	const [updateContent, setUpdateContent] = useState<string | null>()
 	const [selectedTextBlockId, setSelectedTextBlockId] = useState<string | null>(null)
 	const [questionOrBlock, setQuestionOrBlock] = useState("question")
 
 	const [open, setOpen] = useState(false)
-
-	useEffect(() => {
-		const fetchUser = async() => {
-			const data = await currentUser()
-			if(data){
-				setUser(data)
-			}
-		}
-		fetchUser()
-	},[])
-
-	const handleEditorChange = (newContent: any) => {
-    setContent(newContent);
-  };
 
 	const extractFirstWord = (text: string) => {
 		const words = text.split(" "); // Разделение текста на массив слов
@@ -124,6 +110,7 @@ const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: 
     setSelectedTextBlockId(id); // Устанавливаем ID выбранного текстового блока
     setContent(text); // Меняем содержимое редактора
   };
+
 	return (
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
@@ -171,6 +158,7 @@ const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: 
 								className={`border border-b-[3px] hover:bg-blue-100 hover:border-blue-200 hover:text-blue-300 rounded-t-lg px-3 py-1 transition-all ${selectedTextBlockId === data.id ? "border-blue-500 border-b-[3px] text-blue-500" : ""}`}
 								onClick={() => {
 									setContent(data.text)
+									setUpdateContent(null)
 									handleClickTextBlock(data.id, data.text)
 									setQuestionOrBlock("block")
 								}}
@@ -181,7 +169,6 @@ const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: 
 										{extractTextFromHTML(data.text)}
 									</HoverCardContent>
 								</HoverCard>
-								
 							</div>
 						))}
 						<div className="border border-b-[3px] rounded-t-lg flex items-center justify-center px-2 transition-all hover:bg-green-500 border-green-500 text-green-500 hover:text-white cursor-pointer"
@@ -195,6 +182,7 @@ const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: 
 					</div>
 					<div className="relative">
 							<TrixEditor
+								key={content}
                 className="w-full border border-gray-100 text-gray-500"
                 autoFocus={true}
                 placeholder=""
@@ -203,13 +191,13 @@ const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: 
                 uploadData={{"key1": "value", "key2": "value"}}
                 fileParamName="blob"
                 mergeTags={mergeTags}
-                onChange={setContent}
+                onChange={(value) => {setUpdateContent(value)}}
                 onEditorReady={() => {}}
               />
 						<div>
 							{questionOrBlock === "block" ? 
 							<div 
-								className="w-7 h-7 bg-red-300 absolute top-0 right-0 m-3 border border-red-500 rounded-lg flex items-center justify-center hover:bg-red-500 cursor-pointer transition-all text-red-500 hover:text-white"
+								className="w-7 h-7 bg-red-300 absolute top-0 right-0 m-0 mr-[-1.7rem] border border-red-500 rounded-lg flex items-center justify-center hover:bg-red-500 cursor-pointer transition-all text-red-500 hover:text-white"
 								onClick={() => {
 									deleteBlock({blockId: selectedTextBlockId ? selectedTextBlockId: ""})
 									updateVisov()
@@ -227,16 +215,18 @@ const UpdateWritingTasqModal = ({test, updateVisov} : {test: Test, updateVisov: 
 								variant={"violetSelect"} 
 								className="w-1/2"
 								onClick={() => {
+									setContent(updateContent ? updateContent : content)
 									if(questionOrBlock === "question"){
-										updateQuestion({testId: test.id, question: content})
+										updateQuestion({testId: test.id, question: updateContent ? updateContent : content})
 									}
 									if(questionOrBlock === "block"){
-										updateBlock({testId: test.id, blockId: selectedTextBlockId ? selectedTextBlockId : "", text:content })
+										updateBlock({testId: test.id, blockId: selectedTextBlockId ? selectedTextBlockId : "", text:updateContent ? updateContent : content })
 									}
 									updateVisov()
 								}}
+								disabled={updateContent == content || updateContent == null}
 							>
-								Сохранить открытый блок
+								{updateContent !== content ? 'Сохранить открытый блок' : 'Внесите изменения для сохранения'}
 							</Button>
 							<Button 
 								variant={"shadow2"} 
